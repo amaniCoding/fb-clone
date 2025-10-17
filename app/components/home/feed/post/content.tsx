@@ -1,6 +1,6 @@
 "use client";
 
-import { Medias_USER } from "@/generated/prisma/client";
+import { Medias_USER } from "@/app/generated/prisma";
 import Medias from "./Medias";
 export default function Content({
   content,
