@@ -1,14 +1,13 @@
-// lib/prisma.ts
 
-import { PrismaClient } from "@/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { withAccelerate } from '@prisma/extension-accelerate'
+import { PrismaClient } from '../generated/prisma'
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
-
-declare global {
-  var prisma: PrismaClient | undefined;
+const globalForPrisma = global as unknown as { 
+    prisma: PrismaClient
 }
 
-export const prisma = global.prisma || new PrismaClient({ adapter });
+const prisma = globalForPrisma.prisma || new PrismaClient().$extends(withAccelerate())
 
-if (process.env.NODE_ENV !== "production") global.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+
+export default prisma

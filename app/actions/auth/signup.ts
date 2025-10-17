@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/app/libs/prisma";
+import prisma from "@/app/libs/prisma";
 import { UserFormData } from "@/app/libs/schemas/user-schema";
 import bcrypt from "bcryptjs";
 

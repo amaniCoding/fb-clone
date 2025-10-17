@@ -1,7 +1,8 @@
 import { verifyPassword } from "@/app/libs/auth/verifypassword";
 import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { prisma } from "../prisma";
+import prisma from "../prisma";
+
 export const authConfig: NextAuthConfig = {
   providers: [
     Credentials({

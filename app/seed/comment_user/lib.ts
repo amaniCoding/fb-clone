@@ -1,6 +1,8 @@
-import { prisma } from "@/app/libs/prisma";
+
+import { Post_USER, User } from "@/app/generated/prisma";
 import { randomTexts } from "../dummy";
-import { Post_USER, User } from "@/generated/prisma/client";
+import prisma from "@/app/libs/prisma";
+
 
 const userPostOption = ["contentonly", "mediasonly", "both"];
 type UserPostOption = "contentonly" | "mediasonly" | "both";

@@ -1,6 +1,7 @@
-import { prisma } from "@/app/libs/prisma";
+
+import { Post_USER, ReactionType, User } from "@/app/generated/prisma";
 import { reactionTypes } from "../dummy";
-import { Post_USER, ReactionType, User } from "@/generated/prisma/client";
+import prisma from "@/app/libs/prisma";
 
 let randomUser: User;
 let posts: Post_USER[];
