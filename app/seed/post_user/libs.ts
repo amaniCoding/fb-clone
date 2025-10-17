@@ -5,13 +5,12 @@ import prisma from "@/app/libs/prisma";
 
 const userPostOption = ["contentonly", "mediasonly", "both"];
 type UserPostOption = "contentonly" | "mediasonly" | "both";
-let randomUser: User;
+let users: User[];
 
 async function getRandomUser() {
-  const users = await prisma.user.findMany({});
-  const randomUserIndex = Math.floor(Math.random() * users.length);
+  const _users = await prisma.user.findMany({});
 
-  randomUser = users[randomUserIndex];
+  users = _users
 }
 
 await getRandomUser();
@@ -36,7 +35,8 @@ export function _seedPosts() {
 
     const randomTextIndex = Math.floor(Math.random() * 20);
     const content = randomTexts[randomTextIndex];
-
+      const randomUserIndex = Math.floor(Math.random() * users.length);
+      const randomUser = users[randomUserIndex];
     const randomPhotoCount = Math.floor(Math.random() * 6) + 1;
     return prisma.post_USER.create({
       data: {

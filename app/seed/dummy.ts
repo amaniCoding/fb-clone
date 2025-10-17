@@ -90,7 +90,7 @@ export const users = [
     lname: "Molla",
     birthDay: new Date(),
     gender: "female",
-    mobileOrPhoneNumber: "amani.zi@gmail.com",
+    mobileOrPhoneNumber: "amanii.zii@gmail.com",
     password: bcrypt.hashSync("zenit.Oath.49", 10),
     profilepic: "/users/7.jpg",
   },

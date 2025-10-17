@@ -25,7 +25,7 @@ interface FeedState {
 // Define the initial state using that type
 const initialState: FeedState = {
   network: {
-    isOnline: false,
+    isOnline: navigator.onLine,
     status: "",
   },
   currentPostAction: {

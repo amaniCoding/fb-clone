@@ -51,7 +51,7 @@ export default function MyApp({
   return (
     <>
       {showNetWorkError && isOnline && status && (
-        <div className="fixed bottom-3 left-3 px-3.5 py-4 bg-slate-800 rounded-lg text-center text-white flex items-center space-x-2">
+        <div className="fixed bottom-3 z-30 left-3 px-3.5 py-4 bg-slate-800 rounded-lg text-center text-white flex items-center space-x-2">
           <Image
             alt="Amanuel Ferede"
             src={"/net/wireless.png"}
@@ -66,7 +66,7 @@ export default function MyApp({
       )}
 
       {showNetWorkError && !isOnline && status && (
-        <div className="fixed bottom-3 left-3 px-3.5 py-4 bg-slate-800 rounded-lg text-center text-white flex items-center space-x-2">
+        <div className="fixed bottom-3 z-30 left-3 px-3.5 py-4 bg-slate-800 rounded-lg text-center text-white flex items-center space-x-2">
           <Image
             alt="Amanuel Ferede"
             src={"/net/wifi-slash.png"}
