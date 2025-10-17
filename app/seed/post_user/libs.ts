@@ -28,12 +28,12 @@ function generatePhoto(photoCount: number) {
 
 export function _seedPosts() {
   return Array.from({ length: 5 }, () => {
-    const randomPostOptionIndex = Math.floor(Math.random() * 3);
+    const randomPostOptionIndex = Math.floor(Math.random() * userPostOption.length);
     const randomPostOption: UserPostOption = userPostOption[
       randomPostOptionIndex
     ] as UserPostOption;
 
-    const randomTextIndex = Math.floor(Math.random() * 20);
+    const randomTextIndex = Math.floor(Math.random() * randomTexts.length);
     const content = randomTexts[randomTextIndex];
       const randomUserIndex = Math.floor(Math.random() * users.length);
       const randomUser = users[randomUserIndex];
