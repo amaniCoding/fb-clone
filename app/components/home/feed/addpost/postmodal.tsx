@@ -3,10 +3,10 @@ import { FaLock, FaXmark } from "react-icons/fa6";
 import Image from "next/image";
 import { BsEmojiAstonished } from "react-icons/bs";
 
-import React, { ChangeEvent, useRef } from "react";
+import React, { ChangeEvent, useActionState, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 
-import { createPost } from "@/app/actions/user";
+import { createPost, State } from "@/app/actions/user";
 
 import { useFormStatus } from "react-dom";
 import { useSession } from "next-auth/react";
@@ -19,16 +19,24 @@ import UploadedMedias from "./uploadedmedias";
 export default function PostModal(props: { onClose: () => void }) {
   const dispatch = useAppDispatch();
   const { data, status } = useSession();
+  const initialState: State = {
+    message: "",
+    success: false,
+  };
+  const [state, formAction, isPending] = useActionState(
+    createPost,
+    initialState,
+    undefined
+  );
 
   const post = useAppSelector((state) => state.feed.addPost.post);
   const uploadedMedias = useAppSelector(
     (state) => state.feed.addPost.upLoadedMedias
   );
-
   const input = useRef<HTMLInputElement>(null);
 
   const textAreaForText = useRef<HTMLTextAreaElement>(null);
-  const { pending } = useFormStatus();
+
   const showDialog = () => {
     input.current?.click();
   };
@@ -72,13 +80,17 @@ export default function PostModal(props: { onClose: () => void }) {
     dispatch(setPostToAdd(e.target.value));
   };
 
-  // useEffect(() => {
-  //   if (pending) {
-  //     props.onClose();
-  //     dispatch(setUploadedMediasToAdd([]))
-  //     dispatch(setPostToAdd(""));
-  //   }
-  // }, [dispatch, pending, props]);
+  useEffect(() => {
+    if (state.success) {
+      props.onClose();
+      dispatch(
+        setUploadedMediasToAdd({
+          type: "empty",
+        })
+      );
+      dispatch(setPostToAdd(""));
+    }
+  }, [dispatch, state.success, props]);
 
   return (
     <>
@@ -87,7 +99,7 @@ export default function PostModal(props: { onClose: () => void }) {
           className={`max-w-[517px] mx-auto relative  shadow-2xl rounded-xl bg-white mt-15
             `}
         >
-          {pending && (
+          {isPending && (
             <div className="absolute bg-gray-100 opacity-60 z-10 top-0 bottom-0 left-0 right-0 flex items-center justify-center">
               <p className="text-2xl font-medium">Posting ...</p>
             </div>
@@ -96,6 +108,7 @@ export default function PostModal(props: { onClose: () => void }) {
           <div className="p-3 border-b pb-2 border-b-gray-200 flex items-center justify-between">
             <p className=""></p>
             <p className="font-bold text-xl">Create Post</p>
+            <p>{state.message}</p>
             <FaXmark
               className="w-10 h-10 p-2 hover:bg-gray-50 bg-gray-100 rounded-full cursor-pointer"
               onClick={() => {
@@ -104,7 +117,7 @@ export default function PostModal(props: { onClose: () => void }) {
               }}
             />
           </div>
-          <form className="p-3 flex flex-col w-full" action={createPost}>
+          <form className="p-3 flex flex-col w-full" action={formAction}>
             <div className="flex space-x-3">
               {status === "loading" ? null : data?.user.profilePicture ? (
                 <Image
@@ -134,7 +147,7 @@ export default function PostModal(props: { onClose: () => void }) {
                   className={`${
                     uploadedMedias.length > 0
                       ? "placeholder:text-sm"
-                      : "placeholder:text-xl"
+                      : "placeholder:text-3xl text-3xl"
                   } placeholder:text-gray-500 auto text-wrap resize-none
                 outline-none  block field-sizing-content border-none outline-0 w-full overflow-y-auto ${
                   uploadedMedias.length === 0 ? "pb-20" : "pb-0"
@@ -143,7 +156,9 @@ export default function PostModal(props: { onClose: () => void }) {
                   onChange={onChangePost}
                   name="post"
                 ></textarea>
-                <BsEmojiAstonished className="w-6 h-6 fill-gray-600 absolute z-10 top-0 right-1 bottom-0" />
+                {uploadedMedias.length > 0 && (
+                  <BsEmojiAstonished className="w-6 h-6 fill-gray-600 absolute z-10 top-0 right-1 bottom-0" />
+                )}
               </div>
               {uploadedMedias.length > 0 && (
                 <div className="uploadedmedias relative w-full">
@@ -196,6 +211,7 @@ export default function PostModal(props: { onClose: () => void }) {
                   name="photos"
                   multiple
                   type="file"
+                  accept="image/*,video/*"
                   onChange={onChangeFile}
                   className="relative hidden"
                 ></input>

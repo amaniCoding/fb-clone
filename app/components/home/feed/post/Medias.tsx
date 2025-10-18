@@ -8,9 +8,9 @@ import { UploadedMediasTypes } from "./meidas/types";
 
 export default function Medias({ medias }: UploadedMediasTypes) {
   return (
-    <div className={`w-full`}>
+    <div className={`w-full ${medias!?.length > 0 ? "h-[28rem]" : "h-auto"}`}>
       {/* {medias.length} */}
-      {medias!.length === 1 && medias![0].type === "video" && (
+      {medias!.length === 1 && medias![0].type === "image" && (
         <div
           className="w-full h-full"
           style={{
