@@ -10,8 +10,6 @@ export type State = {
   message: string;
 };
 
-let mediaUrls: PutBlobResult[] = [];
-
 const upLoadMedias = async (medias: File[]) => {
   if (medias && medias.length > 0) {
     try {
