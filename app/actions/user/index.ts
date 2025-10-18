@@ -1,10 +1,10 @@
 "use server";
-import UploadedMedias from "@/app/components/home/feed/addpost/uploadedmedias";
 import { MediaType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 import { put, PutBlobResult, del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 export type State = {
   success: boolean;
   message: string;
@@ -43,7 +43,7 @@ const postToFeed = async (
   medias: File[]
 ) => {
   const uploadedMedias = await upLoadMedias(medias);
-  if (UploadedMedias.length > 0) {
+  if (uploadedMedias!.length > 0) {
     const urls = uploadedMedias?.map((obj) => {
       return obj.url;
     });
@@ -79,7 +79,6 @@ export async function createPost(prevState: State, formData: FormData) {
   try {
     await postToFeed(content, session.user.id, medias);
 
-    revalidatePath("/");
     return {
       success: true,
       message: "Success !Temporary ",
