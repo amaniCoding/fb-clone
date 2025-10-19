@@ -1,6 +1,11 @@
 "use client";
 import Image from "next/image";
-export default function UpperLikeShareComment() {
+import { UpperFooter } from "./types";
+export default function Upper({
+  commentsCount,
+  reactionsCount,
+  reactions,
+}: UpperFooter) {
   return (
     <div className="px-3 py-2">
       <div className="flex items-center justify-between border-b border-b-gray-300 pb-2">
@@ -24,12 +29,12 @@ export default function UpperLikeShareComment() {
               className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
             />
           </div>
-          <p>10</p>
+          <p>{reactionsCount}</p>
         </div>
 
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-1  rounded-md ">
-            <span>10</span>
+            <span>{commentsCount}</span>
             <Image
               alt=""
               src={"/reactions/comment.png"}

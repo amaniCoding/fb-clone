@@ -4,10 +4,10 @@ import NavBar from "./components/home/navbar";
 import SideBar from "./components/home/sidebar";
 import { auth } from "@/app/libs/auth/auth";
 import AddPost from "./components/home/feed/addpost/addpost";
-import Feeder from "./components/home/feed/feeder/feeder";
 import { Suspense } from "react";
 import Story from "./components/skeletons/story";
 import Stories from "./components/home/feed/story/stories/stories";
+import Feeder from "./components/home/feed/feeder/feeder";
 export default async function Home() {
   const session = await auth();
 

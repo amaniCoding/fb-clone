@@ -3,6 +3,9 @@ import Header from "./header";
 import Content from "./content";
 import Footer from "./footer";
 import { PostsUser } from "../types";
+import Medias from "./Medias";
+import Upper from "./footer/upper/upper";
+import Lower from "./footer/lower/lower";
 export default function Post({ post }: { post: PostsUser }) {
   return (
     <>
@@ -13,8 +16,14 @@ export default function Post({ post }: { post: PostsUser }) {
           date={post.createdAt.toLocaleString()}
         />
 
-        <Content content={post.content} medias={post.medias} />
-        <Footer />
+        <Content content={post.content} />
+        <Medias medias={post.medias} />
+        <Upper
+          commentsCount={post.comments_count}
+          reactionsCount={post.reactions_count}
+          reactions={post.reactions_grouped}
+        />
+        <Lower />
       </div>
     </>
   );

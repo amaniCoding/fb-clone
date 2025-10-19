@@ -1,13 +1,13 @@
 "use server";
+import { PostsUser } from "@/app/components/home/feed/types";
 import { MediaType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 import { put, PutBlobResult, del } from "@vercel/blob";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 export type State = {
   success: boolean;
   message: string;
+  feed: PostsUser | undefined;
 };
 
 const upLoadMedias = async (medias: File[]) => {
@@ -59,10 +59,16 @@ const postToFeed = async (
           },
         },
       },
+      include: {
+        medias: true,
+        user: true,
+      },
     });
 
     if (!post) {
       await del(urls!);
+    } else {
+      return post;
     }
   }
 };
@@ -77,15 +83,17 @@ export async function createPost(prevState: State, formData: FormData) {
   console.log(medias);
 
   try {
-    await postToFeed(content, session.user.id, medias);
+    const feed = await postToFeed(content, session.user.id, medias);
 
     return {
       success: true,
       message: "Success !Temporary ",
+      feed: feed,
     };
   } catch (error) {
     console.log("Error", error);
     return {
+      feed: undefined,
       success: false,
       message: "Something went wrong",
     };

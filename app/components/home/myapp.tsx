@@ -11,10 +11,10 @@ export default function MyApp({
   children: React.ReactNode;
 }>) {
   const isPostBoxOpened = useAppSelector(
-    (state) => state.feed.addPost.toShowAddPostModal
+    (state) => state.addPost.toShowAddPostModal
   );
   const isCommentBoxOpened = useAppSelector(
-    (state) => state.feed.currentPostAction.toShowCommentModal
+    (state) => state.post.toShowCommentModal
   );
 
   const { isOnline, status } = useAppSelector((state) => state.feed.network);

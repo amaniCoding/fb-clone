@@ -1,9 +1,9 @@
 import prisma from "../libs/prisma";
-
+import { prismaEXT_POST_USER } from "../libs/prisma-ext";
 
 export async function GET() {
   try {
-    const posts_users = await prisma.post_USER.findMany({
+    const posts_users = await prismaEXT_POST_USER.post_USER.findMany({
       include: {
         medias: true,
         user: true,

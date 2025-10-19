@@ -8,12 +8,16 @@ import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 
 import { createPost, State } from "@/app/actions/user";
 
-import { useFormStatus } from "react-dom";
 import { useSession } from "next-auth/react";
-import { setPostToAdd, setUploadedMediasToAdd } from "@/app/store/slices/feed";
+
 import { PiPencilSimpleBold } from "react-icons/pi";
 import { GrGallery } from "react-icons/gr";
 import UploadedMedias from "./uploadedmedias";
+import {
+  setPostContent,
+  setUploadedMediasToAdd,
+} from "@/app/store/slices/addpost/addpost";
+import { addFeed } from "@/app/store/slices/feed/feed";
 
 // import { createPost, State } from "@/app/libs/actions"
 export default function PostModal(props: { onClose: () => void }) {
@@ -22,6 +26,7 @@ export default function PostModal(props: { onClose: () => void }) {
   const initialState: State = {
     message: "",
     success: false,
+    feed: undefined,
   };
   const [state, formAction, isPending] = useActionState(
     createPost,
@@ -29,9 +34,9 @@ export default function PostModal(props: { onClose: () => void }) {
     undefined
   );
 
-  const post = useAppSelector((state) => state.feed.addPost.post);
+  const content = useAppSelector((state) => state.addPost.content);
   const uploadedMedias = useAppSelector(
-    (state) => state.feed.addPost.upLoadedMedias
+    (state) => state.addPost.upLoadedMedias
   );
   const input = useRef<HTMLInputElement>(null);
 
@@ -76,8 +81,8 @@ export default function PostModal(props: { onClose: () => void }) {
   const onChangePost = (
     e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-    dispatch(setPostToAdd(e.target.value));
-    dispatch(setPostToAdd(e.target.value));
+    dispatch(setPostContent(e.target.value));
+    dispatch(setPostContent(e.target.value));
   };
 
   useEffect(() => {
@@ -88,9 +93,10 @@ export default function PostModal(props: { onClose: () => void }) {
           type: "empty",
         })
       );
-      dispatch(setPostToAdd(""));
+      dispatch(setPostContent(""));
+      dispatch(addFeed(state.feed));
     }
-  }, [dispatch, state.success, props]);
+  }, [dispatch, state.success, state.feed, props]);
 
   return (
     <>
@@ -112,7 +118,7 @@ export default function PostModal(props: { onClose: () => void }) {
             <FaXmark
               className="w-10 h-10 p-2 hover:bg-gray-50 bg-gray-100 rounded-full cursor-pointer"
               onClick={() => {
-                dispatch(setPostToAdd(post));
+                dispatch(setPostContent(content));
                 props.onClose();
               }}
             />
@@ -152,7 +158,7 @@ export default function PostModal(props: { onClose: () => void }) {
                 outline-none  block field-sizing-content border-none outline-0 w-full overflow-y-auto ${
                   uploadedMedias.length === 0 ? "pb-20" : "pb-0"
                 }`}
-                  value={post}
+                  value={content}
                   onChange={onChangePost}
                   name="post"
                 ></textarea>
@@ -276,10 +282,10 @@ export default function PostModal(props: { onClose: () => void }) {
               </div>
             </div>
             <button
-              disabled={!post || uploadedMedias.length === 0}
+              disabled={!content || uploadedMedias.length === 0}
               type="submit"
               className={`w-full text-center  py-2 cursor-pointer text-white rounded-md ${
-                post || uploadedMedias.length > 0
+                content || uploadedMedias.length > 0
                   ? "bg-blue-600"
                   : "bg-gray-300"
               }`}

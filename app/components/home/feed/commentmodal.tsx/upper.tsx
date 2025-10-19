@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-export default function UpperLikeShareComment() {
+export default function Upper() {
   return (
     <div className="px-3">
       <div className="flex items-center justify-between pb-2">

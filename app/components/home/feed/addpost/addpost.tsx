@@ -6,9 +6,9 @@ import { FaRegSmile } from "react-icons/fa";
 
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 
-import { showAddPostModal } from "@/app/store/slices/feed";
 import PostModal from "./postmodal";
 import { LoggedInUser } from "./types";
+import { showAddPostModal } from "@/app/store/slices/addpost/addpost";
 
 export default function AddPost({
   loggedInUser: { profilePicture },
@@ -17,7 +17,7 @@ export default function AddPost({
 }) {
   const [showPostModal, setShowPostModal] = useState<boolean>(false);
   const dispatch = useAppDispatch();
-  const post = useAppSelector((state) => state.feed.addPost.post);
+  const content = useAppSelector((state) => state.addPost.content);
 
   const handelShowPostBox = () => {
     setShowPostModal(true);
@@ -48,7 +48,7 @@ export default function AddPost({
             type="text"
             placeholder="What is on your mind, Amanuel"
             className="w-full outline-none focus:outline-none p-2 bg-gray-50 rounded-3xl placeholder:font-sans pl-5 text-black"
-            value={post}
+            value={content}
             onChange={() => {}}
             onFocus={() => {
               handelShowPostBox();

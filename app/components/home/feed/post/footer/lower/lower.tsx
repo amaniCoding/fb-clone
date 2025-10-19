@@ -1,11 +1,11 @@
 "use client";
 import Image from "next/image";
-import ReactionBox from "./reactionbox";
 import { useAppDispatch } from "@/app/store/hooks";
 import { useRef, useState } from "react";
-import { showCommentModal } from "@/app/store/slices/feed";
+import ReactionBox from "../../reactionbox";
+import { showCommentModal } from "@/app/store/slices/post/post";
 
-export default function LikeShareComment() {
+export default function Lower() {
   const dispatch = useAppDispatch();
   const [toShowReactionBox, setToShowReactionBox] = useState<boolean>(false);
   const timeOutId = useRef<NodeJS.Timeout>(null);

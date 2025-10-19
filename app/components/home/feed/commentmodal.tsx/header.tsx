@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppDispatch } from "@/app/store/hooks";
-import { showCommentModal } from "@/app/store/slices/feed";
+import { showCommentModal } from "@/app/store/slices/post/post";
 import { FaXmark } from "react-icons/fa6";
 
 export default function Header() {
