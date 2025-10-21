@@ -1,4 +1,3 @@
-
 import { Post_USER, ReactionType, User } from "@/app/generated/prisma";
 import { reactionTypes } from "../dummy";
 import prisma from "@/app/libs/prisma";
@@ -11,6 +10,9 @@ async function getPosts(page: number) {
   const _posts = await prisma.post_USER.findMany({
     take: 5,
     skip: skip,
+    orderBy: {
+      createdAt: "desc",
+    },
   });
   posts = _posts;
 }

@@ -1,21 +1,20 @@
-import prisma from "../libs/prisma";
-import { prismaEXT_POST_USER } from "../libs/prisma-ext";
+import xprisma from "../libs/prisma-ext";
+import { getpost_users } from "./libs/user";
 
 export async function GET() {
   try {
-    const posts_users = await prismaEXT_POST_USER.post_USER.findMany({
-      include: {
-        medias: true,
-        user: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const posts_users = await getpost_users();
+    const x = await xprisma.post_USER.findFirst();
 
     //await seedUser();
-    return Response.json({ posts_user: posts_users });
+
+    //console.log(await Promise.all(newposts_user));
+
+    console.log(x?.reactions_x);
+    return Response.json({ posts_user: await Promise.all(posts_users) });
   } catch (error) {
+    console.error(error);
+
     return Response.json({ error }, { status: 500 });
   }
 }

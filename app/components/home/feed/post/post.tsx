@@ -1,7 +1,6 @@
 "use client";
 import Header from "./header";
 import Content from "./content";
-import Footer from "./footer";
 import { PostsUser } from "../types";
 import Medias from "./Medias";
 import Upper from "./footer/upper/upper";
@@ -19,8 +18,8 @@ export default function Post({ post }: { post: PostsUser }) {
         <Content content={post.content} />
         <Medias medias={post.medias} />
         <Upper
-          commentsCount={post.comments_count}
-          reactionsCount={post.reactions_count}
+          commentsCount={post._count.comments}
+          reactionsCount={post._count.reactions}
           reactions={post.reactions_grouped}
         />
         <Lower />

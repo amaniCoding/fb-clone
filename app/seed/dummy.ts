@@ -279,7 +279,7 @@ export const reactionTypes = [
   "love",
   "care",
   "haha",
-  "waw",
+  "wow",
   "sad",
   "angry",
 ];

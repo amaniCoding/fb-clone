@@ -15,6 +15,7 @@ interface FeedState {
   network: {
     isOnline: boolean;
     status: string;
+    showNumber: "once" | "more" | "";
   };
 }
 
@@ -23,6 +24,7 @@ const initialState: FeedState = {
   network: {
     isOnline: navigator.onLine,
     status: "",
+    showNumber: "",
   },
   feeds: {
     feeds: [],
@@ -37,7 +39,11 @@ export const feedSlice = createSlice({
   reducers: {
     setNetWorkError: (
       state,
-      action: PayloadAction<{ isOnline: boolean; status: string }>
+      action: PayloadAction<{
+        isOnline: boolean;
+        status: string;
+        showNumber: "once" | "more" | "";
+      }>
     ) => {
       state.network = action.payload;
     },

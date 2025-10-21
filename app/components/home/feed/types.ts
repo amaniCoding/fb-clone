@@ -1,16 +1,26 @@
-import { Medias_USER, Post_USER, Prisma, User } from "@/app/generated/prisma";
+import { Medias_USER, Post_USER, User } from "@/app/generated/prisma";
+import { PickEnumerable } from "@/app/generated/prisma/internal/prismaNamespace";
+import { PostReactions_USERGroupByOutputType } from "@/app/generated/prisma/models";
 
 export interface PostsUser extends Post_USER {
-  comments_count: number;
-  reactions_count: number;
-  reactions_grouped: Prisma.GetPostReactions_USERAggregateType<{
-    _count: {
-      reactionType: true;
-    };
-    where: {
-      postId: string;
-    };
-  }>;
+  _count: {
+    comments: number;
+    reactions: number;
+  };
+  user: {
+    firstName: string;
+    lastName: string;
+    Profile: {
+      profilePicture: string | null;
+    } | null;
+  };
   medias: Medias_USER[];
-  user: User;
+  reactions_grouped: (PickEnumerable<
+    PostReactions_USERGroupByOutputType,
+    "reactionType"[]
+  > & {
+    _count: {
+      reactionType: number;
+    };
+  })[];
 }

@@ -1,8 +1,6 @@
-
 import { Post_USER, User } from "@/app/generated/prisma";
 import { randomTexts } from "../dummy";
 import prisma from "@/app/libs/prisma";
-
 
 const userPostOption = ["contentonly", "mediasonly", "both"];
 type UserPostOption = "contentonly" | "mediasonly" | "both";
@@ -14,6 +12,9 @@ async function getPosts(page: number) {
   const _posts = await prisma.post_USER.findMany({
     take: 5,
     skip: skip,
+    orderBy: {
+      createdAt: "desc",
+    },
   });
   posts = _posts;
 }

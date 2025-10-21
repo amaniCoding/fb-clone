@@ -17,7 +17,9 @@ export default function MyApp({
     (state) => state.post.toShowCommentModal
   );
 
-  const { isOnline, status } = useAppSelector((state) => state.feed.network);
+  const { isOnline, status, showNumber } = useAppSelector(
+    (state) => state.feed.network
+  );
 
   const [showNetWorkError, setshowNetWorkError] = useState<boolean>(false);
   const timeOutId = useRef<string | number | NodeJS.Timeout | undefined>(
@@ -50,7 +52,7 @@ export default function MyApp({
   }, [isOnline]);
   return (
     <>
-      {showNetWorkError && isOnline && status && (
+      {showNetWorkError && isOnline && status && showNumber === "more" && (
         <div className="fixed bottom-3 z-30 left-3 px-3.5 py-4 bg-slate-800 rounded-lg text-center text-white flex items-center space-x-2">
           <Image
             alt="Amanuel Ferede"
@@ -65,7 +67,7 @@ export default function MyApp({
         </div>
       )}
 
-      {showNetWorkError && !isOnline && status && (
+      {showNetWorkError && !isOnline && status && showNumber === "more" && (
         <div className="fixed bottom-3 z-30 left-3 px-3.5 py-4 bg-slate-800 rounded-lg text-center text-white flex items-center space-x-2">
           <Image
             alt="Amanuel Ferede"

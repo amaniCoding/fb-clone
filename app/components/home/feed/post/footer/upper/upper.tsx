@@ -6,46 +6,46 @@ export default function Upper({
   reactionsCount,
   reactions,
 }: UpperFooter) {
+  const newRxn = reactions.sort(
+    (a, b) => a._count.reactionType - b._count.reactionType
+  );
+  const newRxn_x = newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
   return (
     <div className="px-3 py-2">
       <div className="flex items-center justify-between border-b border-b-gray-300 pb-2">
-        <div className="flex items-center space-x-1 fill-gray-500">
-          <div className="flex items-center">
-            <Image
-              alt=""
-              src={"/reactions/like.png"}
-              width={0}
-              height={0}
-              sizes="100vh"
-              className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
-            />
-
-            <Image
-              alt=""
-              src={"/reactions/love.png"}
-              width={0}
-              height={0}
-              sizes="100vh"
-              className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
-            />
+        {reactionsCount > 0 && (
+          <div className="flex items-center space-x-1 fill-gray-500">
+            <div className="flex items-center">
+              {newRxn_x.map((rxn) => (
+                <Image
+                  alt=""
+                  src={`/reactions/${rxn.reactionType}.png`}
+                  width={0}
+                  height={0}
+                  sizes="100vh"
+                  className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
+                />
+              ))}
+            </div>
+            <p>{reactionsCount}</p>
           </div>
-          <p>{reactionsCount}</p>
-        </div>
-
+        )}
         <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-1  rounded-md ">
-            <span>{commentsCount}</span>
-            <Image
-              alt=""
-              src={"/reactions/comment.png"}
-              width={0}
-              height={0}
-              sizes="100vh"
-              className=" w-5 h-5 object-cover rounded-full block flex-none opacity-60"
-            />
-          </div>
+          {commentsCount > 0 && (
+            <div className="flex items-center space-x-1  rounded-md ">
+              <span>{commentsCount}</span>
+              <Image
+                alt=""
+                src={"/reactions/comment.png"}
+                width={0}
+                height={0}
+                sizes="100vh"
+                className=" w-5 h-5 object-cover rounded-full block flex-none opacity-60"
+              />
+            </div>
+          )}
 
-          <div className="flex items-center space-x-1  rounded-md ">
+          {/* <div className="flex items-center space-x-1  rounded-md ">
             <span>20</span>
             <Image
               alt=""
@@ -55,7 +55,7 @@ export default function Upper({
               sizes="100vh"
               className=" w-5 h-5 object-cover rounded-full block flex-none opacity-60"
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
