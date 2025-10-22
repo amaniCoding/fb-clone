@@ -4,12 +4,11 @@ import { PostReactions_USERGroupByOutputType } from "@/app/generated/prisma/mode
 export type UpperFooter = {
   commentsCount: number;
   reactionsCount: number;
-  reactions: (PickEnumerable<
-    PostReactions_USERGroupByOutputType,
-    "reactionType"[]
-  > & {
-    _count: {
-      reactionType: number;
-    };
-  })[];
+  reactions:
+    | (PickEnumerable<PostReactions_USERGroupByOutputType, "reactionType"[]> & {
+        _count: {
+          reactionType: number;
+        };
+      })[]
+    | null;
 };

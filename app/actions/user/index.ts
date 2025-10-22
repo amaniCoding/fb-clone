@@ -1,6 +1,7 @@
 "use server";
 import { PostsUser } from "@/app/components/home/feed/types";
-import { MediaType } from "@/app/generated/prisma/client";
+import { aggregateReactions } from "@/app/feeder/libs/user";
+import { MediaType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 
@@ -62,14 +63,33 @@ const postToFeed = async (
       },
       include: {
         medias: true,
-        user: true,
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            Profile: {
+              select: {
+                profilePicture: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
+            reactions: true,
+          },
+        },
       },
     });
 
     if (!post) {
       await del(urls!);
     } else {
-      return post;
+      return {
+        ...post,
+        reactions_grouped: await aggregateReactions(post.id),
+      };
     }
   }
 };

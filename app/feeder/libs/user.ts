@@ -1,6 +1,6 @@
 import prisma from "@/app/libs/prisma";
 
-const aggregateReactions = async (postId: string) => {
+export const aggregateReactions = async (postId: string) => {
   try {
     const reactions = await prisma.postReactions_USER.groupBy({
       by: ["reactionType"],
@@ -11,7 +11,6 @@ const aggregateReactions = async (postId: string) => {
     return reactions;
   } catch (error) {
     return null;
-    console.log(error);
   }
 };
 

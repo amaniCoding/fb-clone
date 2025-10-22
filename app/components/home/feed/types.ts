@@ -15,12 +15,11 @@ export interface PostsUser extends Post_USER {
     } | null;
   };
   medias: Medias_USER[];
-  reactions_grouped: (PickEnumerable<
-    PostReactions_USERGroupByOutputType,
-    "reactionType"[]
-  > & {
-    _count: {
-      reactionType: number;
-    };
-  })[];
+  reactions_grouped:
+    | (PickEnumerable<PostReactions_USERGroupByOutputType, "reactionType"[]> & {
+        _count: {
+          reactionType: number;
+        };
+      })[]
+    | null;
 }
