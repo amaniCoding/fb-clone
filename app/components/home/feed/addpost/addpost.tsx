@@ -55,7 +55,6 @@ export default function AddPost({
             }}
           ></input>
         </div>
-
         <div className="flex items-center xl:justify-center justify-between space-x-2 my-1.5">
           <button className="rounded-md hover:bg-gray-100 px-3 flex items-center space-x-2 py-2">
             <Image

@@ -1,7 +1,6 @@
 "use server";
 import { PostsUser } from "@/app/components/home/feed/types";
-import { MediaType } from "@/app/generated/prisma";
-
+import { MediaType } from "@/app/generated/prisma/client";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 
