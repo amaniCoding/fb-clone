@@ -1,6 +1,5 @@
+import { Prisma } from "@/app/generated/prisma";
 import { Medias_USER, Post_USER } from "@/app/generated/prisma/client";
-import { PickEnumerable } from "@/app/generated/prisma/internal/prismaNamespace";
-import { PostReactions_USERGroupByOutputType } from "@/app/generated/prisma/models";
 
 export interface PostsUser extends Post_USER {
   _count: {
@@ -16,7 +15,10 @@ export interface PostsUser extends Post_USER {
   };
   medias: Medias_USER[];
   reactions_grouped:
-    | (PickEnumerable<PostReactions_USERGroupByOutputType, "reactionType"[]> & {
+    | (Prisma.PickEnumerable<
+        Prisma.PostReactions_USERGroupByOutputType,
+        "reactionType"[]
+      > & {
         _count: {
           reactionType: number;
         };
