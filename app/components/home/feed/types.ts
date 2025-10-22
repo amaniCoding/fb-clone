@@ -1,5 +1,4 @@
-import { Prisma } from "@/app/generated/prisma";
-import { Medias_USER, Post_USER } from "@/app/generated/prisma/client";
+import { Medias_USER, Post_USER, Prisma } from "@/app/generated/prisma";
 
 export interface PostsUser extends Post_USER {
   _count: {

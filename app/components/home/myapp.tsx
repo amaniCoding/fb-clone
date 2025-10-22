@@ -52,7 +52,7 @@ export default function MyApp({
   }, [isOnline]);
   return (
     <>
-      {showNetWorkError && isOnline && status && showNumber === "more" && (
+      {showNetWorkError && isOnline && status && showNumber > 1 && (
         <div className="fixed bottom-3 z-30 left-3 px-3.5 py-4 bg-slate-800 rounded-lg text-center text-white flex items-center space-x-2">
           <Image
             alt="Amanuel Ferede"
@@ -67,7 +67,7 @@ export default function MyApp({
         </div>
       )}
 
-      {showNetWorkError && !isOnline && status && showNumber === "more" && (
+      {showNetWorkError && !isOnline && status && showNumber > 1 && (
         <div className="fixed bottom-3 z-30 left-3 px-3.5 py-4 bg-slate-800 rounded-lg text-center text-white flex items-center space-x-2">
           <Image
             alt="Amanuel Ferede"

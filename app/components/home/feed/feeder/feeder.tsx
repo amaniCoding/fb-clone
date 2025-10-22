@@ -50,7 +50,7 @@ export default function Feeder() {
         setNetWorkError({
           isOnline: true,
           status: "Your internet connection was restored",
-          showNumber: "more",
+          showNumber: networkNotification + 1,
         })
       );
 
@@ -60,7 +60,7 @@ export default function Feeder() {
         setNetWorkError({
           isOnline: true,
           status: "You are currently offline",
-          showNumber: "more",
+          showNumber: networkNotification + 1,
         })
       );
     }
@@ -84,7 +84,6 @@ export default function Feeder() {
 
   return (
     <>
-      <p>{posts_user?.length}</p>
       {posts_user!.map((post) => (
         <Post key={post.id} post={post} />
       ))}

@@ -15,7 +15,7 @@ interface FeedState {
   network: {
     isOnline: boolean;
     status: string;
-    showNumber: "once" | "more" | "";
+    showNumber: number;
   };
 }
 
@@ -24,7 +24,7 @@ const initialState: FeedState = {
   network: {
     isOnline: navigator.onLine,
     status: "",
-    showNumber: "",
+    showNumber: 0,
   },
   feeds: {
     feeds: [],
@@ -42,7 +42,7 @@ export const feedSlice = createSlice({
       action: PayloadAction<{
         isOnline: boolean;
         status: string;
-        showNumber: "once" | "more" | "";
+        showNumber: number;
       }>
     ) => {
       state.network = action.payload;
