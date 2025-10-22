@@ -1,4 +1,4 @@
-import { Post_USER, ReactionType, User } from "@/app/generated/prisma/client";
+import { Post_USER, ReactionType, User } from "@/app/generated/prisma";
 import { reactionTypes } from "../dummy";
 import prisma from "@/app/libs/prisma";
 
