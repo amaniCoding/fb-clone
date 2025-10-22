@@ -10,7 +10,6 @@ import {
   setLoading,
   setNetWorkError,
 } from "@/app/store/slices/feed/feed";
-import { PrismaClientInitializationError } from "@prisma/client/runtime/library";
 import Link from "next/link";
 
 export default function Feeder() {
