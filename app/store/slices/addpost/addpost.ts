@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SetUploadedMediasToAdd } from "../../types";
-import { Post_USER } from "@/app/generated/prisma";
 import { PostsUser } from "@/app/components/home/feed/types";
 
 interface UploadedMediaType {
