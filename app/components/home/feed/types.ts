@@ -1,4 +1,4 @@
-import { Medias_USER, Post_USER, User } from "@/app/generated/prisma";
+import { Medias_USER, Post_USER } from "@/app/generated/prisma/client";
 import { PickEnumerable } from "@/app/generated/prisma/internal/prismaNamespace";
 import { PostReactions_USERGroupByOutputType } from "@/app/generated/prisma/models";
 
