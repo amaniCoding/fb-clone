@@ -1,5 +1,4 @@
-
-import { MediaType, User } from "@/app/generated/prisma";
+import { MediaType, User } from "@/app/generated/prisma/client";
 import { randomTexts } from "../dummy";
 import prisma from "@/app/libs/prisma";
 
@@ -10,7 +9,7 @@ let users: User[];
 async function getRandomUser() {
   const _users = await prisma.user.findMany({});
 
-  users = _users
+  users = _users;
 }
 
 await getRandomUser();
@@ -28,15 +27,17 @@ function generatePhoto(photoCount: number) {
 
 export function _seedPosts() {
   return Array.from({ length: 5 }, () => {
-    const randomPostOptionIndex = Math.floor(Math.random() * userPostOption.length);
+    const randomPostOptionIndex = Math.floor(
+      Math.random() * userPostOption.length
+    );
     const randomPostOption: UserPostOption = userPostOption[
       randomPostOptionIndex
     ] as UserPostOption;
 
     const randomTextIndex = Math.floor(Math.random() * randomTexts.length);
     const content = randomTexts[randomTextIndex];
-      const randomUserIndex = Math.floor(Math.random() * users.length);
-      const randomUser = users[randomUserIndex];
+    const randomUserIndex = Math.floor(Math.random() * users.length);
+    const randomUser = users[randomUserIndex];
     const randomPhotoCount = Math.floor(Math.random() * 6) + 1;
     return prisma.post_USER.create({
       data: {
