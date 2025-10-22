@@ -9,8 +9,9 @@ export async function GET() {
     //await seedUser();
 
     //console.log(await Promise.all(newposts_user));
+    const all = await Promise.all(posts_users);
 
-    console.log(x?.reactions_x);
+    console.log(all.length);
     return Response.json({ posts_user: await Promise.all(posts_users) });
   } catch (error) {
     console.error(error);

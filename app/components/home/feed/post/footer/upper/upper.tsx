@@ -6,27 +6,17 @@ export default function Upper({
   reactionsCount,
   reactions,
 }: UpperFooter) {
-  const newRxn =
-    reactions &&
-    reactions.sort((a, b) => a._count.reactionType - b._count.reactionType);
-  const newRxn_x = newRxn && newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
+  // const newRxn =
+  //   reactions !== null
+  //     ? reactions.sort((a, b) => a._count.reactionType - b._count.reactionType)
+  //     : [];
+  // const newRxn_x = newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
   return (
     <div className="px-3 py-2">
       <div className="flex items-center justify-between border-b border-b-gray-300 pb-2">
         {reactionsCount > 0 && (
           <div className="flex items-center space-x-1 fill-gray-500">
-            <div className="flex items-center">
-              {newRxn_x?.map((rxn) => (
-                <Image
-                  alt=""
-                  src={`/reactions/${rxn.reactionType}.png`}
-                  width={0}
-                  height={0}
-                  sizes="100vh"
-                  className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
-                />
-              ))}
-            </div>
+            <div className="flex items-center"></div>
             <p>{reactionsCount}</p>
           </div>
         )}

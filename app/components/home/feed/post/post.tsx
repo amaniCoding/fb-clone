@@ -12,7 +12,7 @@ export default function Post({ post }: { post: PostsUser }) {
         <Header
           firstName={post.user.firstName}
           lastName={post.user.lastName}
-          date={post.createdAt.toLocaleString()}
+          date={post.createdAt.toString()}
         />
 
         <Content content={post.content} />
