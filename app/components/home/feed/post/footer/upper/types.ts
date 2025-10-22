@@ -1,11 +1,13 @@
-import { PickEnumerable } from "@/app/generated/prisma/internal/prismaNamespace";
-import { PostReactions_USERGroupByOutputType } from "@/app/generated/prisma/models";
+import { Prisma } from "@/app/generated/prisma";
 
 export type UpperFooter = {
   commentsCount: number;
   reactionsCount: number;
   reactions:
-    | (PickEnumerable<PostReactions_USERGroupByOutputType, "reactionType"[]> & {
+    | (Prisma.PickEnumerable<
+        Prisma.PostReactions_USERGroupByOutputType,
+        "reactionType"[]
+      > & {
         _count: {
           reactionType: number;
         };
