@@ -13,7 +13,6 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.17.1",
-    "prisma": "^6.17.1",
     "@prisma/extension-accelerate": "^2.0.2",
     "@reduxjs/toolkit": "^2.9.1",
     "@vercel/blob": "^2.0.0",
@@ -43,7 +42,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.6",
     "eslint-config-prettier": "^10.1.8",
-
+    "prisma": "^6.17.1",
     "tailwindcss": "^4",
     "tsx": "^4.20.6",
     "typescript": "^5"
