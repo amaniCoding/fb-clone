@@ -8,8 +8,9 @@ import Medias from "../post/Medias";
 import Upper from "./upper";
 import Lower from "../post/footer/lower/lower";
 import HeadLine from "./headline";
+import { PostsUser } from "../types";
 
-export default function CommentModal() {
+export default function CommentModal({ post }: { post: PostsUser }) {
   const { data, status } = useSession();
 
   if (status === "loading") {
@@ -20,12 +21,17 @@ export default function CommentModal() {
       <div className="shadow-2xl max-w-[700px] mx-auto rounded-xl bg-white my-10 ">
         <Header />
         <HeadLine />
-        <Content />
-        <Medias />
+        <Content content={post.content} />
+        <Medias medias={post.medias} />
         <Comments />
-        <Upper />
+        <Upper
+          comments={post._count.comments}
+          reactions={post._count.reactions}
+          groupedReactions={post.reactions_grouped}
+          firtReactions={post.reactions}
+        />
         <div className=" p-1 border-b border-t-gray-300 border-t border-b-gray-300">
-          <Lower />
+          <Lower post={post} refFrom="commentModal" />
         </div>
         <p className="my-2"></p>
         <AddComment loggedInUser={data?.user} />

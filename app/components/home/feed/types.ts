@@ -5,6 +5,12 @@ export interface PostsUser extends Post_USER {
     comments: number;
     reactions: number;
   };
+  reactions: {
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+  }[];
   user: {
     firstName: string;
     lastName: string;
@@ -22,5 +28,5 @@ export interface PostsUser extends Post_USER {
           reactionType: number;
         };
       })[]
-    | null;
+    | undefined;
 }

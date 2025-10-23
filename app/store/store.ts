@@ -2,11 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { feedSlice } from "./slices/feed/feed";
 import { addPostSlice } from "./slices/addpost/addpost";
 import { postSlice } from "./slices/post/post";
+import { CommentModalSlice } from "./slices/commentmodal/post";
 export const store = configureStore({
   reducer: {
     feed: feedSlice.reducer,
     addPost: addPostSlice.reducer,
     post: postSlice.reducer,
+    commentModal: CommentModalSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

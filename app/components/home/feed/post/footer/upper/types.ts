@@ -12,5 +12,12 @@ export type UpperFooter = {
           reactionType: number;
         };
       })[]
-    | null;
+    | undefined;
+
+  firstReactions: {
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+  }[];
 };

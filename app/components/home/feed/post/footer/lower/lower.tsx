@@ -4,15 +4,23 @@ import { useAppDispatch } from "@/app/store/hooks";
 import { useRef, useState } from "react";
 import ReactionBox from "../../reactionbox";
 import { showCommentModal } from "@/app/store/slices/post/post";
+import { setPost } from "@/app/store/slices/commentmodal/post";
+import { PostsUser } from "../../../types";
 
-export default function Lower() {
+export default function Lower({
+  post,
+  refFrom,
+}: {
+  post: PostsUser;
+  refFrom: string;
+}) {
   const dispatch = useAppDispatch();
   const [toShowReactionBox, setToShowReactionBox] = useState<boolean>(false);
   const timeOutId = useRef<NodeJS.Timeout>(null);
 
   const _showCommentModal = () => {
-    alert("fuck");
     dispatch(showCommentModal(true));
+    dispatch(setPost(post));
   };
 
   const showReactionBox = () => {
@@ -60,7 +68,7 @@ export default function Lower() {
       </div>
       <div
         className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100"
-        onClick={_showCommentModal}
+        onClick={refFrom === "post" ? _showCommentModal : () => {}}
       >
         <div className="flex items-center px-3 py-1.5 space-x-1 ">
           <Image

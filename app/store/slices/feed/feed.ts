@@ -10,7 +10,9 @@ interface FeedState {
   feeds: {
     loading: boolean;
     page: number;
-    feeds: PostsUser[] | null;
+    feeds: PostsUser[] | undefined;
+    totalRows: number;
+    totalPages: number;
   };
   network: {
     isOnline: boolean;
@@ -30,6 +32,8 @@ const initialState: FeedState = {
     feeds: [],
     loading: false,
     page: 1,
+    totalPages: 0,
+    totalRows: 0,
   },
 };
 
@@ -58,10 +62,28 @@ export const feedSlice = createSlice({
     addFeed: (state, action: PayloadAction<PostsUser | undefined>) => {
       state.feeds.feeds?.unshift(action.payload!);
     },
+
+    updatePage: (state, action: PayloadAction<number>) => {
+      state.feeds.page = state.feeds.page + 1;
+    },
+
+    updateTotalPagesAndRows: (
+      state,
+      action: PayloadAction<{ totalPages: number; totalRows: number }>
+    ) => {
+      state.feeds.totalPages = action.payload.totalPages;
+      state.feeds.totalRows = action.payload.totalRows;
+    },
   },
 });
 
-export const { setNetWorkError, setFeeds, setLoading, addFeed } =
-  feedSlice.actions;
+export const {
+  setNetWorkError,
+  setFeeds,
+  setLoading,
+  addFeed,
+  updatePage,
+  updateTotalPagesAndRows,
+} = feedSlice.actions;
 
 export default feedSlice.reducer;

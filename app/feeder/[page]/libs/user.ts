@@ -9,13 +9,14 @@ export const aggregateReactions = async (postId: string) => {
       },
     });
     return reactions;
-  } catch (error) {
-    return null;
-  }
+  } catch (error) {}
 };
 
-export const getpost_users = async () => {
+export const getpost_users = async (page: number) => {
+  const offset = (page - 1) * 10;
   const posts_users = await prisma.post_USER.findMany({
+    take: 10,
+    skip: offset,
     include: {
       medias: true,
       user: {
@@ -35,6 +36,17 @@ export const getpost_users = async () => {
           comments: true,
           reactions: true,
         },
+      },
+      reactions: {
+        select: {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+        take: 1,
       },
     },
 

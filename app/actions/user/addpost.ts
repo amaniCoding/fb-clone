@@ -1,6 +1,6 @@
 "use server";
 import { PostsUser } from "@/app/components/home/feed/types";
-import { aggregateReactions } from "@/app/feeder/libs/user";
+import { aggregateReactions } from "@/app/feeder/[page]/libs/user";
 import { MediaType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
@@ -78,6 +78,16 @@ const postToFeed = async (
           select: {
             comments: true,
             reactions: true,
+          },
+        },
+        reactions: {
+          select: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
           },
         },
       },

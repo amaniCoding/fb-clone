@@ -6,7 +6,7 @@ import { BsEmojiAstonished } from "react-icons/bs";
 import React, { ChangeEvent, useActionState, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 
-import { createPost, State } from "@/app/actions/user";
+import { createPost, State } from "@/app/actions/user/addpost";
 
 import { useSession } from "next-auth/react";
 

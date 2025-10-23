@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Post from "../post/post";
 import CommentModal from "../commentmodal.tsx/comment-modal";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
@@ -8,6 +8,8 @@ import {
   setFeeds,
   setLoading,
   setNetWorkError,
+  updatePage,
+  updateTotalPagesAndRows,
 } from "@/app/store/slices/feed/feed";
 import Link from "next/link";
 import axios from "axios";
@@ -21,26 +23,53 @@ export default function Feeder() {
     (state) => state.feed.network.showNumber
   );
   const posts_user = useAppSelector((state) => state.feed.feeds.feeds);
+  const commentModalPost = useAppSelector(
+    (state) => state.commentModal.user.post
+  );
   const loading = useAppSelector((state) => state.feed.feeds.loading);
+  const page = useAppSelector((state) => state.feed.feeds.page);
+  const totalPages = useAppSelector((state) => state.feed.feeds.totalPages);
   const [hasError, setHasError] = useState<boolean>(false);
   const [isOnLine, setIsOnLine] = useState<boolean>(navigator.onLine);
+  const observer = useRef<IntersectionObserver>(null);
 
+  const hasMore = page >= totalPages;
+
+  const lastPostElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (loading || !hasMore) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          const newPage = page + 1;
+          dispatch(updatePage(newPage));
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [hasMore, loading, page]
+  );
   useEffect(() => {
     const controller = new AbortController();
     const getFeeds = async () => {
       try {
         dispatch(setLoading(true));
         setHasError(false);
-        const response = await axios.get("/feeder", {
+        const response = await axios.get(`/feeder/${page}`, {
           signal: controller.signal,
         });
-
-        setHasError(false);
         dispatch(setFeeds(response.data.posts_user));
+        dispatch(
+          updateTotalPagesAndRows({
+            totalPages: response.data.totalPages,
+            totalRows: response.data.totalRows,
+          })
+        );
         dispatch(setLoading(false));
       } catch (error) {
         setHasError(true);
-
         dispatch(setLoading(false));
       }
     };
@@ -80,25 +109,32 @@ export default function Feeder() {
       });
       controller.abort();
     };
-  }, [dispatch, isOnLine]);
+  }, [dispatch, isOnLine, page]);
 
   return (
     <>
-      {posts_user!.map((post) => (
-        <Post key={post.id} post={post} />
+      {posts_user?.map((post, index) => (
+        <Post
+          key={post.id}
+          post={post}
+          ref={posts_user?.length === index + 1 ? lastPostElementRef : null}
+        />
       ))}
       {loading && <FeedItemSkeleton />}
       {hasError && (
         <div className="h-44 flex items-center justify-center">
           <div className="flex flex-col space-y-1">
-            <p className="text-xl">Something went worng</p>
-            <Link className="block bg-blue-600 px-3 py-2" href={`/`}>
-              Link
+            <p className="text-2xl">Something went worng</p>
+            <Link
+              className="block bg-blue-600 px-3 py-2 rounded-md text-center text-white"
+              href={`/`}
+            >
+              Reload the page
             </Link>
           </div>
         </div>
       )}
-      {isCommentModalShown && <CommentModal />}
+      {isCommentModalShown && <CommentModal post={commentModalPost} />}
     </>
   );
 }

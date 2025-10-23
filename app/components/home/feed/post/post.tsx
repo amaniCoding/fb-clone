@@ -5,10 +5,16 @@ import { PostsUser } from "../types";
 import Medias from "./Medias";
 import Upper from "./footer/upper/upper";
 import Lower from "./footer/lower/lower";
-export default function Post({ post }: { post: PostsUser }) {
+export default function Post({
+  post,
+  ref,
+}: {
+  post: PostsUser;
+  ref: ((node: HTMLDivElement) => void) | null;
+}) {
   return (
     <>
-      <div className="rounded-xl bg-white mb-4">
+      <div className="rounded-xl bg-white mb-4" ref={ref}>
         <Header
           firstName={post.user.firstName}
           lastName={post.user.lastName}
@@ -21,8 +27,9 @@ export default function Post({ post }: { post: PostsUser }) {
           commentsCount={post._count.comments}
           reactionsCount={post._count.reactions}
           reactions={post.reactions_grouped}
+          firstReactions={post.reactions}
         />
-        <Lower />
+        <Lower post={post} refFrom="post" />
       </div>
     </>
   );
