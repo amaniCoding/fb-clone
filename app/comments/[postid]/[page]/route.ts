@@ -10,9 +10,9 @@ export async function GET(
   { params: { page, postId } }: { params: RouteParams }
 ) {
   try {
-    const comments = await getComments(postId, page);
+    const { comments, count } = await getComments(postId, page);
 
-    return Response.json({ comments: comments });
+    return Response.json({ comments: comments, count: count });
   } catch (error) {
     console.error(error);
 
