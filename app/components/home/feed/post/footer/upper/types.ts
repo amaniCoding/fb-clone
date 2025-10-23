@@ -11,8 +11,7 @@ export type UpperFooter = {
         _count: {
           reactionType: number;
         };
-      })[]
-    | undefined;
+      })[];
 
   firstReactions: {
     user: {

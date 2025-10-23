@@ -17,8 +17,7 @@ export default function Upper({
         _count: {
           reactionType: number;
         };
-      })[]
-    | undefined;
+      })[];
 
   firtReactions: {
     user: {

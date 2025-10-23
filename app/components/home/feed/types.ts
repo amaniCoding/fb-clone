@@ -27,6 +27,5 @@ export interface PostsUser extends Post_USER {
         _count: {
           reactionType: number;
         };
-      })[]
-    | undefined;
+      })[];
 }

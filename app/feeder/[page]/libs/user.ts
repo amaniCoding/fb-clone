@@ -9,11 +9,14 @@ export const aggregateReactions = async (postId: string) => {
       },
     });
     return reactions;
-  } catch (error) {}
+  } catch (error) {
+    return [];
+  }
 };
 
 export const getpost_users = async (page: number) => {
   const offset = (page - 1) * 10;
+  const count = await prisma.post_USER.count();
   const posts_users = await prisma.post_USER.findMany({
     take: 10,
     skip: offset,
@@ -56,13 +59,19 @@ export const getpost_users = async (page: number) => {
   });
 
   if (posts_users.length > 0) {
-    return posts_users.map(async (post) => {
-      return {
-        ...post,
-        reactions_grouped: await aggregateReactions(post.id),
-      };
-    });
+    return {
+      count: count,
+      posts: posts_users.map(async (post) => {
+        return {
+          ...post,
+          reactions_grouped: await aggregateReactions(post.id),
+        };
+      }),
+    };
   } else {
-    return [];
+    return {
+      count: 0,
+      posts: [],
+    };
   }
 };

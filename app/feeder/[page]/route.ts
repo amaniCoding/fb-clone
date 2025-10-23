@@ -9,18 +9,16 @@ type RouteType = {
 export async function GET(request: NextRequest, { page }: RouteType) {
   try {
     const rowsPerPage = 10;
-    const posts_users = await getpost_users(page);
-    const x = await xprisma.post_USER.findFirst();
+    const { count, posts } = await getpost_users(page);
 
-    //await seedUser();
+    //const x = await xprisma.post_USER.findFirst();
 
-    //console.log(await Promise.all(newposts_user));
-    const all = await Promise.all(posts_users);
+    const all = await Promise.all(posts);
 
     console.log(all.length);
     return Response.json({
-      posts_user: await Promise.all(posts_users),
-      totalRows: all.length,
+      posts_user: all,
+      totalRows: count,
       totalPages: Math.ceil(all.length / rowsPerPage),
     });
   } catch (error) {
