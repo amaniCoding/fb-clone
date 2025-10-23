@@ -1,9 +1,41 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PostsUser } from "@/app/components/home/feed/types";
 import { Comment_USER, PostType, Prisma } from "@/app/generated/prisma";
+import { data } from "@/app/components/home/navbar/data";
 
 // Define a type for the slice state
-interface ExtendedComment extends Comment_USER {
+export interface ExtendedComment extends Comment_USER {
+  reactions: {
+    user: {
+      firstName: string;
+      lastName: string;
+      Profile: {
+        profilePicture: string | null;
+      } | null;
+    };
+  }[];
+  replies: {
+    user: {
+      firstName: string;
+      lastName: string;
+      Profile: {
+        profilePicture: string | null;
+      } | null;
+    };
+    _count: {
+      reactions: number;
+    };
+    grouped_reactions: Promise<
+      (Prisma.PickEnumerable<
+        Prisma.ReplyReactions_USERGroupByOutputType,
+        "reactionType"
+      > & {
+        _count: {
+          reactionType: number;
+        };
+      })[]
+    >;
+  }[];
   grouped_reactions: (Prisma.PickEnumerable<
     Prisma.CommentReactions_USERGroupByOutputType,
     "reactionType"
@@ -141,7 +173,7 @@ export const CommentModalSlice = createSlice({
         case "userpost":
           const comment = state.user.comments.find((comment) => comment.postId);
           if (comment) {
-            comment.data = action.payload.comments;
+            comment.data = [...comment.data, ...action.payload.comments];
           } else {
             const newComment: Comment = {
               data: [],
@@ -150,6 +182,7 @@ export const CommentModalSlice = createSlice({
               page: 1,
               postId: action.payload.postId,
             };
+            newComment.data = [...action.payload.comments];
             state.user.comments.push(newComment);
           }
           break;
