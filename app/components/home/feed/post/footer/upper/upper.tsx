@@ -8,11 +8,7 @@ export default function Upper({
   firstReactions,
 }: UpperFooter) {
   console.log(reactions);
-  const newRxn = reactions
-    ? [...reactions!].sort(
-        (a, b) => b._count.reactionType - a._count.reactionType
-      )
-    : [];
+  const newRxn = reactions.sort((a, b) => b.count - a.count);
   const newRxn_x = newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
   return (
     <div className="px-3 py-2">

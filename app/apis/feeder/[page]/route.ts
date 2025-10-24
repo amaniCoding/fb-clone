@@ -6,8 +6,6 @@ type RouteType = {
   page: number;
 };
 
-let feed;
-
 export async function GET(request: NextRequest, { page }: RouteType) {
   try {
     const rowsPerPage = 10;
@@ -16,7 +14,6 @@ export async function GET(request: NextRequest, { page }: RouteType) {
     //const x = await xprisma.post_USER.findFirst();
 
     const u = await Promise.all(posts_user);
-    feed = typeof u;
 
     const feeds = [...u];
 

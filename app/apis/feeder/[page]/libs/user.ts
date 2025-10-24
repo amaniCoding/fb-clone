@@ -228,7 +228,7 @@ export const getpost_users = async (page: number) => {
   }
 };
 
-const f = await getpost_users(3);
-const g = Promise.all(f.posts_user);
+const result = await getpost_users(3);
+const feed = await Promise.all(result.posts_user);
 
-export type feedType = typeof g;
+export type FeedsType = (typeof feed)[0];

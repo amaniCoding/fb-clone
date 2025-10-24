@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PostsUser } from "@/app/components/home/feed/types";
+import { FeedsType } from "@/app/apis/feeder/[page]/libs/user";
 
 interface UploadedMediaType {
   url: string;
@@ -10,7 +11,7 @@ interface FeedState {
   feeds: {
     loading: boolean;
     page: number;
-    feeds: PostsUser[] | undefined;
+    feeds: FeedsType[] | undefined;
     totalRows: number;
     totalPages: number;
   };
@@ -55,11 +56,11 @@ export const feedSlice = createSlice({
       state.feeds.loading = action.payload;
     },
 
-    setFeeds: (state, action: PayloadAction<PostsUser[]>) => {
+    setFeeds: (state, action: PayloadAction<FeedsType[]>) => {
       state.feeds.feeds = [...state.feeds.feeds!, ...action.payload];
     },
 
-    addFeed: (state, action: PayloadAction<PostsUser | undefined>) => {
+    addFeed: (state, action: PayloadAction<FeedsType | undefined>) => {
       state.feeds.feeds?.unshift(action.payload!);
     },
 

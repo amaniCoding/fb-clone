@@ -5,11 +5,12 @@ import { PostsUser } from "../types";
 import Medias from "./Medias";
 import Upper from "./footer/upper/upper";
 import Lower from "./footer/lower/lower";
+import { FeedsType } from "@/app/apis/feeder/[page]/libs/user";
 export default function Post({
   post,
   ref,
 }: {
-  post: PostsUser;
+  post: FeedsType;
   ref: ((node: HTMLDivElement) => void) | null;
 }) {
   return (
@@ -26,7 +27,7 @@ export default function Post({
         <Upper
           commentsCount={post._count.comments}
           reactionsCount={post._count.reactions}
-          reactions={post.reactions_grouped}
+          reactions={post._reactions}
           firstReactions={post.reactions}
         />
         <Lower post={post} refFrom="post" />

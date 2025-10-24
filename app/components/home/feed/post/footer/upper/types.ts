@@ -1,18 +1,18 @@
-import { Prisma } from "@/app/generated/prisma";
+import { Prisma, ReactionType } from "@/app/generated/prisma";
 
 export type UpperFooter = {
   commentsCount: number;
   reactionsCount: number;
-  reactions:
-    | (Prisma.PickEnumerable<
-        Prisma.PostReactions_USERGroupByOutputType,
-        "reactionType"[]
-      > & {
-        _count: {
-          reactionType: number;
-        };
-      })[];
-
+  reactions: {
+    reactionType: ReactionType;
+    count: number;
+    totalRows: number;
+    totalPages: number;
+    loading: boolean;
+    page: number;
+    error: string;
+    reactors: never[];
+  }[];
   firstReactions: {
     user: {
       firstName: string;

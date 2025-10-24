@@ -6,12 +6,13 @@ import ReactionBox from "../../reactionbox";
 import { showCommentModal } from "@/app/store/slices/post/post";
 import { setPost } from "@/app/store/slices/commentmodal/post";
 import { PostsUser } from "../../../types";
+import { FeedsType } from "@/app/apis/feeder/[page]/libs/user";
 
 export default function Lower({
   post,
   refFrom,
 }: {
-  post: PostsUser;
+  post: FeedsType;
   refFrom: string;
 }) {
   const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ export default function Lower({
 
   const _showCommentModal = () => {
     dispatch(showCommentModal(true));
-    dispatch(setPost(post));
+    //dispatch(setPost(post));
   };
 
   const showReactionBox = () => {

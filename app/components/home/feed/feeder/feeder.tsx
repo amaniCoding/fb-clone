@@ -22,7 +22,7 @@ export default function Feeder() {
   const networkNotification = useAppSelector(
     (state) => state.feed.network.showNumber
   );
-  const posts_user = useAppSelector((state) => state.feed.feeds.feeds);
+  const feeds = useAppSelector((state) => state.feed.feeds.feeds);
   const commentModalPost = useAppSelector(
     (state) => state.commentModal.user.post
   );
@@ -113,11 +113,11 @@ export default function Feeder() {
 
   return (
     <>
-      {posts_user?.map((post, index) => (
+      {feeds?.map((post, index) => (
         <Post
-          key={post.id}
+          key={index}
           post={post}
-          ref={posts_user?.length === index + 1 ? lastPostElementRef : null}
+          ref={feeds.length === index + 1 ? lastPostElementRef : null}
         />
       ))}
       {loading && <FeedItemSkeleton />}
