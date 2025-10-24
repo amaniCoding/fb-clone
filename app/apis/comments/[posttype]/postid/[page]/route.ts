@@ -1,18 +1,20 @@
 import { NextRequest } from "next/server";
 import { getComments } from "./lib";
+import { PostType } from "@/app/generated/prisma";
 interface RouteParams {
-  postId: string;
+  postid: string;
   page: number;
+  posttype: PostType;
 }
 
 export async function GET(
   request: NextRequest,
-  { params: { page, postId } }: { params: RouteParams }
+  { params: { page, postid, posttype } }: { params: RouteParams }
 ) {
   try {
-    const { comments, count } = await getComments(postId, page);
+    const result = await getComments(posttype, postid, page);
 
-    return Response.json({ comments: comments, count: count });
+    return Response.json({ result: result });
   } catch (error) {
     console.error(error);
 

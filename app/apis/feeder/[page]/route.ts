@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import xprisma from "../../libs/prisma-ext";
+import xprisma from "../../../libs/prisma-ext";
 import { getpost_users } from "./libs/user";
 
 type RouteType = {
