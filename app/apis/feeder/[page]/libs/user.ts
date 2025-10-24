@@ -74,6 +74,7 @@ const prepareMediaComments = (medias: MediasType) => {
       commentros: [],
     };
   });
+  return result;
 };
 
 const prepareMediaReactions = async (
@@ -105,9 +106,19 @@ const prepareMediaReactions = async (
             totalPages: Math.ceil(rxn._count.reactionType / rowsPerPage),
           };
         });
-        return preparereactions;
+
+        preparereactions.map((rxn) => {
+          return {
+            id: media.id,
+            ...rxn,
+          };
+        });
       });
-      return await Promise.all(result);
+
+      return {
+        currentReactionType: "",
+        result: await Promise.all(result),
+      };
     } catch (error) {}
   }
 };
@@ -122,6 +133,9 @@ export const getpost_users = async (page: number) => {
       medias: {
         select: {
           id: true,
+          url: true,
+          type: true,
+          createdAt: true,
           _count: {
             select: {
               comments: true,
@@ -192,7 +206,7 @@ export const getpost_users = async (page: number) => {
   if (posts_users.length > 0) {
     return {
       count: count,
-      posts: posts_users.map(async (post) => {
+      posts_user: posts_users.map(async (post) => {
         return {
           ...post,
           _mediasComments: prepareMediaComments(post.medias),
@@ -209,7 +223,12 @@ export const getpost_users = async (page: number) => {
   } else {
     return {
       count: 0,
-      posts: [],
+      posts_user: [],
     };
   }
 };
+
+const f = await getpost_users(3);
+const g = Promise.all(f.posts_user);
+
+export type feedType = typeof g;

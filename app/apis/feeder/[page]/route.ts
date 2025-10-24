@@ -6,20 +6,25 @@ type RouteType = {
   page: number;
 };
 
+let feed;
+
 export async function GET(request: NextRequest, { page }: RouteType) {
   try {
     const rowsPerPage = 10;
-    const { count, posts } = await getpost_users(page);
+    const { count, posts_user } = await getpost_users(page);
 
     //const x = await xprisma.post_USER.findFirst();
 
-    const all = await Promise.all(posts);
+    const u = await Promise.all(posts_user);
+    feed = typeof u;
 
-    console.log(all.length);
+    const feeds = [...u];
+
+    console.log(u.length);
     return Response.json({
-      posts_user: all,
-      totalRows: count,
-      totalPages: Math.ceil(all.length / rowsPerPage),
+      feeds: feeds,
+      totalRows: feeds.length,
+      totalPages: Math.ceil(feeds.length / rowsPerPage),
     });
   } catch (error) {
     console.error(error);

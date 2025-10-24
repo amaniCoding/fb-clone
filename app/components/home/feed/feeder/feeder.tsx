@@ -60,7 +60,7 @@ export default function Feeder() {
         const response = await axios.get(`/feeder/${page}`, {
           signal: controller.signal,
         });
-        dispatch(setFeeds(response.data.posts_user));
+        dispatch(setFeeds(response.data.feed));
         dispatch(
           updateTotalPagesAndRows({
             totalPages: response.data.totalPages,

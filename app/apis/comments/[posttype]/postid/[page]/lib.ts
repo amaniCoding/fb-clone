@@ -29,9 +29,11 @@ const prepareCommentReactions = async (
           reactors: [],
         };
       });
-    } catch (error) {
-      return {};
-    }
+      return {
+        currentReactionType: "",
+        result: result,
+      };
+    } catch (error) {}
   }
 };
 
@@ -60,11 +62,11 @@ export const getComments = async (
           id: postId,
         },
         select: {
-          id: true,
           comments: {
             take: 7,
             skip: offset,
-            include: {
+            select: {
+              id: true,
               user: {
                 select: {
                   firstName: true,
