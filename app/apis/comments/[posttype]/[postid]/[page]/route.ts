@@ -9,15 +9,18 @@ interface RouteParams {
 
 export async function GET(
   request: NextRequest,
-  { params: { page, postid, posttype } }: { params: RouteParams }
+  params: Promise<{ params: RouteParams }>
 ) {
   try {
+    const {
+      params: { page, postid, posttype },
+    } = await params;
     const result = await getComments(posttype, postid, page);
-
+    console.log("FUDK");
     return Response.json({ result: result });
   } catch (error) {
     console.error(error);
 
-    return Response.json({ error }, { status: 500 });
+    return Response.json({ error: "Failed to comment" }, { status: 500 });
   }
 }

@@ -1,7 +1,10 @@
-import Comments from "@/app/components/home/feed/commentmodal.tsx/comments";
-import { Medias_USER, PostType } from "@/app/generated/prisma";
+import { Comment } from "@/app/apis/comments/[posttype]/[postid]/[page]/lib";
+import {
+  PostType,
+  Comment_USER,
+  Comment_USER_MEDIA,
+} from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
-import { error } from "console";
 
 type MediasType = {
   id: string;
@@ -26,32 +29,32 @@ export const preparePostReactions = async (
   totalRows: number
 ) => {
   const rowsPerPage = 7;
-  try {
-    const reactions = await prisma.postReactions_USER.groupBy({
-      by: ["reactionType"],
-      _count: {
-        reactionType: true,
-      },
-    });
-    const result = reactions.map((rxn) => {
-      return {
-        reactionType: rxn.reactionType,
-        count: rxn._count.reactionType,
-        totalRows: rxn._count.reactionType,
-        totalPages: Math.ceil(rxn._count.reactionType / rowsPerPage),
-        loading: false,
-        page: 1,
-        error: "",
-        reactors: [],
-      };
-    });
-    return result;
-  } catch (error) {
-    return [];
+  if (postType === "userpost") {
+    try {
+      const reactions = await prisma.postReactions_USER.groupBy({
+        by: ["reactionType"],
+        _count: {
+          reactionType: true,
+        },
+      });
+      const result = reactions.map((rxn) => {
+        return {
+          reactionType: rxn.reactionType,
+          count: rxn._count.reactionType,
+          totalRows: rxn._count.reactionType,
+          totalPages: Math.ceil(rxn._count.reactionType / rowsPerPage),
+          loading: false,
+          page: 1,
+          error: "",
+          reactors: [],
+        };
+      });
+      return Promise.all(result);
+    } catch (error) {}
   }
 };
 
-const preparePostComments = (totalRows: number) => {
+export const preparePostComments = (totalRows: number) => {
   const rowsPerPage = 7;
   return {
     totalRows,
@@ -59,25 +62,27 @@ const preparePostComments = (totalRows: number) => {
     loading: false,
     page: 1,
     error: "",
-    commentors: [],
+    commentors: [] as Comment,
   };
 };
 
-const prepareMediaComments = (medias: MediasType) => {
+export const prepareMediaComments = (medias: MediasType) => {
+  const rowsPerPage = 7;
   const result = medias.map((media) => {
     return {
       totalRows: media._count.comments,
+      totalPages: Math.ceil(media._count.comments / rowsPerPage),
       mediaId: media.id,
       loading: false,
       page: 1,
       error: "",
-      commentros: [],
+      commentros: [] as Comment_USER_MEDIA[],
     };
   });
   return result;
 };
 
-const prepareMediaReactions = async (
+export const prepareMediaReactions = async (
   postType: PostType,
   medias: MediasType
 ) => {
@@ -107,28 +112,30 @@ const prepareMediaReactions = async (
           };
         });
 
-        preparereactions.map((rxn) => {
+        const r = preparereactions.map((rxn) => {
           return {
             id: media.id,
             ...rxn,
           };
         });
+        return {
+          currentReactionType: "",
+          r,
+        };
       });
 
-      return {
-        currentReactionType: "",
-        result: await Promise.all(result),
-      };
+      return await Promise.all(result);
     } catch (error) {}
   }
 };
 
 export const getpost_users = async (page: number) => {
-  const offset = (page - 1) * 10;
+  const skip = (page - 1) * 10;
   const count = await prisma.post_USER.count();
+
   const posts_users = await prisma.post_USER.findMany({
     take: 10,
-    skip: offset,
+    skip: skip,
     include: {
       medias: {
         select: {

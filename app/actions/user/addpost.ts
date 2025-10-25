@@ -1,7 +1,12 @@
 "use server";
+import {
+  prepareMediaComments,
+  prepareMediaReactions,
+  preparePostComments,
+  preparePostReactions,
+} from "@/app/apis/feeder/[page]/libs/user";
 import { PostsUser } from "@/app/components/home/feed/types";
-import { aggregateReactions } from "@/app/apis/feeder/[page]/libs/user";
-import { MediaType } from "@/app/generated/prisma";
+import { $Enums, MediaType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 
@@ -62,7 +67,39 @@ const postToFeed = async (
         },
       },
       include: {
-        medias: true,
+        medias: {
+          select: {
+            id: true,
+            url: true,
+            type: true,
+            createdAt: true,
+            _count: {
+              select: {
+                comments: true,
+                reactions: true,
+              },
+            },
+            reactions: {
+              select: {
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                    Profile: {
+                      select: {
+                        profilePicture: true,
+                      },
+                    },
+                  },
+                },
+              },
+              take: 1,
+              orderBy: {
+                createdAt: "desc",
+              },
+            },
+          },
+        },
         user: {
           select: {
             firstName: true,
@@ -74,10 +111,12 @@ const postToFeed = async (
             },
           },
         },
+
         _count: {
           select: {
             comments: true,
             reactions: true,
+            medias: true,
           },
         },
         reactions: {
@@ -89,6 +128,10 @@ const postToFeed = async (
               },
             },
           },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 1,
         },
       },
     });
@@ -98,7 +141,14 @@ const postToFeed = async (
     } else {
       return {
         ...post,
-        reactions_grouped: await aggregateReactions(post.id),
+        _mediasComments: prepareMediaComments(post.medias),
+        _mediaReactions: await prepareMediaReactions("userpost", post.medias),
+        _comments: preparePostComments(post._count.comments),
+        _reactions: await preparePostReactions(
+          "userpost",
+          post.id,
+          post._count.reactions
+        ),
       };
     }
   }

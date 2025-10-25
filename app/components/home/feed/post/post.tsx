@@ -15,7 +15,7 @@ export default function Post({
 }) {
   return (
     <>
-      <div className="rounded-xl bg-white mb-4" ref={ref}>
+      <div className="rounded-xl bg-white mb-4 pb-1.5" ref={ref}>
         <Header
           firstName={post.user.firstName}
           lastName={post.user.lastName}

@@ -55,7 +55,6 @@ export const getComments = async (
 ) => {
   const offset = (page - 1) * 7;
   if (postType === "userpost") {
-    const count = await prisma.comment_USER.count();
     try {
       const post = await prisma.post_USER.findUnique({
         where: {
@@ -143,3 +142,6 @@ export const getComments = async (
     } catch (error) {}
   }
 };
+
+const comments = await getComments("userpost", "someid", 1);
+export type Comment = typeof comments;

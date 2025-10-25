@@ -7,12 +7,13 @@ import { showCommentModal } from "@/app/store/slices/post/post";
 import { setPost } from "@/app/store/slices/commentmodal/post";
 import { PostsUser } from "../../../types";
 import { FeedsType } from "@/app/apis/feeder/[page]/libs/user";
+import { openCommentModal } from "@/app/store/slices/feed/feed";
 
 export default function Lower({
   post,
   refFrom,
 }: {
-  post: FeedsType;
+  post: FeedsType | undefined;
   refFrom: string;
 }) {
   const dispatch = useAppDispatch();
@@ -20,8 +21,12 @@ export default function Lower({
   const timeOutId = useRef<NodeJS.Timeout>(null);
 
   const _showCommentModal = () => {
-    dispatch(showCommentModal(true));
-    //dispatch(setPost(post));
+    dispatch(
+      openCommentModal({
+        isOpen: true,
+        post,
+      })
+    );
   };
 
   const showReactionBox = () => {
@@ -46,7 +51,7 @@ export default function Lower({
     }, 500);
   };
   return (
-    <div className="flex items-center justify-between relative">
+    <div className="flex items-center justify-between relative mx-1.5">
       {toShowReactionBox && (
         <ReactionBox keepShowing={keepShowing} hideShowing={hideShowing} />
       )}

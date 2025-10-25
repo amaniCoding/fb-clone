@@ -1,11 +1,14 @@
 "use client";
+import { Comment } from "@/app/apis/comments/[posttype]/[postid]/[page]/lib";
+import FeedItemSkeleton from "@/app/components/skeletons/feed";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import {
-  setComments,
-  setLoading,
-  setPage,
-} from "@/app/store/slices/commentmodal/post";
-import { setNetWorkError } from "@/app/store/slices/feed/feed";
+  setComment_Comment,
+  setError_Comment,
+  setLoading_Comment,
+  setNetWorkError,
+  setPage_Comment,
+} from "@/app/store/slices/feed/feed";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,22 +18,26 @@ export default function Comments() {
   const networkNotification = useAppSelector(
     (state) => state.feed.network.showNumber
   );
-  const postId = useAppSelector((state) => state.commentModal.user.post.id);
-  const totalPages = useAppSelector(
-    (state) => state.commentModal.user.totalPages
+
+  const feedToRefer = useAppSelector((state) => state.feed.feeds.feeds);
+  const currentPost = useAppSelector((state) => state.feed.commentModal.post);
+  const postId = currentPost?.id;
+  const postType = currentPost?.postType;
+
+  const tepmFeed = feedToRefer?.find(
+    (feed) => feed.id === postId && feed.postType === postType
   );
-  const commentsData = useAppSelector(
-    (state) => state.commentModal.user.comments
-  );
-  const page = commentsData.find((data) => data.postId === postId)?.page;
-  const loading = commentsData.find((data) => data.postId === postId)?.loading;
-  const comments = commentsData.find((data) => data.postId === postId)?.data;
+  const page = tepmFeed?._comments.page;
+  const loading = tepmFeed?._comments.loading;
+  const error = tepmFeed?._comments.error;
+  const totalPages = tepmFeed?._comments.totalPages;
+  const comments = tepmFeed?._comments.commentors;
 
   const [hasError, setHasError] = useState<boolean>(false);
   const [isOnLine, setIsOnLine] = useState<boolean>(navigator.onLine);
   const observer = useRef<IntersectionObserver>(null);
 
-  const hasMore = page! >= totalPages;
+  const hasMore = page! <= totalPages!;
 
   const lastCommentElementRef = useCallback(
     (node: HTMLDivElement) => {
@@ -41,10 +48,10 @@ export default function Comments() {
         if (entries[0].isIntersecting) {
           const newPage = page! + 1;
           dispatch(
-            setPage({
-              page: newPage,
+            setPage_Comment({
+              newPage,
               postId: postId,
-              postType: "userpost",
+              postType: postType,
             })
           );
         }
@@ -59,43 +66,40 @@ export default function Comments() {
     const getComments = async () => {
       try {
         dispatch(
-          setLoading({
-            loading: true,
+          setLoading_Comment({
+            newLoading: true,
             postId: postId,
-            postType: "userpost",
+            postType: postType,
           })
         );
-        setHasError(false);
-        const response = await axios.get(`/comments/${postId}/${page}`, {
-          signal: controller.signal,
-        });
+        const response = await axios.get(
+          `/apis/comments/${postType!}/${postId!}/${page!}`,
+          {
+            signal: controller.signal,
+          }
+        );
         dispatch(
-          setComments({
-            comments: response.data.comments,
-            postId: postId,
-            postType: "userpost",
+          setComment_Comment({
+            newComments: response.data.result as Comment,
+            postId,
+            postType,
           })
         );
-        // dispatch(
-        //   updateTotalPagesAndRows({
-        //     totalPages: response.data.totalPages,
-        //     totalRows: response.data.totalRows,
-        //   })
-        // );
+
         dispatch(
-          setLoading({
-            loading: false,
+          setLoading_Comment({
+            newLoading: true,
             postId: postId,
-            postType: "userpost",
+            postType: postType,
           })
         );
       } catch (error) {
         setHasError(true);
         dispatch(
-          setLoading({
-            loading: false,
+          setError_Comment({
+            newError: "Error",
             postId: postId,
-            postType: "userpost",
+            postType: postType,
           })
         );
       }
@@ -138,37 +142,70 @@ export default function Comments() {
     };
   }, [dispatch, isOnLine, page]);
   return (
-    <div className="overflow-y-auto socrollabar h-96 relative">
+    <div className="overflow-y-auto socrollabar h-auto relative">
+      {loading && <FeedItemSkeleton />}
       <div className="px-6 py-2 ">
-        {comments?.map((comment, index) => (
+        {comments!.map((co, index) => (
           <div
             className="flex flex-row mb-3 space-x-3 pb-2"
-            key={comment.id}
-            ref={comments.length === index + 1 ? lastCommentElementRef : null}
+            key={co.id}
+            ref={comments!.length === index + 1 ? lastCommentElementRef : null}
           >
-            <div className="relative group flex-none">
-              <Link href={"/profile"}>
-                <Image
-                  unoptimized
-                  alt="Amanuel Ferede"
-                  src={"/users/7.jpg"}
-                  width={0}
-                  height={0}
-                  sizes="100vh"
-                  className="w-8 h-8 object-cover rounded-full"
-                />
-              </Link>
-            </div>
-            <div className="">
-              <div className="p-3 bg-gray-100 rounded-xl ">
-                <p className="font-semibold">Amanuel Ferede</p>
-                <p>Text comment</p>
-              </div>
+            <Link href={"/#"}>
+              <Image
+                unoptimized
+                alt="Amanuel Ferede"
+                src={"/users/7.jpg"}
+                width={0}
+                height={0}
+                sizes="100vh"
+                className="w-8 h-8 object-cover rounded-full"
+              />
+            </Link>
 
-              <div className="flex space-x-4 pl-3">
-                <span className="text-sm"></span>
-                <span className="text-sm">Like</span>
-                <span className="text-sm">Reply</span>
+            <div className="p-3 bg-gray-100 rounded-xlf flex flex-col space-y-1 ">
+              <p className="font-semibold">Amanuel Ferede</p>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Eveniet, autem. Ipsam, itaque reprehenderit. Facere dolorum eos
+                temporibus sequi minima odit quisquam id, qui laboriosam.
+                Inventore dicta nemo odit nostrum cum.
+              </p>
+              <div className="flex justify-between items-center">
+                <div className="flex space-x-4 pl-3">
+                  <span className="text-sm">2hrs</span>
+                  <span className="text-sm">Like</span>
+                  <span className="text-sm">Reply</span>
+                </div>
+                <div className="-space-x-1">
+                  <Image
+                    key={index}
+                    alt=""
+                    src={`/reactions/haha.png`}
+                    width={0}
+                    height={0}
+                    sizes="100vh"
+                    className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
+                  />
+                  <Image
+                    key={index}
+                    alt=""
+                    src={`/reactions/like.png`}
+                    width={0}
+                    height={0}
+                    sizes="100vh"
+                    className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
+                  />
+                  <Image
+                    key={index}
+                    alt=""
+                    src={`/reactions/love.png`}
+                    width={0}
+                    height={0}
+                    sizes="100vh"
+                    className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
+                  />
+                </div>
               </div>
             </div>
           </div>

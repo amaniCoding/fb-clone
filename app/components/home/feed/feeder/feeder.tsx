@@ -5,6 +5,7 @@ import CommentModal from "../commentmodal.tsx/comment-modal";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import FeedItemSkeleton from "@/app/components/skeletons/feed";
 import {
+  feedResponseType,
   setFeeds,
   setLoading,
   setNetWorkError,
@@ -15,17 +16,18 @@ import Link from "next/link";
 import axios from "axios";
 
 export default function Feeder() {
-  const isCommentModalShown = useAppSelector(
-    (state) => state.post.toShowCommentModal
+  const isCommentModalOpen = useAppSelector(
+    (state) => state.feed.commentModal.isOpen
+  );
+  const postForCommentModal = useAppSelector(
+    (state) => state.feed.commentModal.post
   );
   const dispatch = useAppDispatch();
   const networkNotification = useAppSelector(
     (state) => state.feed.network.showNumber
   );
   const feeds = useAppSelector((state) => state.feed.feeds.feeds);
-  const commentModalPost = useAppSelector(
-    (state) => state.commentModal.user.post
-  );
+
   const loading = useAppSelector((state) => state.feed.feeds.loading);
   const page = useAppSelector((state) => state.feed.feeds.page);
   const totalPages = useAppSelector((state) => state.feed.feeds.totalPages);
@@ -33,7 +35,7 @@ export default function Feeder() {
   const [isOnLine, setIsOnLine] = useState<boolean>(navigator.onLine);
   const observer = useRef<IntersectionObserver>(null);
 
-  const hasMore = page >= totalPages;
+  const hasMore = page <= totalPages;
 
   const lastPostElementRef = useCallback(
     (node: HTMLDivElement) => {
@@ -51,22 +53,33 @@ export default function Feeder() {
     },
     [hasMore, loading, page]
   );
+
+  const dispatchAccordly = (page: number, result: feedResponseType) => {
+    if (page === 1) {
+      dispatch(
+        setFeeds({
+          firstTime: true,
+          result: result,
+        })
+      );
+    } else {
+      dispatch(
+        setFeeds({
+          firstTime: false,
+          result: result,
+        })
+      );
+    }
+  };
   useEffect(() => {
     const controller = new AbortController();
     const getFeeds = async () => {
       try {
         dispatch(setLoading(true));
-        setHasError(false);
-        const response = await axios.get(`/feeder/${page}`, {
+        const response = await axios.get(`/apis/feeder/${page}`, {
           signal: controller.signal,
         });
-        dispatch(setFeeds(response.data.feed));
-        dispatch(
-          updateTotalPagesAndRows({
-            totalPages: response.data.totalPages,
-            totalRows: response.data.totalRows,
-          })
-        );
+        dispatchAccordly(page, response.data.result as feedResponseType);
         dispatch(setLoading(false));
       } catch (error) {
         setHasError(true);
@@ -117,7 +130,7 @@ export default function Feeder() {
         <Post
           key={index}
           post={post}
-          ref={feeds.length === index + 1 ? lastPostElementRef : null}
+          ref={feeds?.length === index + 1 ? lastPostElementRef : null}
         />
       ))}
       {loading && <FeedItemSkeleton />}
@@ -134,7 +147,7 @@ export default function Feeder() {
           </div>
         </div>
       )}
-      {isCommentModalShown && <CommentModal post={commentModalPost} />}
+      {isCommentModalOpen && <CommentModal post={postForCommentModal} />}
     </>
   );
 }

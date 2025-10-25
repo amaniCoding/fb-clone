@@ -1,5 +1,5 @@
 "use client";
-import { Prisma } from "@/app/generated/prisma";
+import { Prisma, ReactionType } from "@/app/generated/prisma";
 import Image from "next/image";
 export default function Upper({
   comments,
@@ -10,14 +10,17 @@ export default function Upper({
   comments: number;
   reactions: number;
   groupedReactions:
-    | (Prisma.PickEnumerable<
-        Prisma.PostReactions_USERGroupByOutputType,
-        "reactionType"[]
-      > & {
-        _count: {
-          reactionType: number;
-        };
-      })[];
+    | {
+        reactionType: ReactionType;
+        count: number;
+        totalRows: number;
+        totalPages: number;
+        loading: boolean;
+        page: number;
+        error: string;
+        reactors: never[];
+      }[]
+    | undefined;
 
   firtReactions: {
     user: {
@@ -27,9 +30,7 @@ export default function Upper({
   }[];
 }) {
   const newRxn = groupedReactions
-    ? [...groupedReactions!].sort(
-        (a, b) => b._count.reactionType - a._count.reactionType
-      )
+    ? [...groupedReactions!].sort((a, b) => b.count - a.count)
     : [];
   const newRxn_x = newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
   return (
