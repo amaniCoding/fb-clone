@@ -154,8 +154,8 @@ export default function Comments() {
             <Link href={"/#"}>
               <Image
                 unoptimized
-                alt="Amanuel Ferede"
-                src={"/users/7.jpg"}
+                alt={`${co.user.firstName.substring(0, 2)}`}
+                src={`${co.user.firstName} ${co.user.lastName}`}
                 width={0}
                 height={0}
                 sizes="100vh"
@@ -164,47 +164,26 @@ export default function Comments() {
             </Link>
 
             <div className="p-3 bg-gray-100 rounded-xlf flex flex-col space-y-1 ">
-              <p className="font-semibold">Amanuel Ferede</p>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Eveniet, autem. Ipsam, itaque reprehenderit. Facere dolorum eos
-                temporibus sequi minima odit quisquam id, qui laboriosam.
-                Inventore dicta nemo odit nostrum cum.
-              </p>
+              <p className="font-semibold">{`${co.user.firstName} ${co.user.lastName}`}</p>
+              <p>{co.content}</p>
               <div className="flex justify-between items-center">
                 <div className="flex space-x-4 pl-3">
-                  <span className="text-sm">2hrs</span>
+                  <span className="text-sm">{co.createdAt.toString()}</span>
                   <span className="text-sm">Like</span>
                   <span className="text-sm">Reply</span>
                 </div>
-                <div className="-space-x-1">
-                  <Image
-                    key={index}
-                    alt=""
-                    src={`/reactions/haha.png`}
-                    width={0}
-                    height={0}
-                    sizes="100vh"
-                    className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
-                  />
-                  <Image
-                    key={index}
-                    alt=""
-                    src={`/reactions/like.png`}
-                    width={0}
-                    height={0}
-                    sizes="100vh"
-                    className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
-                  />
-                  <Image
-                    key={index}
-                    alt=""
-                    src={`/reactions/love.png`}
-                    width={0}
-                    height={0}
-                    sizes="100vh"
-                    className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
-                  />
+                <div className="flex items-center -space-x-1">
+                  {co._reactions?.result.map((rxn) => (
+                    <Image
+                      key={index}
+                      alt=""
+                      src={`/reactions/${rxn.reactionType}`}
+                      width={0}
+                      height={0}
+                      sizes="100vh"
+                      className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
+                    />
+                  ))}
                 </div>
               </div>
             </div>

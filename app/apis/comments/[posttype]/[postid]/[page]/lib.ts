@@ -66,6 +66,8 @@ export const getComments = async (
             skip: offset,
             select: {
               id: true,
+              content: true,
+              createdAt: true,
               user: {
                 select: {
                   firstName: true,
