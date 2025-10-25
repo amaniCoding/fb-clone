@@ -1,5 +1,6 @@
 "use client";
 import { Comment } from "@/app/apis/comments/[posttype]/[postid]/[page]/lib";
+import CommentsSkeleton from "@/app/components/skeletons/comment";
 import FeedItemSkeleton from "@/app/components/skeletons/feed";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import {
@@ -143,7 +144,6 @@ export default function Comments() {
   }, [dispatch, isOnLine, page]);
   return (
     <div className="overflow-y-auto socrollabar h-auto relative">
-      {loading && <FeedItemSkeleton />}
       <div className="px-6 py-2 ">
         {comments!.map((co, index) => (
           <div
@@ -210,6 +210,7 @@ export default function Comments() {
             </div>
           </div>
         ))}
+        {loading && <CommentsSkeleton />}
       </div>
     </div>
   );
