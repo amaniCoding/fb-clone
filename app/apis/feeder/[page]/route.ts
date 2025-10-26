@@ -8,13 +8,13 @@ type RouteType = {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ page: number }> }
+  { params }: { params: Promise<{ page: string }> }
 ) {
   try {
     const { page } = await params;
     const rowsPerPage = 10;
     console.log("PAGEGGE", page);
-    const { count, posts_user } = await getpost_users(page);
+    const { count, posts_user } = await getpost_users(parseInt(page));
 
     //const x = await xprisma.post_USER.findFirst();
 

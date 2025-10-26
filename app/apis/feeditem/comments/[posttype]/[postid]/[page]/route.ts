@@ -3,7 +3,7 @@ import { getComments } from "./lib";
 import { PostType } from "@/app/generated/prisma";
 interface RouteParams {
   postid: string;
-  page: number;
+  page: string;
   posttype: PostType;
 }
 
@@ -13,7 +13,7 @@ export async function GET(
 ) {
   try {
     const { page, postid, posttype } = await params;
-    const result = await getComments(posttype, postid, page);
+    const result = await getComments(posttype, postid, parseInt(page));
     console.log("FUDK");
     return Response.json({ result: result });
   } catch (error) {
