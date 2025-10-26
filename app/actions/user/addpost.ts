@@ -1,5 +1,6 @@
 "use server";
 import {
+  prepareGroupedReactions,
   prepareMediaComments,
   prepareMediaReactions,
   preparePostComments,
@@ -141,14 +142,14 @@ const postToFeed = async (
     } else {
       return {
         ...post,
-        _mediasComments: prepareMediaComments(post.medias),
-        _mediaReactions: await prepareMediaReactions("userpost", post.medias),
         _comments: preparePostComments(post._count.comments),
-        _reactions: await preparePostReactions(
-          "userpost",
-          post.id,
-          post._count.reactions
+        _mediasComments: prepareMediaComments(post.medias),
+        _reactions: preparePostReactions(),
+        _groupedReactions: await prepareGroupedReactions(
+          post.postType,
+          post.id
         ),
+        _mediasReactions: prepareMediaReactions(post.medias),
       };
     }
   }

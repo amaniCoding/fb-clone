@@ -54,7 +54,10 @@ export const preparePostReactions = () => {
   };
 };
 
-const prepareGroupedReactions = async (postType: PostType, postId: string) => {
+export const prepareGroupedReactions = async (
+  postType: PostType,
+  postId: string
+) => {
   try {
     const reactions = await prisma.postReactions_USER.groupBy({
       by: ["reactionType"],
