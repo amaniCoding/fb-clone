@@ -48,7 +48,7 @@ export default function CommentModal({
           <Upper
             comments={post!._count.comments}
             reactions={post!._count.reactions}
-            groupedReactions={post!._reactions}
+            groupedReactions={post!._groupedReactions}
             firtReactions={post!.reactions}
           />
           <div className=" p-1 border-b border-t-gray-300 border-t border-b-gray-300">

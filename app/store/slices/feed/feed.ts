@@ -3,7 +3,7 @@ import { PostsUser } from "@/app/components/home/feed/types";
 import { FeedsType } from "@/app/apis/feeder/[page]/libs/user";
 import { setPage } from "../commentmodal/post";
 import { Comment_USER } from "@/app/generated/prisma";
-import { Comment } from "@/app/apis/comments/[posttype]/[postid]/[page]/lib";
+import { Comment } from "@/app/apis/feeditem/comments/[posttype]/[postid]/[page]/lib";
 
 interface UploadedMediaType {
   url: string;

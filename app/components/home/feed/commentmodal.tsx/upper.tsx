@@ -13,12 +13,6 @@ export default function Upper({
     | {
         reactionType: ReactionType;
         count: number;
-        totalRows: number;
-        totalPages: number;
-        loading: boolean;
-        page: number;
-        error: string;
-        reactors: never[];
       }[]
     | undefined;
 

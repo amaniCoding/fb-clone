@@ -1,13 +1,31 @@
-import { Comment } from "@/app/apis/comments/[posttype]/[postid]/[page]/lib";
+export type ReactionModalHeader = {
+  reactionType: string;
+  count: number;
+};
+
+export type ReactionModalReactors = {
+  reactionType: string;
+  loading: boolean;
+  page: boolean;
+  error: string;
+  totalRows: number;
+  totalPages: number;
+};
+
+import { Comment } from "@/app/apis/feeditem/comments/[posttype]/[postid]/[page]/lib";
 import {
   PostType,
   Comment_USER,
   Comment_USER_MEDIA,
+  MediaType,
 } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
+import { count } from "console";
+import { boolean } from "zod";
 
-type MediasType = {
+export type MediasType = {
   id: string;
+  createdAt: Date;
   reactions: {
     user: {
       firstName: string;
@@ -21,37 +39,38 @@ type MediasType = {
     comments: number;
     reactions: number;
   };
+  url: string;
+  type: MediaType;
 }[];
 
-export const preparePostReactions = async (
-  postType: PostType,
-  postId: string,
-  totalRows: number
-) => {
-  const rowsPerPage = 7;
-  if (postType === "userpost") {
-    try {
-      const reactions = await prisma.postReactions_USER.groupBy({
-        by: ["reactionType"],
-        _count: {
-          reactionType: true,
-        },
-      });
-      const result = reactions.map((rxn) => {
-        return {
-          reactionType: rxn.reactionType,
-          count: rxn._count.reactionType,
-          totalRows: rxn._count.reactionType,
-          totalPages: Math.ceil(rxn._count.reactionType / rowsPerPage),
-          loading: false,
-          page: 1,
-          error: "",
-          reactors: [],
-        };
-      });
-      return Promise.all(result);
-    } catch (error) {}
-  }
+export const preparePostReactions = () => {
+  return {
+    currentReactionType: "",
+    header: {
+      loading: true,
+      reactions: [] as ReactionModalHeader[],
+    },
+    reactors: [] as ReactionModalReactors[],
+  };
+};
+
+const prepareGroupedReactions = async (postType: PostType, postId: string) => {
+  try {
+    const reactions = await prisma.postReactions_USER.groupBy({
+      by: ["reactionType"],
+      _count: {
+        reactionType: true,
+      },
+    });
+
+    const result = reactions.map((rxn) => {
+      return {
+        reactionType: rxn.reactionType,
+        count: rxn._count.reactionType,
+      };
+    });
+    return result;
+  } catch (error) {}
 };
 
 export const preparePostComments = (totalRows: number) => {
@@ -76,57 +95,23 @@ export const prepareMediaComments = (medias: MediasType) => {
       loading: false,
       page: 1,
       error: "",
-      commentros: [] as Comment_USER_MEDIA[],
+      commentros: [],
     };
   });
   return result;
 };
 
-export const prepareMediaReactions = async (
-  postType: PostType,
-  medias: MediasType
-) => {
-  const rowsPerPage = 7;
-  if (postType == "userpost") {
-    try {
-      const result = medias.map(async (media) => {
-        const reactions = await prisma.postReactions_USER_MEDIA.groupBy({
-          by: "reactionType",
-          _count: {
-            reactionType: true,
-          },
-          where: {
-            id: media.id,
-          },
-        });
-
-        const preparereactions = reactions.map((rxn) => {
-          return {
-            reactionType: rxn.reactionType,
-            count: rxn._count.reactionType,
-            loading: false,
-            error: "",
-            page: 1,
-            totalRows: rxn._count.reactionType,
-            totalPages: Math.ceil(rxn._count.reactionType / rowsPerPage),
-          };
-        });
-
-        const r = preparereactions.map((rxn) => {
-          return {
-            id: media.id,
-            ...rxn,
-          };
-        });
-        return {
-          currentReactionType: "",
-          r,
-        };
-      });
-
-      return await Promise.all(result);
-    } catch (error) {}
-  }
+export const prepareMediaReactions = (medias: MediasType) => {
+  return medias.map((media) => {
+    return {
+      id: media.id,
+      currentReactionType: "",
+      header: {
+        loading: true,
+        reactions: [] as ReactionModalHeader[],
+      },
+    };
+  });
 };
 
 export const getpost_users = async (page: number) => {
@@ -216,14 +201,14 @@ export const getpost_users = async (page: number) => {
       posts_user: posts_users.map(async (post) => {
         return {
           ...post,
-          _mediasComments: prepareMediaComments(post.medias),
-          _mediaReactions: await prepareMediaReactions("userpost", post.medias),
           _comments: preparePostComments(post._count.comments),
-          _reactions: await preparePostReactions(
-            "userpost",
-            post.id,
-            post._count.reactions
+          _mediasComments: prepareMediaComments(post.medias),
+          _reactions: preparePostReactions(),
+          _groupedReactions: await prepareGroupedReactions(
+            post.postType,
+            post.id
           ),
+          _mediasReactions: prepareMediaReactions(post.medias),
         };
       }),
     };

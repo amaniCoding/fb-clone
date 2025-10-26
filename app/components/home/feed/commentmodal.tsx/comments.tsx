@@ -1,5 +1,5 @@
 "use client";
-import { Comment } from "@/app/apis/comments/[posttype]/[postid]/[page]/lib";
+import { Comment } from "@/app/apis/feeditem/comments/[posttype]/[postid]/[page]/lib";
 import CommentsSkeleton from "@/app/components/skeletons/comment";
 import FeedItemSkeleton from "@/app/components/skeletons/feed";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
@@ -74,7 +74,7 @@ export default function Comments() {
           })
         );
         const response = await axios.get(
-          `/apis/comments/${postType!}/${postId!}/${page!}`,
+          `/apis/feeditem/comments/${postType!}/${postId!}/${page!}`,
           {
             signal: controller.signal,
           }
@@ -151,11 +151,11 @@ export default function Comments() {
             key={co.id}
             ref={comments!.length === index + 1 ? lastCommentElementRef : null}
           >
-            <Link href={"/#"}>
+            <Link href={"/#"} className="flex-none">
               <Image
                 unoptimized
                 alt={`${co.user.firstName.substring(0, 2)}`}
-                src={`${co.user.firstName} ${co.user.lastName}`}
+                src={`/users/${index + 1}.jpg`}
                 width={0}
                 height={0}
                 sizes="100vh"
@@ -163,30 +163,7 @@ export default function Comments() {
               />
             </Link>
 
-            <div className="p-3 bg-gray-100 rounded-xlf flex flex-col space-y-1 ">
-              <p className="font-semibold">{`${co.user.firstName} ${co.user.lastName}`}</p>
-              <p>{co.content}</p>
-              <div className="flex justify-between items-center">
-                <div className="flex space-x-4 pl-3">
-                  <span className="text-sm">{co.createdAt.toString()}</span>
-                  <span className="text-sm">Like</span>
-                  <span className="text-sm">Reply</span>
-                </div>
-                <div className="flex items-center -space-x-1">
-                  {co._reactions?.result.map((rxn) => (
-                    <Image
-                      key={index}
-                      alt=""
-                      src={`/reactions/${rxn.reactionType}`}
-                      width={0}
-                      height={0}
-                      sizes="100vh"
-                      className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
+            <div className="flex flex-col space-y-1"></div>
           </div>
         ))}
         {loading && <CommentsSkeleton />}

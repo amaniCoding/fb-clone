@@ -27,7 +27,7 @@ export default function Post({
         <Upper
           commentsCount={post._count.comments}
           reactionsCount={post._count.reactions}
-          reactions={post._reactions}
+          groupedReactions={post._groupedReactions}
           firstReactions={post.reactions}
         />
         <Lower post={post} refFrom="post" />

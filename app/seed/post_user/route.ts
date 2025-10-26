@@ -1,12 +1,12 @@
 import { _seedPosts } from "./libs";
 
-const seed = async () => {
-  await Promise.all(_seedPosts());
+const seed = () => {
+  _seedPosts();
 };
 
 export async function GET() {
   try {
-    await seed();
+    seed();
     //await seedUser();
     return Response.json({ message: "Database seeded successfully" });
   } catch (error) {
