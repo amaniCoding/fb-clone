@@ -1,5 +1,6 @@
 "use server";
 import {
+  FeedsType,
   prepareGroupedReactions,
   prepareMediaComments,
   prepareMediaReactions,
@@ -15,7 +16,7 @@ import { put, PutBlobResult, del } from "@vercel/blob";
 export type State = {
   success: boolean;
   message: string;
-  feed: PostsUser | undefined;
+  feed: FeedsType | undefined;
 };
 
 const upLoadMedias = async (medias: File[]) => {
