@@ -89,13 +89,20 @@ export default function Comments() {
 
         dispatch(
           setLoading_Comment({
-            newLoading: true,
+            newLoading: false,
             postId: postId,
             postType: postType,
           })
         );
       } catch (error) {
         setHasError(true);
+        dispatch(
+          setLoading_Comment({
+            newLoading: false,
+            postId: postId,
+            postType: postType,
+          })
+        );
         dispatch(
           setError_Comment({
             newError: "Error",
@@ -145,27 +152,65 @@ export default function Comments() {
   return (
     <div className="overflow-y-auto socrollabar h-auto relative">
       <div className="px-6 py-2 ">
-        {comments!.map((co, index) => (
-          <div
-            className="flex flex-row mb-3 space-x-3 pb-2"
-            key={co.id}
-            ref={comments!.length === index + 1 ? lastCommentElementRef : null}
-          >
-            <Link href={"/#"} className="flex-none">
-              <Image
-                unoptimized
-                alt={`${co.user.firstName.substring(0, 2)}`}
-                src={`/users/${index + 1}.jpg`}
-                width={0}
-                height={0}
-                sizes="100vh"
-                className="w-8 h-8 object-cover rounded-full"
-              />
-            </Link>
+        {comments!.map((co, index) => {
+          const newRxn = co._grouped_reactions
+            ? [...co._grouped_reactions].sort((a, b) => b.count - a.count)
+            : [];
+          const newRxn_x = newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
+          return (
+            <div
+              className="flex flex-row mb-3 space-x-3 pb-2"
+              key={co.id}
+              ref={
+                comments!.length === index + 1 ? lastCommentElementRef : null
+              }
+            >
+              <Link href={"/#"} className="flex-none">
+                <Image
+                  unoptimized
+                  alt={`${co.user.firstName.substring(0, 2)}`}
+                  src={`/users/${index + 1}.jpg`}
+                  width={0}
+                  height={0}
+                  sizes="100vh"
+                  className="w-8 h-8 object-cover rounded-full"
+                />
+              </Link>
 
-            <div className="flex flex-col space-y-1"></div>
-          </div>
-        ))}
+              <div className="flex flex-col space-y-1">
+                <div className="bg-gray-200 p-2 rounded-xl flex flex-col">
+                  <p>
+                    {co.user.firstName} {co.user.lastName}
+                  </p>
+                  <p>{co.content}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2 text-black/40 text-sm font-semibold">
+                    <p>2hrs</p>
+                    <p>Like</p>
+                    <p>Reply</p>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    {co._count.reactions}
+                    <div className="flex items-center -space-x-1">
+                      {co._grouped_reactions?.map((rxn, index) => (
+                        <Image
+                          key={index}
+                          alt=""
+                          src={`/reactions/wow.png`}
+                          width={0}
+                          height={0}
+                          sizes="100vh"
+                          className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
         {loading && <CommentsSkeleton />}
       </div>
     </div>

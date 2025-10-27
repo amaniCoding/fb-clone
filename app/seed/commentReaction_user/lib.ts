@@ -1,58 +1,27 @@
-import {
-  Audinece,
-  Comment_USER,
-  Post_USER,
-  PostType,
-  ReactionType,
-  SuperAudinece,
-  User,
-} from "@/app/generated/prisma";
-import { randomTexts, reactionTypes } from "../dummy";
+import { Comment_USER, ReactionType, User } from "@/app/generated/prisma";
+import { reactionTypes } from "../dummy";
 import prisma from "@/app/libs/prisma";
 
-const userPostOption = ["contentonly", "mediasonly", "both"];
-type UserPostOption = "contentonly" | "mediasonly" | "both";
 let users: User[];
-let posts: ({
-  comments: {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    userId: string;
-    content: string | null;
-    postId: string;
-    mediaUrl: string | null;
-  }[];
-} & {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  postType: PostType;
-  userId: string;
-  content: string | null;
-  location: string | null;
-  doing: string | null;
-  doingWhat: string | null;
-  audience: Audinece;
-  sAudience: SuperAudinece | null;
-})[];
 
-async function getPosts(page: number) {
+function getPosts(page: number) {
   const skip = (page - 1) * 5;
-  const _posts = await prisma.post_USER.findMany({
+  return prisma.post_USER.findMany({
     take: 5,
     skip: skip,
-    include: {
+    select: {
       comments: {
         take: 5,
         skip: skip,
+        orderBy: {
+          createdAt: "desc",
+        },
       },
     },
     orderBy: {
       createdAt: "desc",
     },
   });
-  posts = _posts;
 }
 
 async function getRandomUser() {
@@ -60,53 +29,40 @@ async function getRandomUser() {
 }
 
 await getRandomUser();
-await getPosts(1);
 
-const createCommentReactions = (
-  comments: {
-    id: string;
-    userId: string;
-    content: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-    postId: string;
-    mediaUrl: string | null;
-  }[]
-) => {
-  return Promise.all(
-    comments.map((co) => {
-      const randomReactionTypeIndex = Math.floor(Math.random() * 7);
+export function createReactions(comments: Comment_USER[]) {
+  const a = comments.map((co) => {
+    const addition = Math.floor(Math.random() * 3) + 1;
 
-      const randomReactionType = reactionTypes[randomReactionTypeIndex];
-      const randomUserIndex = Math.floor(Math.random() * users.length);
-      const randomUser = users[randomUserIndex];
+    return Promise.all(
+      Array.from({ length: 5 + addition }, () => {
+        const randomReactionTypeIndex = Math.floor(Math.random() * 7);
 
-      return prisma.commentReactions_USER.create({
-        data: {
-          user: {
-            connect: { id: randomUser.id },
+        const randomReactionType = reactionTypes[randomReactionTypeIndex];
+        const randomUserIndex = Math.floor(Math.random() * users.length);
+        const randomUser = users[randomUserIndex];
+        return prisma.commentReactions_USER.create({
+          data: {
+            user: {
+              connect: { id: randomUser.id },
+            },
+
+            comment: {
+              connect: { id: co.id },
+            },
+            reactionType: randomReactionType as ReactionType,
           },
-
-          comment: {
-            connect: { id: co.id },
-          },
-          reactionType: randomReactionType as ReactionType,
-        },
-      });
-    })
-  );
-};
-
-export function createReactions(comments: Comment_USER[], page: number) {
-  const offset = (page - 1) * 5;
-  const addition = Math.floor(Math.random() * 3) + 1;
-
-  return createCommentReactions(comments);
+        });
+      })
+    );
+  });
+  return Promise.all(a);
 }
 
-export function _seedCommentReactions() {
-  const a = posts.map((post) => {
-    return createReactions(post.comments, 1);
+export async function _seedCommentReactions() {
+  const a = await getPosts(1);
+  const b = a.map((post) => {
+    return createReactions(post.comments);
   });
-  return a;
+  return await Promise.all(b);
 }

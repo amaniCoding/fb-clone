@@ -81,7 +81,7 @@ export const preparePostComments = (totalRows: number) => {
   return {
     totalRows,
     totalPages: Math.ceil(totalRows / rowsPerPage),
-    loading: false,
+    loading: true,
     page: 1,
     error: "",
     commentors: [] as Comment,
@@ -95,7 +95,7 @@ export const prepareMediaComments = (medias: MediasType) => {
       totalRows: media._count.comments,
       totalPages: Math.ceil(media._count.comments / rowsPerPage),
       mediaId: media.id,
-      loading: false,
+      loading: true,
       page: 1,
       error: "",
       commentros: [],

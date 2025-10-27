@@ -1,4 +1,3 @@
-import { ExtendedComment } from "@/app/store/slices/commentmodal/post";
 import prisma from "../../../../../../libs/prisma";
 import { PostType } from "@/app/generated/prisma";
 import {
@@ -27,6 +26,28 @@ const prepareCommentReplies = (totalRows: number) => {
     repliers: [],
   };
 };
+
+const prepareGroupedCommentReactions = async (commentId: string) => {
+  try {
+    const _grouped_reactions = await prisma.commentReactions_USER.groupBy({
+      by: ["reactionType"],
+      _count: {
+        reactionType: true,
+      },
+      where: {
+        id: commentId,
+      },
+    });
+
+    const result = _grouped_reactions.map((rxn) => {
+      return {
+        reactionType: rxn.reactionType,
+        count: rxn._count.reactionType,
+      };
+    });
+    return result;
+  } catch (error) {}
+};
 export const getComments = async (
   postType: PostType,
   postId: string,
@@ -43,6 +64,11 @@ export const getComments = async (
           comments: {
             take: 7,
             skip: offset,
+            orderBy: {
+              reactions: {
+                _count: "desc",
+              },
+            },
             select: {
               id: true,
               content: true,
@@ -109,15 +135,17 @@ export const getComments = async (
         },
       });
 
-      const newComments = post?.comments.map((comment) => {
+      const newComments = post?.comments.map(async (comment) => {
         return {
           ...comment,
           _reactions: prepareCommentReactions(),
+          _grouped_reactions: await prepareGroupedCommentReactions(comment.id),
           _replies: prepareCommentReplies(comment._count.replies),
         };
       });
       if (newComments) {
         const result = await Promise.all(newComments);
+        console.log("REACTIONSSSSSSSSS", result[0]._count.reactions);
         return result;
       }
     } catch (error) {}

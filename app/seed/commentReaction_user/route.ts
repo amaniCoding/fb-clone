@@ -1,7 +1,7 @@
 import { _seedCommentReactions } from "./lib";
 
 const seed = async () => {
-  await Promise.all(_seedCommentReactions());
+  await _seedCommentReactions();
 };
 
 export async function GET() {
