@@ -31,6 +31,12 @@ enum MediaType {
   video
 }
 
+enum MessageMediaType {
+  image
+  video
+  document
+}
+
 enum SuperAudinece {
   friendsExcept
   specificFriends
@@ -66,6 +72,14 @@ enum ReactionType {
   wow
 }
 
+/**
+ * Entities
+ */
+
+/**
+ * user related data
+ */
+
 model User {
   id                  String   @id @default(uuid())
   firstName           String
@@ -78,123 +92,139 @@ model User {
   phoneNumber         String?  @unique
   password            String
 
-  verificationCode       Int?
-  verificationExpiredAt  DateTime?
-  isActive               Boolean         @default(false)
-  activeAt               DateTime?
-  friendsFromSent        Firends[]       @relation("sender")
-  friendsFromRecieved    Firends[]       @relation("reciever")
+  verificationCode      Int?
+  verificationExpiredAt DateTime?
+  isActive              Boolean   @default(false)
+  activeAt              DateTime?
+
+  // friends
+  friends Firends[]
+
   setFriendRequests      FriendRequest[] @relation("friendrequestsender")
   recievedFriendRequests FriendRequest[] @relation("friendrequestreciever")
 
-  taggedPosts        Tags_USER[]
-  fansOf             Page[]
-  memberOf           GroupMembers[]
-  managedPages       Page[]                   @relation("managedpages")
-  managedGroups      Group[]
-  ownPosts           Post_USER[]              @relation("userposts")
-  groupPosts         Post_GROUP[]
-  sharedPosts        Post_USERSHARE[]
-  sharedPostsToGroup Post_USERSHARE_TOGROUP[]
-  sentMessages       Message_USER[]           @relation("messagesender")
-  recievedMessages   Message_USER[]           @relation("messagereciever")
+  //groups
+  memberedGroups     GroupMembers[]
+  groupPosts         GroupPost[]
+  sharedPostsToGroup ToGroupSharePost[]
+  superAdminTo       Group?
+  adminTo            GroupAdmin[]
+  moderatorTo        GroupModerator[]
 
-  sentMessages_page     Message_PAGE[] @relation("messagesender_page")
-  recievedMessages_page Message_PAGE[] @relation("messagereciever_page")
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
-  stories               Story_USER[]
+  taggedPosts   Tags[]
+  //pages
+  followedPages PageFollowers[]
+  managedPages  Page[]          @relation("managedpages")
+  //post
+  ownPosts      UserPost[]      @relation("userposts")
 
-  replies_user              Reply_USER[]
-  replies_page              Reply_PAGE[]
-  replies_group             Reply_GROUP[]
-  replies_usershare         Reply_USERSHARE[]
-  replies_pageshare         Reply_PAGESHARE[]
-  replies_usershare_togroup Reply_USERSHARE_TOGROUP[]
-  replies_pageshare_togroup Reply_PAGESHARE_TOGROUP[]
+  //shares
+  sharedPosts              UserSharePost[]
+  sentMessages             Message_USER[]  @relation("messagesender")
+  recievedMessages         Message_USER[]  @relation("messagereciever")
+  // messages
+  sentMessagesToPage       Message_PAGE[]  @relation("sentmessagesToPage")
+  recievedMessagesFromPage Message_PAGE[]  @relation("recievedmessagesFormPage")
 
-  comments_user              Comment_USER[]
-  comments_page              Comment_PAGE[]
-  comments_group             Comment_GROUP[]
-  comments_usershare         Comment_USERSHARE[]
-  comments_pageshare         Comment_PAGESHARE[]
-  comments_usershare_togroup Comment_USERSHARE_TOGROUP[]
-  comments_pageshare_togroup Comment_PAGESHARE_TOGROUP[]
+  //story
+  stories                 Story[]
+  // profile
+  Profile                 Profile?
+  //feeds
+  comments                FeedComment[]
+  reactions               FeedReaction[]
+  replyReactions          FeedReplyReactions[]
+  FeedReplyReplyReactions FeedReplyReplyReactions[]
+  replies                 FeedReply[]
+  replyReplies            FeedReplyReply[]
+  commentReactions        FeedCommentReaction[]
 
-  postReactions_user              PostReactions_USER[]
-  postReactions_page              PostReactions_PAGE[]
-  postReactions_group             PostReactions_GROUP[]
-  postReactions_usershare         PostReactions_USERSHARE[]
-  postReactions_pageshare         PostReactions_PAGESHARE[]
-  postReactions_usershare_togroup PostReactions_USERSHARE_TOGROUP[]
-  postReactions_pageshare_togroup PostReactions_PAGESHARE_TOGROUP[]
+  // medias
 
-  commentReactions_user              CommentReactions_USER[]
-  commentReactions_page              CommentReactions_PAGE[]
-  commentReactions_group             CommentReactions_GROUP[]
-  commentReactions_usershare         CommentReactions_USERSHARE[]
-  commentReactions_pageshare         CommentReactions_PAGESHARE[]
-  commentReactions_usershare_togroup CommentReaction_USERSHARE_TOGROUP[]
-  commentReactions_pageshare_togroup CommentReaction_PAGESHARE_TOGROUP[]
+  MediaReplyReplyReactions MediaReplyReplyReactions[]
 
-  replyReactions_user              ReplyReactions_USER[]
-  replyReactions_page              ReplyReactions_PAGE[]
-  replyReactions_group             ReplyReactions_GROUP[]
-  replyReactions_usershare         ReplyReactions_USERSHARE[]
-  replyReactions_pageshare         ReplyReactions_PAGESHARE[]
-  replyReactions_usershare_togroup ReplyReactions_USERSHARE_TOGROUP[]
-  replyReactions_pageshare_togroup ReplyReactions_PAGESHARE_TOGROUP[]
+  MediaReplyReply MediaReplyReply[]
 
-  comments_media_user         Comment_USER_MEDIA[]
-  replies_media_user          Reply_USER_MEDIA[]
-  postReactions_media_user    PostReactions_USER_MEDIA[]
-  commentReactions_media_user CommentReactions_USER_MEDIA[]
-  replyReactions_media_user   ReplyReactions_USER_MEDIA[]
+  MediaReplyReactions MediaReplyReactions[]
 
-  comments_media_page         Comment_PAGE_MEDIA[]
-  replies_media_page          Reply_PAGE_MEDIA[]
-  postReactions_media_page    PostReactions_PAGE_MEDIA[]
-  commentReactions_media_page CommentReactions_PAGE_MEDIA[]
-  replyReactions_media_page   ReplyReactions_PAGE_MEDIA[]
+  MediaCommentReaction MediaCommentReaction[]
 
-  comments_media_group         Comment_GROUP_MEDIA[]
-  replies_media_group          Reply_GROUP_MEDIA[]
-  postReactions_media_group    PostReactions_GROUP_MEDIA[]
-  commentReactions_media_group CommentReactions_GROUP_MEDIA[]
-  replyReactions_media_group   ReplyReactions_GROUP_MEDIA[]
+  MediaReply MediaReply[]
 
-  postReactions_userreel PostReactions_USERREEL[]
-  postReactions_pagereel PostReaction_PAGEREEL[]
+  MediaReaction MediaReaction[]
 
-  commentReactions_userreel CommentReaction_USERREEL[]
-  commentReactions_pagereel CommentReaction_PAGEREEL[]
+  MediaComment MediaComment[]
 
-  replyReactions_userreel ReplyReactions_USERREEL[]
-  replyReactions_pagereel ReplyReactions_PAGEREEL[]
+  // reels
 
-  comments_userreel Comment_USERREEL[]
-  comments_pagereel Comment_PAGEREEL[]
+  reels Reel[]
 
-  replies_userreel Reply_USERREEL[]
-  replies_pagereel Reply_PAGEREEL[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-  reels Reel_USER[]
+model UserPost {
+  id            String             @id @default(uuid())
+  userId        String
+  user          User               @relation("userposts", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content       String?
+  tags          Tags[]
+  location      String?
+  doing         String?
+  doingWhat     String?
+  medias        Media[]
+  audience      Audinece           @default(friends)
+  feeds         Feed[]
+  sharesByUser  UserSharePost[]
+  sharesByPage  PageSharePost[]
+  sharesToGroup ToGroupSharePost[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
 
-  PostsMemberOfLists Post_USER[]
-  adminTo            Profile_GROUP[] @relation("admins")
-  moderatorTo        Profile_GROUP[] @relation("moderators")
+model UserSharePost {
+  id          String     @id @default(uuid())
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tags        Tags[]
+  shareWhat   ShareType
+  content     String
+  doing       String
+  doingWhat   String
+  audience    Audinece   @default(friends)
+  userId      String
+  location    String
+  userPostId  String?
+  pagePostId  String?
+  groupPostId String?
+  mediaId     String?
+  media       Media?     @relation(fields: [mediaId], references: [id])
+  userPost    UserPost?  @relation(fields: [userPostId], references: [id])
+  pagePost    PagePost?  @relation(fields: [pagePostId], references: [id])
+  groupPost   GroupPost? @relation(fields: [groupPostId], references: [id])
+  feeds       Feed[]
 
-  Profile Profile_USER?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tags {
+  id              String         @id @default(uuid())
+  userPostId      String?
+  userSharePostId String?
+  userId          String
+  userPost        UserPost?      @relation(fields: [userPostId], references: [id])
+  userSharePost   UserSharePost? @relation(fields: [userSharePostId], references: [id])
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 }
 
 model Firends {
-  id         String   @id @default(uuid())
-  senderId   String
-  recieverId String
-  sender     User     @relation("sender", fields: [senderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reciever   User     @relation("reciever", fields: [recieverId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(uuid())
+  userId    String
+  friend    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model FriendRequest {
@@ -207,946 +237,11 @@ model FriendRequest {
   updatedAt  DateTime @updatedAt
 }
 
-model Medias_USER {
-  id       String               @id @default(uuid())
-  postId   String
-  post     Post_USER            @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  url      String
-  type     MediaType
-  size     Int?
-  width    Int?
-  height   Int?
-  comments Comment_USER_MEDIA[]
-
-  sharesByUser        Post_USERSHARE[]
-  sharesByPage        Post_PAGESHARE[]
-  sharesByPageToGroup Post_PAGESHARE_TOGROUP[]
-  sharesByUserToGroup Post_USERSHARE_TOGROUP[]
-  reactions           PostReactions_USER_MEDIA[]
-  createdAt           DateTime                   @default(now())
-  updatedAt           DateTime                   @updatedAt
-}
-
-model MessageMedias_USER {
-  id        String       @id @default(uuid())
-  postId    String
-  messageId String
-  message   Message_USER @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  url       String
-  type      MediaType
-  size      Int?
-  width     Int?
-  height    Int?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-}
-
-model MessageMedias_PAGE {
-  id        String       @id @default(uuid())
-  postId    String
-  messageId String
-  message   Message_PAGE @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  url       String
-  type      MediaType
-  size      Int?
-  width     Int?
-  height    Int?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-}
-
-model Medias_PAGE {
-  id                  String                     @id @default(uuid())
-  pagePostId          String
-  pagePost            Post_PAGE                  @relation(fields: [pagePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  url                 String
-  type                MediaType
-  size                Int?
-  width               Int?
-  height              Int?
-  comments            Comment_PAGE_MEDIA[]
-  reactions           PostReactions_PAGE_MEDIA[]
-  sharesByUser        Post_USERSHARE[]
-  sharesByPage        Post_PAGESHARE[]
-  sharesByPageToGroup Post_PAGESHARE_TOGROUP[]
-  sharesByUserToGroup Post_USERSHARE_TOGROUP[]
-  createdAt           DateTime                   @default(now())
-  updatedAt           DateTime                   @updatedAt
-}
-
-model Medias_GROUP {
-  id                  String                      @id @default(uuid())
-  groupPostId         String
-  groupPost           Post_GROUP                  @relation(fields: [groupPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  url                 String
-  type                String
-  size                Int?
-  width               Int?
-  height              Int?
-  comments            Comment_GROUP_MEDIA[]
-  reactions           PostReactions_GROUP_MEDIA[]
-  sharesByUser        Post_USERSHARE[]
-  sharesByPage        Post_PAGESHARE[]
-  sharesByPageToGroup Post_PAGESHARE_TOGROUP[]
-  sharesByUserToGroup Post_USERSHARE_TOGROUP[]
-  createdAt           DateTime                    @default(now())
-  updatedAt           DateTime                    @updatedAt
-}
-
-model Tags_USER {
-  id        String    @id @default(uuid())
-  postId    String
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post      Post_USER @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
-
-model Page {
-  id                    String                   @id @default(uuid())
-  name                  String
-  category              String
-  userId                String
-  admin                 User                     @relation("managedpages", fields: [userId], references: [id], onUpdate: Cascade)
-  fans                  User[]
-  posts                 Post_PAGE[]
-  sharedPosts           Post_PAGESHARE[]
-  sharedPostsToGroup    Post_PAGESHARE_TOGROUP[]
-  stories               Story_PAGE[]
-  reels                 Reel_PAGE[]
-  sentMessages_page     Message_PAGE[]           @relation("messagesender_page")
-  recievedMessages_page Message_PAGE[]           @relation("messagereciever_page")
-  createdAt             DateTime                 @default(now())
-  updatedAt             DateTime                 @updatedAt
-}
-
-model Post_USER {
-  id                   String                   @id @default(uuid())
-  postType             PostType                 @default(userpost)
-  userId               String
-  user                 User                     @relation("userposts", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  content              String?
-  medias               Medias_USER[]
-  tags                 Tags_USER[]
-  location             String?
-  doing                String?
-  doingWhat            String?
-  audience             Audinece                 @default(friends)
-  sAudience            SuperAudinece?
-  sAudienceFriendLists User[]
-  sharesByUser         Post_USERSHARE[]
-  sharesByPage         Post_PAGESHARE[]
-  sharesByPageToGroup  Post_USERSHARE_TOGROUP[]
-  sharesByUserToGroup  Post_PAGESHARE_TOGROUP[]
-  comments             Comment_USER[]
-  createdAt            DateTime                 @default(now())
-  updatedAt            DateTime                 @updatedAt
-
-  reactions PostReactions_USER[]
-}
-
-model Post_PAGE {
-  id                  String                   @id @default(uuid())
-  postType            PostType                 @default(pagepost)
-  pageId              String
-  page                Page                     @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  content             String
-  medias              Medias_PAGE[]
-  location            String
-  doing               String
-  doingWhat           String
-  audience            Audinece                 @default(public)
-  sharesByUser        Post_USERSHARE[]
-  sharesByPage        Post_PAGESHARE[]
-  sharesByPageToGroup Post_PAGESHARE_TOGROUP[]
-  sharesByUserToGroup Post_USERSHARE_TOGROUP[]
-  comments            Comment_PAGE[]
-  reactions           PostReactions_PAGE[]
-  createdAt           DateTime                 @default(now())
-  updatedAt           DateTime                 @updatedAt
-}
-
-model Post_GROUP {
-  id                  String                   @id @default(uuid())
-  postType            PostType                 @default(grouppost)
-  userId              String
-  groupId             String
-  user                User                     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  group               Group                    @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  content             String
-  medias              Medias_GROUP[]
-  location            String
-  doing               String
-  doingWhat           String
-  audience            Audinece                 @default(friends)
-  sAudience           SuperAudinece?
-  sharesByUser        Post_USERSHARE[]
-  sharesByPage        Post_PAGESHARE[]
-  sharesByPageToGroup Post_PAGESHARE_TOGROUP[]
-  sharesByUserToGroup Post_USERSHARE_TOGROUP[]
-  comments            Comment_GROUP[]
-  reactions           PostReactions_GROUP[]
-  createdAt           DateTime                 @default(now())
-  updatedAt           DateTime                 @updatedAt
-}
-
-model Group {
-  id                           String                   @id @default(uuid())
-  userId                       String
-  admin                        User                     @relation(fields: [userId], references: [id], onUpdate: Cascade)
-  name                         String
-  category                     String
-  members                      GroupMembers[]
-  groupMembersId               String
-  posts                        Post_GROUP[]
-  sharedPostsToThisGroupByUser Post_USERSHARE_TOGROUP[]
-  sharedPostsToThisGroupByPage Post_PAGESHARE_TOGROUP[]
-  createdAt                    DateTime                 @default(now())
-  updatedAt                    DateTime                 @updatedAt
-}
-
-model GroupMembers {
-  id        String   @id @default(uuid())
-  userId    String
-  groupId   String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Post_USERSHARE {
-  id           String         @id @default(uuid())
-  postType     PostType       @default(usersharepost)
-  shareType    ShareType
-  content      String
-  doing        String
-  doingWhat    String
-  audience     Audinece       @default(friends)
-  cAudience    SuperAudinece?
-  userId       String
-  location     String
-  userPostId   String?
-  pagePostId   String?
-  groupPostId  String?
-  userMediaId  String?
-  pageMediaId  String?
-  groupMediaId String?
-  userMedia    Medias_USER?   @relation(fields: [userMediaId], references: [id])
-  pageMedia    Medias_PAGE?   @relation(fields: [pageMediaId], references: [id])
-  groupMedia   Medias_GROUP?  @relation(fields: [groupMediaId], references: [id])
-  sharingType  String
-  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userPost     Post_USER?     @relation(fields: [userPostId], references: [id])
-  pagePost     Post_PAGE?     @relation(fields: [pagePostId], references: [id])
-  groupPost    Post_GROUP?    @relation(fields: [groupPostId], references: [id])
-
-  comments  Comment_USERSHARE[]
-  reactions PostReactions_USERSHARE[]
-  createdAt DateTime                  @default(now())
-  updatedAt DateTime                  @updatedAt
-}
-
-model Post_PAGESHARE {
-  id        String    @id @default(uuid())
-  postType  PostType  @default(pagesharepost)
-  shareType ShareType
-
-  content      String
-  doing        String
-  doingWhat    String
-  audience     Audinece                  @default(friends)
-  cAudience    SuperAudinece?
-  pageId       String
-  location     String
-  userPostId   String?
-  pagePostId   String?
-  groupPostId  String?
-  userMediaId  String?
-  pageMediaId  String?
-  groupMediaId String?
-  userMedia    Medias_USER?              @relation(fields: [userMediaId], references: [id])
-  pageMedia    Medias_PAGE?              @relation(fields: [pageMediaId], references: [id])
-  groupMedia   Medias_GROUP?             @relation(fields: [groupMediaId], references: [id])
-  sharingType  String
-  page         Page                      @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userPost     Post_USER?                @relation(fields: [userPostId], references: [id])
-  pagePost     Post_PAGE?                @relation(fields: [pagePostId], references: [id])
-  groupPost    Post_GROUP?               @relation(fields: [groupPostId], references: [id])
-  comments     Comment_PAGESHARE[]
-  reactions    PostReactions_PAGESHARE[]
-  createdAt    DateTime                  @default(now())
-  updatedAt    DateTime                  @updatedAt
-}
-
-model Post_PAGESHARE_TOGROUP {
-  id        String    @id @default(uuid())
-  postType  PostType  @default(pagesharetogrouppost)
-  shareType ShareType
-
-  content      String
-  doing        String
-  doingWhat    String
-  audience     Audinece       @default(friends)
-  cAudience    SuperAudinece?
-  pageId       String
-  location     String
-  userPostId   String?
-  pagePostId   String?
-  groupPostId  String?
-  userMediaId  String?
-  pageMediaId  String?
-  groupMediaId String?
-  userMedia    Medias_USER?   @relation(fields: [userMediaId], references: [id])
-  pageMedia    Medias_PAGE?   @relation(fields: [pageMediaId], references: [id])
-  groupMedia   Medias_GROUP?  @relation(fields: [groupMediaId], references: [id])
-  sharingType  String
-  groupId      String
-  page         Page           @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  toWhichGroup Group          @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userPost  Post_USER?                        @relation(fields: [userPostId], references: [id])
-  pagePost  Post_PAGE?                        @relation(fields: [pagePostId], references: [id])
-  groupPost Post_GROUP?                       @relation(fields: [groupPostId], references: [id])
-  comments  Comment_PAGESHARE_TOGROUP[]
-  reactions PostReactions_PAGESHARE_TOGROUP[]
-  createdAt DateTime                          @default(now())
-  updatedAt DateTime                          @updatedAt
-}
-
-model Post_USERSHARE_TOGROUP {
-  id        String    @id @default(uuid())
-  postType  PostType  @default(usersharetogrouppost)
-  shareType ShareType
-
-  content      String
-  doing        String
-  doingWhat    String
-  audience     Audinece                          @default(friends)
-  cAudience    SuperAudinece?
-  userId       String
-  groupId      String
-  location     String
-  userPostId   String?
-  pagePostId   String?
-  groupPostId  String?
-  userMediaId  String?
-  pageMediaId  String?
-  groupMediaId String?
-  userMedia    Medias_USER?                      @relation(fields: [userMediaId], references: [id])
-  pageMedia    Medias_PAGE?                      @relation(fields: [pageMediaId], references: [id])
-  groupMedia   Medias_GROUP?                     @relation(fields: [groupMediaId], references: [id])
-  sharingType  String
-  sharer       User                              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  toWhichGroup Group                             @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userPost     Post_USER?                        @relation(fields: [userPostId], references: [id])
-  pagePost     Post_PAGE?                        @relation(fields: [pagePostId], references: [id])
-  groupPost    Post_GROUP?                       @relation(fields: [groupPostId], references: [id])
-  comments     Comment_USERSHARE_TOGROUP[]
-  reactions    PostReactions_USERSHARE_TOGROUP[]
-  createdAt    DateTime                          @default(now())
-  updatedAt    DateTime                          @updatedAt
-}
-
-model Message_USER {
-  id            String               @id @default(uuid())
-  senderId      String
-  recieverId    String
-  sender        User                 @relation("messagesender", fields: [senderId], references: [id], onUpdate: Cascade)
-  reciever      User                 @relation("messagereciever", fields: [recieverId], references: [id], onUpdate: Cascade)
-  seen          Boolean              @default(false)
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  MessageMedias MessageMedias_USER[]
-}
-
-model Message_PAGE {
-  id              String  @id @default(uuid())
-  senderId        String?
-  recieverId      String?
-  senderId_page   String?
-  recieverId_page String?
-
-  sender_page   Page?                @relation("messagesender_page", fields: [senderId_page], references: [id], onUpdate: Cascade)
-  reciever_page Page?                @relation("messagereciever_page", fields: [recieverId_page], references: [id], onUpdate: Cascade)
-  sender        User?                @relation("messagesender_page", fields: [senderId], references: [id], onUpdate: Cascade)
-  reciever      User?                @relation("messagereciever_page", fields: [recieverId], references: [id], onUpdate: Cascade)
-  seen          Boolean              @default(false)
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  MessageMedias MessageMedias_PAGE[]
-}
-
-model StoryMedia_USER {
-  id        String     @id @default(uuid())
-  storyId   String
-  story     Story_USER @relation(fields: [storyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  type      String
-  url       String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-}
-
-model Story_USER {
-  id        String            @id @default(uuid())
-  userId    String
-  user      User              @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  medias    StoryMedia_USER[]
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-}
-
-model StoryMedia_PAGE {
-  id          String     @id @default(uuid())
-  type        String
-  url         String
-  pageStoryId String
-  story       Story_PAGE @relation(fields: [pageStoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-}
-
-model Story_PAGE {
-  id        String            @id @default(uuid())
-  pageId    String
-  page      Page              @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  medias    StoryMedia_PAGE[]
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-}
-
-model Reply_USER {
-  id        String       @id @default(uuid())
-  commentId String
-  comment   Comment_USER @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId    String
-  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  reactions ReplyReactions_USER[]
-  createdAt DateTime              @default(now())
-  updatedAt DateTime              @updatedAt
-}
-
-model Reply_PAGE {
-  id        String       @id @default(uuid())
-  commentId String
-  comment   Comment_PAGE @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId    String
-  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  reactions ReplyReactions_PAGE[]
-  createdAt DateTime              @default(now())
-  updatedAt DateTime              @updatedAt
-}
-
-model Reply_GROUP {
-  id        String        @id @default(uuid())
-  commentId String
-  comment   Comment_GROUP @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId    String
-  user      User                   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  reactions ReplyReactions_GROUP[]
-  createdAt DateTime               @default(now())
-  updatedAt DateTime               @updatedAt
-}
-
-model Reply_USERSHARE {
-  id        String            @id @default(uuid())
-  commentId String
-  comment   Comment_USERSHARE @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId    String
-  user      User                       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  reactions ReplyReactions_USERSHARE[]
-  createdAt DateTime                   @default(now())
-  updatedAt DateTime                   @updatedAt
-}
-
-model Reply_PAGESHARE {
-  id        String            @id @default(uuid())
-  commentId String
-  comment   Comment_PAGESHARE @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId    String
-  user      User                       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  reactions ReplyReactions_PAGESHARE[]
-  createdAt DateTime                   @default(now())
-  updatedAt DateTime                   @updatedAt
-}
-
-model Reply_USERSHARE_TOGROUP {
-  id        String                    @id @default(uuid())
-  commentId String
-  comment   Comment_USERSHARE_TOGROUP @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId    String
-  user      User                               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  reactions ReplyReactions_USERSHARE_TOGROUP[]
-  createdAt DateTime                           @default(now())
-  updatedAt DateTime                           @updatedAt
-}
-
-model Reply_PAGESHARE_TOGROUP {
-  id        String                    @id @default(uuid())
-  commentId String
-  comment   Comment_PAGESHARE_TOGROUP @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId    String
-  user      User                               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  reactions ReplyReactions_PAGESHARE_TOGROUP[]
-  createdAt DateTime                           @default(now())
-  updatedAt DateTime                           @updatedAt
-}
-
-model Comment_USER {
-  id        String                  @id @default(uuid())
-  postId    String
-  userId    String
-  user      User                    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post      Post_USER               @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String?
-  content   String?
-  replies   Reply_USER[]
-  reactions CommentReactions_USER[]
-  createdAt DateTime                @default(now())
-  updatedAt DateTime                @updatedAt
-}
-
-model Comment_PAGE {
-  id        String                  @id @default(uuid())
-  postId    String
-  userId    String
-  user      User                    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post      Post_PAGE               @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String?
-  content   String?
-  replies   Reply_PAGE[]
-  reactions CommentReactions_PAGE[]
-  createdAt DateTime                @default(now())
-  updatedAt DateTime                @updatedAt
-}
-
-model Comment_GROUP {
-  id        String                   @id @default(uuid())
-  postId    String
-  userId    String
-  user      User                     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post      Post_GROUP               @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String?
-  content   String?
-  replies   Reply_GROUP[]
-  reactions CommentReactions_GROUP[]
-  createdAt DateTime                 @default(now())
-  updatedAt DateTime                 @updatedAt
-}
-
-model Comment_USERSHARE {
-  id        String                       @id @default(uuid())
-  postId    String
-  userId    String
-  user      User                         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post      Post_USERSHARE               @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String?
-  content   String?
-  replies   Reply_USERSHARE[]
-  reactions CommentReactions_USERSHARE[]
-  createdAt DateTime                     @default(now())
-  updatedAt DateTime                     @updatedAt
-}
-
-model Comment_PAGESHARE {
-  id        String                       @id @default(uuid())
-  postId    String
-  userId    String
-  user      User                         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post      Post_PAGESHARE               @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String?
-  content   String?
-  replies   Reply_PAGESHARE[]
-  reactions CommentReactions_PAGESHARE[]
-  createdAt DateTime                     @default(now())
-  updatedAt DateTime                     @updatedAt
-}
-
-model Comment_USERSHARE_TOGROUP {
-  id        String                              @id @default(uuid())
-  postId    String
-  userId    String
-  user      User                                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post      Post_USERSHARE_TOGROUP              @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String?
-  content   String?
-  replies   Reply_USERSHARE_TOGROUP[]
-  reactions CommentReaction_USERSHARE_TOGROUP[]
-  createdAt DateTime                            @default(now())
-  updatedAt DateTime                            @updatedAt
-}
-
-model Comment_PAGESHARE_TOGROUP {
-  id        String                              @id @default(uuid())
-  postId    String
-  userId    String
-  user      User                                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post      Post_PAGESHARE_TOGROUP              @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String?
-  content   String?
-  replies   Reply_PAGESHARE_TOGROUP[]
-  reactions CommentReaction_PAGESHARE_TOGROUP[]
-  createdAt DateTime                            @default(now())
-  updatedAt DateTime                            @updatedAt
-}
-
 /**
- * comment reactions *
+ * User profile
  */
 
-model CommentReactions_USER {
-  id           String       @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_USER @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-}
-
-model CommentReactions_PAGE {
-  id           String       @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_PAGE @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-}
-
-model CommentReactions_GROUP {
-  id           String        @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_GROUP @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-}
-
-model CommentReactions_USERSHARE {
-  id           String            @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_USERSHARE @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-}
-
-model CommentReactions_PAGESHARE {
-  id           String            @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_PAGESHARE @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-}
-
-model CommentReaction_USERSHARE_TOGROUP {
-  id           String                    @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User                      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_USERSHARE_TOGROUP @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model CommentReaction_PAGESHARE_TOGROUP {
-  id           String                    @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User                      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_PAGESHARE_TOGROUP @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime                  @default(now())
-  updatedAt    DateTime                  @updatedAt
-}
-
-/**
- * reply reactions
- */
-
-model ReplyReactions_USER {
-  id           String       @id @default(uuid())
-  replyId      String
-  reply        Reply_USER   @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ReplyReactions_PAGE {
-  id           String       @id @default(uuid())
-  replyId      String
-  reply        Reply_PAGE   @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ReplyReactions_GROUP {
-  id      String      @id @default(uuid())
-  replyId String
-  reply   Reply_GROUP @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ReplyReactions_USERSHARE {
-  id           String          @id @default(uuid())
-  replyId      String
-  reply        Reply_USERSHARE @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reactionType ReactionType
-  userId       String
-  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ReplyReactions_PAGESHARE {
-  id           String          @id @default(uuid())
-  replyId      String
-  reply        Reply_PAGESHARE @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reactionType ReactionType
-  userId       String
-  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ReplyReactions_USERSHARE_TOGROUP {
-  id           String                  @id @default(uuid())
-  replyId      String
-  reply        Reply_USERSHARE_TOGROUP @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reactionType ReactionType
-  userId       String
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime                @default(now())
-  updatedAt    DateTime                @updatedAt
-}
-
-model ReplyReactions_PAGESHARE_TOGROUP {
-  id           String                  @id @default(uuid())
-  replyId      String
-  reply        Reply_PAGESHARE_TOGROUP @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reactionType ReactionType
-  userId       String
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime                @default(now())
-  updatedAt    DateTime                @updatedAt
-}
-
-model PostReactions_USER {
-  id           String       @id @default(uuid())
-  postId       String
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  post         Post_USER    @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-}
-
-model PostReactions_PAGE {
-  id     String    @id @default(uuid())
-  postId String
-  post   Post_PAGE @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PostReactions_GROUP {
-  id     String     @id @default(uuid())
-  postId String
-  post   Post_GROUP @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PostReactions_USERSHARE {
-  id     String         @id @default(uuid())
-  postId String
-  post   Post_USERSHARE @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PostReactions_PAGESHARE {
-  id     String         @id @default(uuid())
-  postId String
-  post   Post_PAGESHARE @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PostReactions_USERSHARE_TOGROUP {
-  id     String                 @id @default(uuid())
-  postId String
-  post   Post_USERSHARE_TOGROUP @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PostReactions_PAGESHARE_TOGROUP {
-  id     String                 @id @default(uuid())
-  postId String
-  post   Post_PAGESHARE_TOGROUP @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Profile_PAGE {
-  id             String             @id @default(uuid())
-  pageId         String             @unique
-  profilePicture String?
-  coverPhoto     String?
-  avatar         String?
-  about          String?
-  websites       Websites_PAGE[]
-  socialLinks    SocialLinks_PAGE[]
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-}
-
-model Profile_GROUP {
-  id             String              @id @default(uuid())
-  pageId         String              @unique
-  profilePicture String?
-  coverPhoto     String?
-  avatar         String?
-  about          String?
-  websites       Websites_GROUP[]
-  socialLinks    SocialLinks_GROUP[]
-  rules          GroupRules[]
-  admins         User[]              @relation("admins")
-  moderators     User[]              @relation("moderators")
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
-}
-
-model SocialLinks_GROUP {
-  id        String        @id @default(uuid())
-  userName  String
-  type      String
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  Profile   Profile_GROUP @relation(fields: [profileId], references: [id])
-  profileId String
-}
-
-model Websites_GROUP {
-  id String @id @default(uuid())
-
-  Profile   Profile_GROUP @relation(fields: [profileId], references: [id])
-  profileId String
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-}
-
-model GroupRules {
-  id String @id @default(uuid())
-
-  Profile   Profile_GROUP @relation(fields: [profileId], references: [id])
-  profileId String
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-}
-
-model SocialLinks_PAGE {
-  id        String       @id @default(uuid())
-  userName  String
-  type      String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  Profile   Profile_PAGE @relation(fields: [profileId], references: [id])
-  profileId String
-}
-
-model Websites_PAGE {
-  id String @id @default(uuid())
-
-  Profile   Profile_PAGE @relation(fields: [profileId], references: [id])
-  profileId String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-}
-
-model Profile_USER {
+model Profile {
   id                 String             @id @default(uuid())
   userId             String             @unique
   user               User               @relation(fields: [userId], references: [id])
@@ -1171,22 +266,22 @@ model Profile_USER {
 }
 
 model PreviousCity {
-  id        String       @id @default(uuid())
+  id        String   @id @default(uuid())
   dateYear  String
   dateMonth String
-  Profile   Profile_USER @relation(fields: [profileId], references: [id])
-  profileId String       @unique
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  Profile   Profile  @relation(fields: [profileId], references: [id])
+  profileId String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SocialLinks_USER {
-  id        String       @id @default(uuid())
+  id        String   @id @default(uuid())
   userName  String
   type      String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  Profile   Profile_USER @relation(fields: [profileId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Profile   Profile  @relation(fields: [profileId], references: [id])
   profileId String
 }
 
@@ -1199,7 +294,7 @@ model Collges_USER {
   concentrations Concentraions[]
   attendedFor    String
   graduated      Boolean
-  Profile        Profile_USER    @relation(fields: [profileId], references: [id])
+  Profile        Profile         @relation(fields: [profileId], references: [id])
   profileId      String
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
@@ -1217,26 +312,26 @@ model Concentraions {
 model Websites_USER {
   id String @id @default(uuid())
 
-  Profile   Profile_USER @relation(fields: [profileId], references: [id])
+  Profile   Profile  @relation(fields: [profileId], references: [id])
   profileId String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Schools_USER {
-  id         String       @id @default(uuid())
+  id         String   @id @default(uuid())
   schoolName String
   from       DateTime
   to         DateTime
   graduated  Boolean
-  Profile    Profile_USER @relation(fields: [profileId], references: [id])
+  Profile    Profile  @relation(fields: [profileId], references: [id])
   profileId  String
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Works_USER {
-  id               String       @id @default(uuid())
+  id               String    @id @default(uuid())
   company          String
   city             String
   town             String
@@ -1245,388 +340,546 @@ model Works_USER {
   from             DateTime
   to               DateTime?
   currentlyWorking Boolean?
-  Profile          Profile_USER @relation(fields: [profileId], references: [id])
+  Profile          Profile   @relation(fields: [profileId], references: [id])
   profileId        String
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
-model Reel_USER {
+/**
+ * group related relations
+ */
+
+model Group {
+  id         String @id @default(uuid())
+  userId     String @unique
+  superAdmin User   @relation(fields: [userId], references: [id])
+
+  name       String
+  category   String?
+  members    GroupMembers[]
+  posts      GroupPost[]
+  rules      GroupRules[]
+  moderators GroupModerator[]
+  admins     GroupAdmin[]
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+}
+
+model GroupPost {
   id        String   @id @default(uuid())
+  postType  PostType @default(grouppost)
+  userId    String
+  groupId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content   String
+  location  String
+  doing     String
+  doingWhat String
+  medias    Media[]
+  feeds     Feed[]
+
+  sharesByUser  UserSharePost[]
+  sharesByPage  PageSharePost[]
+  sharesToGroup ToGroupSharePost[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ToGroupSharePost {
+  id        String    @id @default(uuid())
+  postType  PostType  @default(pagesharetogrouppost)
+  shareType ShareType
+  userId    String?
+  pageId    String?
+  page      Page?     @relation(fields: [pageId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id])
+
+  sharingWhat PostType @default(pagesharepost)
+  content     String?
+  doing       String?
+  doingWhat   String?
+  location    String?
+  userPostId  String?
+  pagePostId  String?
+  groupPostId String?
+  mediaId     String?
+  media       Media?   @relation(fields: [mediaId], references: [id])
+
+  userPost  UserPost?  @relation(fields: [userPostId], references: [id])
+  pagePost  PagePost?  @relation(fields: [pagePostId], references: [id])
+  groupPost GroupPost? @relation(fields: [groupPostId], references: [id])
+  feeds     Feed[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model GroupRules {
+  id        String   @id @default(uuid())
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GroupAdmin {
+  id        String   @id @default(uuid())
+  groupId   String
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  group     Group    @relation(fields: [groupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GroupModerator {
+  id        String   @id @default(uuid())
+  groupId   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  group     Group    @relation(fields: [groupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GroupMembers {
+  id        String   @id @default(uuid())
+  userId    String
+  groupId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/**
+ * Page related data
+ */
+model Page {
+  id                 String             @id @default(uuid())
+  name               String
+  category           String
+  userId             String
+  admin              User               @relation("managedpages", fields: [userId], references: [id], onUpdate: Cascade)
+  stories            Story[]
+  posts              PagePost[]
+  sharedPosts        PageSharePost[]
+  sharedPostsToGroup ToGroupSharePost[]
+  following          PageFollowers[]    @relation("followingpage")
+  followedBy         PageFollowers[]    @relation("followerpage")
+  sentMessages       Message_PAGE[]     @relation("sentmessages")
+  recievedMessages   Message_PAGE[]     @relation("recievedmessages")
+  reels              Reel[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model PagePost {
+  id            String             @id @default(uuid())
+  postType      PostType           @default(pagepost)
+  pageId        String
+  page          Page               @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content       String
+  location      String
+  medias        Media[]
+  feeds         Feed[]
+  sharesByUser  UserSharePost[]
+  sharesByPage  PageSharePost[]
+  sharesToGroup ToGroupSharePost[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
+model PageSharePost {
+  id     String @id @default(uuid())
+  pageId String
+  page   Page   @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  sharingWhat PostType   @default(pagesharepost)
+  content     String
+  doing       String
+  doingWhat   String
+  audience    Audinece   @default(friends)
+  location    String
+  userPostId  String?
+  pagePostId  String?
+  groupPostId String?
+  mediaId     String?
+  media       Media?     @relation(fields: [mediaId], references: [id])
+  userPost    UserPost?  @relation(fields: [userPostId], references: [id])
+  pagePost    PagePost?  @relation(fields: [pagePostId], references: [id])
+  groupPost   GroupPost? @relation(fields: [groupPostId], references: [id])
+  feeds       Feed[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model PageFollowers {
+  id              String   @id @default(uuid())
+  followerUserId  String?
+  followerPageId  String?
+  followingPageId String?
+  followerUser    User?    @relation(fields: [followerUserId], references: [id])
+  followerPage    Page?    @relation("followerpage", fields: [followerPageId], references: [id])
+  following       Page?    @relation("followingpage", fields: [followingPageId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([followerUserId, followerPageId])
+}
+
+/**
+ * Feed media
+ */
+
+model Media {
+  id          String  @id @default(uuid())
+  userPostId  String?
+  pagePostId  String?
+  groupPostId String?
+  mediaId     String?
+
+  userPost      UserPost?          @relation(fields: [userPostId], references: [id])
+  pagePost      PagePost?          @relation(fields: [pagePostId], references: [id])
+  groupPost     GroupPost?         @relation(fields: [groupPostId], references: [id])
+  url           String
+  type          MediaType
+  sharesByUser  UserSharePost[]
+  sharesByPage  PageSharePost[]
+  sharesToGroup ToGroupSharePost[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  MediaReaction MediaReaction[]
+
+  MediaComment MediaComment[]
+}
+
+/**
+ * message user
+ */
+
+model Message_USER {
+  id            String               @id @default(uuid())
+  senderId      String
+  recieverId    String
+  sender        User                 @relation("messagesender", fields: [senderId], references: [id], onUpdate: Cascade)
+  reciever      User                 @relation("messagereciever", fields: [recieverId], references: [id], onUpdate: Cascade)
+  seen          Boolean              @default(false)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  MessageMedias MessageMedias_USER[]
+}
+
+model MessageMedias_USER {
+  id        String           @id @default(uuid())
+  messageId String
+  Message   Message_USER     @relation(fields: [messageId], references: [id])
+  type      MessageMediaType
+  url       String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+/**
+ * message page
+ */
+
+model Message_PAGE {
+  id              String  @id @default(uuid())
+  senderId        String?
+  recieverId      String?
+  senderId_page   String?
+  recieverId_page String?
+
+  sender_page   Page?                @relation("sentmessages", fields: [senderId_page], references: [id], onUpdate: Cascade)
+  reciever_page Page?                @relation("recievedmessages", fields: [recieverId_page], references: [id], onUpdate: Cascade)
+  sender        User?                @relation("sentmessagesToPage", fields: [senderId], references: [id], onUpdate: Cascade)
+  reciever      User?                @relation("recievedmessagesFormPage", fields: [recieverId], references: [id], onUpdate: Cascade)
+  seen          Boolean              @default(false)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  MessageMedias MessageMedias_PAGE[]
+}
+
+model MessageMedias_PAGE {
+  id        String           @id @default(uuid())
+  messageId String
+  message   Message_PAGE     @relation(fields: [messageId], references: [id])
+  type      MessageMediaType
+  url       String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+/**
+ * story
+ */
+
+model Story {
+  id        String       @id @default(uuid())
+  userId    String?
+  pageId    String?
+  page      Page?        @relation(fields: [pageId], references: [id])
+  user      User?        @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  medias    StoryMedia[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model StoryMedia {
+  id        String   @id @default(uuid())
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id])
+  owner     String
+  type      String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/**
+ * Feed
+ */
+
+model Feed {
+  id                 String            @id @default(uuid())
+  postType           PostType
+  userPostId         String?
+  pagePostId         String?
+  groupPostId        String?
+  userSharePostId    String?
+  pageSharePostId    String?
+  toGroupSharePostId String?
+  userPost           UserPost?         @relation(fields: [userPostId], references: [id])
+  pagePost           PagePost?         @relation(fields: [pagePostId], references: [id])
+  groupPost          GroupPost?        @relation(fields: [groupPostId], references: [id])
+  userSharePost      UserSharePost?    @relation(fields: [userSharePostId], references: [id])
+  pageSharePost      PageSharePost?    @relation(fields: [pageSharePostId], references: [id])
+  toGroupSharePost   ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id])
+  comments           FeedComment[]
+  reactions          FeedReaction[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model FeedComment {
+  id        String                @id @default(uuid())
+  feedId    String
+  feed      Feed                  @relation(fields: [feedId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl  String?
+  content   String?
+  reactions FeedCommentReaction[]
+  replies   FeedReply[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+}
+
+model FeedReaction {
+  id     String @id @default(uuid())
+  feedId String
+  userId String
+  feed   Feed   @relation(fields: [feedId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  reactionType ReactionType
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+/**
+ * feed comment
+ */
+
+model FeedReply {
+  id        String      @id @default(uuid())
+  commentId String
+  comment   FeedComment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId    String
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl  String
+  content   String
+  reactions FeedReplyReactions[]
+  replies   FeedReplyReply[]
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+}
+
+model FeedCommentReaction {
+  id String @id @default(uuid())
+
+  commentId String
+  userId    String
+  comment   FeedComment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  reactionType ReactionType
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+/**
+ * feed reply *
+ */
+
+model FeedReplyReactions {
+  id           String       @id @default(uuid())
+  replyId      String
+  reply        FeedReply    @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reactionType ReactionType
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FeedReplyReply {
+  id        String                    @id @default(uuid())
+  replyId   String
+  reply     FeedReply                 @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  user      User                      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl  String
+  content   String
+  reactions FeedReplyReplyReactions[]
+  createdAt DateTime                  @default(now())
+  updatedAt DateTime                  @updatedAt
+}
+
+model FeedReplyReplyReactions {
+  id           String         @id @default(uuid())
+  replyReplyId String
+  reply        FeedReplyReply @relation(fields: [replyReplyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reactionType ReactionType
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MediaComment {
+  id       String  @id @default(uuid())
+  mediaId  String
+  media    Media   @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl String?
+  content  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reactions MediaCommentReaction[]
+
+  replies MediaReply[]
+}
+
+model MediaReaction {
+  id      String @id @default(uuid())
+  mediaId String
+  userId  String
+  Media   Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  reactionType ReactionType
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+/**
+ * feed comment
+ */
+
+model MediaReply {
+  id        String       @id @default(uuid())
+  commentId String
+  comment   MediaComment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  url       String
+  mediaUrl  String
   content   String
-  profileId String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  comments Comment_USERREEL[]
+  replyReplies MediaReplyReply[]
 
-  reactions PostReactions_USERREEL[]
+  reactions MediaReplyReactions[]
 }
 
-/**
- * for user reel
- * reactions
- * comments
- * replies
- */
+model MediaCommentReaction {
+  id String @id @default(uuid())
 
-model PostReactions_USERREEL {
-  id           String       @id @default(uuid())
-  reelId       String
+  commentId String
+  userId    String
+  comment   MediaComment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reel         Reel_USER    @relation(fields: [reelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl     String
-  content      String
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 }
 
-model Comment_USERREEL {
-  id        String                     @id @default(uuid())
-  reelId    String
-  userId    String
-  user      User                       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reel      Reel_USER                  @relation(fields: [reelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  createdAt DateTime                   @default(now())
-  updatedAt DateTime                   @updatedAt
-  reactions CommentReaction_USERREEL[]
-  replies   Reply_USERREEL[]
-}
-
 /**
- * for a comment
- * reaction
- * reply
+ * feed reply *
  */
 
-model CommentReaction_USERREEL {
-  id           String           @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_USERREEL @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-}
-
-model Reply_USERREEL {
-  id           String                    @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User                      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_USERREEL          @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl     String
-  content      String
-  reactions    ReplyReactions_USERREEL[]
-  createdAt    DateTime                  @default(now())
-  updatedAt    DateTime                  @updatedAt
-}
-
-//for a reply
-
-model ReplyReactions_USERREEL {
-  id           String         @id @default(uuid())
+model MediaReplyReactions {
+  id           String       @id @default(uuid())
   replyId      String
+  reply        MediaReply   @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   reactionType ReactionType
   userId       String
-  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reply        Reply_USERREEL @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Reel_PAGE {
+model MediaReplyReply {
+  id        String     @id @default(uuid())
+  replyId   String
+  reply     MediaReply @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl  String
+  content   String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  reactions MediaReplyReplyReactions[]
+}
+
+model MediaReplyReplyReactions {
+  id           String          @id @default(uuid())
+  replyReplyId String
+  reply        MediaReplyReply @relation(fields: [replyReplyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reactionType ReactionType
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reel {
   id        String   @id @default(uuid())
-  pageId    String
-  page      Page     @relation(fields: [pageId], references: [id])
+  userId    String?
+  pageId    String?
+  page      Page?    @relation(fields: [pageId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   url       String
   content   String
-  profileId String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  comments Comment_PAGEREEL[]
-
-  reactions PostReaction_PAGEREEL[]
-}
-
-/**
- * for user reel
- * reactions
- * comments
- * replies
- */
-
-model PostReaction_PAGEREEL {
-  id           String       @id @default(uuid())
-  reelId       String
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reel         Reel_PAGE    @relation(fields: [reelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl     String
-  content      String
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-}
-
-model Comment_PAGEREEL {
-  id        String    @id @default(uuid())
-  reelId    String
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reel      Reel_PAGE @relation(fields: [reelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  replies Reply_PAGEREEL[]
-
-  reactions CommentReaction_PAGEREEL[]
-}
-
-/**
- * for a comment
- * reaction
- * reply
- */
-
-model CommentReaction_PAGEREEL {
-  id           String           @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_PAGEREEL @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-}
-
-model Reply_PAGEREEL {
-  id           String                    @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User                      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_PAGEREEL          @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl     String
-  content      String
-  reactions    ReplyReactions_PAGEREEL[]
-  createdAt    DateTime                  @default(now())
-  updatedAt    DateTime                  @updatedAt
-}
-
-//for a reply
-
-model ReplyReactions_PAGEREEL {
-  id           String         @id @default(uuid())
-  replyId      String
-  reactionType ReactionType
-  userId       String
-  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reply        Reply_PAGEREEL @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-}
-
-//media
-
-model Comment_USER_MEDIA {
-  id        String                        @id @default(uuid())
-  mediaId   String
-  userId    String
-  user      User                          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  media     Medias_USER                   @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  replies   Reply_USER_MEDIA[]
-  reactions CommentReactions_USER_MEDIA[]
-  createdAt DateTime                      @default(now())
-  updatedAt DateTime                      @updatedAt
-}
-
-model Reply_USER_MEDIA {
-  id        String             @id @default(uuid())
-  commentId String
-  comment   Comment_USER_MEDIA @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId    String
-  user      User                        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  reactions ReplyReactions_USER_MEDIA[]
-  createdAt DateTime                    @default(now())
-  updatedAt DateTime                    @updatedAt
-}
-
-model PostReactions_USER_MEDIA {
-  id           String       @id @default(uuid())
-  mediaId      String
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  media        Medias_USER  @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-}
-
-model CommentReactions_USER_MEDIA {
-  id           String             @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_USER_MEDIA @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-}
-
-model ReplyReactions_USER_MEDIA {
-  id           String           @id @default(uuid())
-  replyId      String
-  reply        Reply_USER_MEDIA @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reactionType ReactionType
-  userId       String
-  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// page
-
-model Comment_PAGE_MEDIA {
-  id        String                        @id @default(uuid())
-  mediaId   String
-  userId    String
-  user      User                          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  media     Medias_PAGE                   @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  replies   Reply_PAGE_MEDIA[]
-  reactions CommentReactions_PAGE_MEDIA[]
-  createdAt DateTime                      @default(now())
-  updatedAt DateTime                      @updatedAt
-}
-
-model Reply_PAGE_MEDIA {
-  id        String             @id @default(uuid())
-  commentId String
-  comment   Comment_PAGE_MEDIA @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId    String
-  user      User                        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  reactions ReplyReactions_PAGE_MEDIA[]
-  createdAt DateTime                    @default(now())
-  updatedAt DateTime                    @updatedAt
-}
-
-model PostReactions_PAGE_MEDIA {
-  id           String       @id @default(uuid())
-  mediaId      String
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  media        Medias_PAGE  @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-}
-
-model CommentReactions_PAGE_MEDIA {
-  id           String             @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_PAGE_MEDIA @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-}
-
-model ReplyReactions_PAGE_MEDIA {
-  id           String           @id @default(uuid())
-  replyId      String
-  reply        Reply_PAGE_MEDIA @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reactionType ReactionType
-  userId       String
-  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// group
-
-model Comment_GROUP_MEDIA {
-  id        String                         @id @default(uuid())
-  mediaId   String
-  userId    String
-  user      User                           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  media     Medias_GROUP                   @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  replies   Reply_GROUP_MEDIA[]
-  reactions CommentReactions_GROUP_MEDIA[]
-  createdAt DateTime                       @default(now())
-  updatedAt DateTime                       @updatedAt
-}
-
-model Reply_GROUP_MEDIA {
-  id        String              @id @default(uuid())
-  commentId String
-  comment   Comment_GROUP_MEDIA @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId    String
-  user      User                         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  reactions ReplyReactions_GROUP_MEDIA[]
-  createdAt DateTime                     @default(now())
-  updatedAt DateTime                     @updatedAt
-}
-
-model PostReactions_GROUP_MEDIA {
-  id           String       @id @default(uuid())
-  mediaId      String
-  reactionType ReactionType
-  userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  media        Medias_GROUP @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-}
-
-model CommentReactions_GROUP_MEDIA {
-  id           String              @id @default(uuid())
-  commentId    String
-  reactionType ReactionType
-  userId       String
-  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  comment      Comment_GROUP_MEDIA @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-}
-
-model ReplyReactions_GROUP_MEDIA {
-  id           String            @id @default(uuid())
-  replyId      String
-  reply        Reply_GROUP_MEDIA @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  reactionType ReactionType
-  userId       String
-  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
