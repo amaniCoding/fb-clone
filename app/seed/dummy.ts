@@ -25,16 +25,6 @@ export const randomTexts = [
 
 export const users = [
   {
-    userid: 1,
-    fname: "Amanuel",
-    lname: "Ferede",
-    birthDay: new Date(),
-    gender: "male",
-    mobileOrPhoneNumber: "amani.zi@gmail.com",
-    password: bcrypt.hashSync("Fb.Oath.49", 10),
-    profilepic: "/users/1.jpg",
-  },
-  {
     userid: 2,
     fname: "Meron",
     lname: "Tegegn",
@@ -282,4 +272,20 @@ export const reactionTypes = [
   "wow",
   "sad",
   "angry",
+];
+
+export const pages = [
+  "Ethiopian Artists",
+  "Fast Mereja",
+  "Global News",
+  "Beauties of Africa",
+  "Nobody cares",
+];
+
+export const groups = [
+  "Ai generators",
+  "Web developers",
+  "Gospel for Ethiopia",
+  "Habesha Mems",
+  "እንመካከር",
 ];

@@ -5,7 +5,7 @@ import { PostsUser } from "../types";
 import Medias from "./Medias";
 import Upper from "./footer/upper/upper";
 import Lower from "./footer/lower/lower";
-import { FeedsType } from "@/app/apis/feeder/[page]/libs/user";
+import { FeedsType } from "@/app/apis/feeder/[page]/libs/feed";
 export default function Post({
   post,
   ref,

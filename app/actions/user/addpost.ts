@@ -6,7 +6,7 @@ import {
   prepareMediaReactions,
   preparePostComments,
   preparePostReactions,
-} from "@/app/apis/feeder/[page]/libs/user";
+} from "@/app/apis/feeder/[page]/libs/feed";
 import { PostsUser } from "@/app/components/home/feed/types";
 import { $Enums, MediaType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";

@@ -9,7 +9,7 @@ import Upper from "./upper";
 import Lower from "../post/footer/lower/lower";
 import HeadLine from "./headline";
 import { PostsUser } from "../types";
-import { FeedsType } from "@/app/apis/feeder/[page]/libs/user";
+import { FeedsType } from "@/app/apis/feeder/[page]/libs/feed";
 import { useAppDispatch } from "@/app/store/hooks";
 import { openCommentModal } from "@/app/store/slices/feed/feed";
 

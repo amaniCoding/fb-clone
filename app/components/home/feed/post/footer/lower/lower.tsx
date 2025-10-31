@@ -6,7 +6,7 @@ import ReactionBox from "../../reactionbox";
 import { showCommentModal } from "@/app/store/slices/post/post";
 import { setPost } from "@/app/store/slices/commentmodal/post";
 import { PostsUser } from "../../../types";
-import { FeedsType } from "@/app/apis/feeder/[page]/libs/user";
+import { FeedsType } from "@/app/apis/feeder/[page]/libs/feed";
 import { openCommentModal } from "@/app/store/slices/feed/feed";
 
 export default function Lower({

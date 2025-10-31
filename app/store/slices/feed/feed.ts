@@ -1,9 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { PostsUser } from "@/app/components/home/feed/types";
-import { FeedsType } from "@/app/apis/feeder/[page]/libs/user";
-import { setPage } from "../commentmodal/post";
-import { Comment_USER } from "@/app/generated/prisma";
 import { Comment } from "@/app/apis/feeditem/comments/[posttype]/[postid]/[page]/lib";
+import { ReactionModalHeader, ReactionModalReactors } from "@/app/apis/feeder/[page]/types";
 
 interface UploadedMediaType {
   url: string;
@@ -21,9 +18,27 @@ export type feedResponseType = {
 // Define a type for the slice state
 interface FeedState {
   commentModal: {
-    post: FeedsType | undefined;
+    id: string | undefined,
     isOpen: boolean;
   };
+
+  reactionModal: {
+    isOpen: boolean,
+    feedId: string | undefined,
+    commentId: string | undefined,
+    replyId: string | undefined,
+    replyReplyId: string | undefined
+    fromWhat: "feed" | "comment" | "reply" | "replyreply" | undefined;
+    refs: {
+      header: {
+        currentReactionType: string | undefined,
+        loading: boolean | undefined,
+        gReactions: ReactionModalHeader[] | undefined
+      },
+
+      reactors: ReactionModalReactors[] | undefined
+    }
+  },
   feeds: {
     loading: boolean;
     page: number;
@@ -41,8 +56,24 @@ interface FeedState {
 // Define the initial state using that type
 const initialState: FeedState = {
   commentModal: {
-    post: undefined,
+    id: undefined,
     isOpen: false,
+  },
+  reactionModal: {
+    feedId: undefined,
+    commentId: undefined,
+    replyId: undefined,
+    replyReplyId: undefined,
+    fromWhat: undefined,
+    isOpen: false,
+    refs: {
+      header: {
+        currentReactionType: undefined,
+        gReactions: [],
+        loading: false
+      },
+      reactors: []
+    }
   },
   network: {
     isOnline: navigator.onLine,
@@ -110,10 +141,10 @@ export const feedSlice = createSlice({
 
     openCommentModal: (
       state,
-      action: PayloadAction<{ isOpen: boolean; post: FeedsType | undefined }>
+      action: PayloadAction<{ isOpen: boolean; id: string }>
     ) => {
       state.commentModal.isOpen = action.payload.isOpen;
-      state.commentModal.post = action.payload.post;
+      state.commentModal.id = action.payload.id;
     },
 
     setPage_Comment: (
@@ -190,6 +221,31 @@ export const feedSlice = createSlice({
         ];
       }
     },
+
+    openReactionModal: (state, action: PayloadAction<{
+      isOpen: boolean,
+      feedId: string,
+      commentId: string | undefined,
+      replyId: string | undefined,
+      replyReplyId: string | undefined,
+      currentReactionType: undefined,
+      fromWhat: "feed" | "comment" | "reply" | "replyreply";
+    }>) => {
+      state.reactionModal.isOpen = action.payload.isOpen;
+      state.reactionModal.fromWhat = action.payload.fromWhat;
+      state.reactionModal.feedId = action.payload.feedId;
+      state.reactionModal.commentId = action.payload.commentId,
+      state.reactionModal.replyId = action.payload.replyId,
+      state.reactionModal.replyReplyId = action.payload.replyReplyId;
+      const currentFeed = state.feeds.feeds?.find(feed => feed.id === action.payload.feedId);
+      if(currentFeed) {
+        currentFeed.reactions.modal.
+      }
+    },
+setLoadingFromHeader: (state, action: PayloadAction<boolean>) => {
+      const currentFeed = state.feeds.feeds?.find(feed => feed.)
+    },
+    
   },
 });
 

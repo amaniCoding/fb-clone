@@ -3,7 +3,7 @@ import { PostType } from "@/app/generated/prisma";
 import {
   ReactionModalHeader,
   ReactionModalReactors,
-} from "@/app/apis/feeder/[page]/libs/user";
+} from "@/app/apis/feeder/[page]/libs/feed";
 const prepareCommentReactions = () => {
   return {
     currentReactionType: "",

@@ -44,22 +44,19 @@ enum SuperAudinece {
 }
 
 enum PostType {
-  userpost
-  grouppost
-  pagepost
-  usersharepost
-  pagesharepost
-  usersharetogrouppost
-  pagesharetogrouppost
+  user
+  group
+  page
+  ushare
+  gshare
+  pshare
 }
 
 enum ShareType {
-  userpost
-  grouppost
-  pagepost
-  userpostmedia
-  grouppostmedia
-  pagepostmedia
+  user
+  group
+  page
+  media
 }
 
 enum ReactionType {
@@ -113,18 +110,18 @@ model User {
 
   taggedPosts   Tags[]
   //pages
-  followedPages PageFollowers[]
-  managedPages  Page[]          @relation("managedpages")
+  followedPages UserPageFollow[]
+  managedPages  Page[]
   //post
-  ownPosts      UserPost[]      @relation("userposts")
+  ownPosts      UserPost[]       @relation("userposts")
 
   //shares
   sharedPosts              UserSharePost[]
-  sentMessages             Message_USER[]  @relation("messagesender")
-  recievedMessages         Message_USER[]  @relation("messagereciever")
+  sentMessages             Message_USER[]  @relation("sentmessages")
+  recievedMessages         Message_USER[]  @relation("recievedmessages")
   // messages
-  sentMessagesToPage       Message_PAGE[]  @relation("sentmessagesToPage")
-  recievedMessagesFromPage Message_PAGE[]  @relation("recievedmessagesFormPage")
+  sentMessagesToPage       Message_PAGE[]  @relation("sentmessages")
+  recievedMessagesFromPage Message_PAGE[]  @relation("recievedmessages")
 
   //story
   stories                 Story[]
@@ -158,6 +155,13 @@ model User {
   // reels
 
   reels Reel[]
+  // follwing 
+
+  followings UserFollow[] @relation("following")
+  followers  UserFollow[] @relation("follwer")
+  /**
+   * if i am follower, i get my followings
+   */
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -182,17 +186,28 @@ model UserPost {
   updatedAt     DateTime           @updatedAt
 }
 
+model UserFollow {
+  id              String   @id @default(uuid())
+  followerUserId  String
+  followingUserId String
+  follower        User     @relation("following", fields: [followerUserId], references: [id])
+  followed        User     @relation("follwer", fields: [followingUserId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
 model UserSharePost {
-  id          String     @id @default(uuid())
+  id     String @id @default(uuid())
+  userId String
+
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tags        Tags[]
   shareWhat   ShareType
-  content     String
-  doing       String
-  doingWhat   String
+  content     String?
+  doing       String?
+  doingWhat   String?
   audience    Audinece   @default(friends)
-  userId      String
-  location    String
+  location    String?
   userPostId  String?
   pagePostId  String?
   groupPostId String?
@@ -355,28 +370,29 @@ model Group {
   userId     String @unique
   superAdmin User   @relation(fields: [userId], references: [id])
 
-  name       String
-  category   String?
-  members    GroupMembers[]
-  posts      GroupPost[]
-  rules      GroupRules[]
-  moderators GroupModerator[]
-  admins     GroupAdmin[]
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
+  name        String
+  category    String?
+  members     GroupMembers[]
+  posts       GroupPost[]
+  rules       GroupRules[]
+  moderators  GroupModerator[]
+  admins      GroupAdmin[]
+  sharedPosts ToGroupSharePost[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 }
 
 model GroupPost {
-  id        String   @id @default(uuid())
-  postType  PostType @default(grouppost)
+  id String @id @default(uuid())
+
   userId    String
   groupId   String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  content   String
-  location  String
-  doing     String
-  doingWhat String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  group     Group   @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content   String?
+  location  String?
+  doing     String?
+  doingWhat String?
   medias    Media[]
   feeds     Feed[]
 
@@ -389,15 +405,14 @@ model GroupPost {
 }
 
 model ToGroupSharePost {
-  id        String    @id @default(uuid())
-  postType  PostType  @default(pagesharetogrouppost)
-  shareType ShareType
-  userId    String?
-  pageId    String?
-  page      Page?     @relation(fields: [pageId], references: [id])
-  user      User?     @relation(fields: [userId], references: [id])
-
-  sharingWhat PostType @default(pagesharepost)
+  id          String     @id @default(uuid())
+  userId      String?
+  pageId      String?
+  page        Page?      @relation(fields: [pageId], references: [id])
+  user        User?      @relation(fields: [userId], references: [id])
+  groupId     String
+  group       Group      @relation(fields: [groupId], references: [id])
+  shareWhat   ShareType
   content     String?
   doing       String?
   doingWhat   String?
@@ -406,14 +421,13 @@ model ToGroupSharePost {
   pagePostId  String?
   groupPostId String?
   mediaId     String?
-  media       Media?   @relation(fields: [mediaId], references: [id])
-
-  userPost  UserPost?  @relation(fields: [userPostId], references: [id])
-  pagePost  PagePost?  @relation(fields: [pagePostId], references: [id])
-  groupPost GroupPost? @relation(fields: [groupPostId], references: [id])
-  feeds     Feed[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  media       Media?     @relation(fields: [mediaId], references: [id])
+  userPost    UserPost?  @relation(fields: [userPostId], references: [id])
+  pagePost    PagePost?  @relation(fields: [pagePostId], references: [id])
+  groupPost   GroupPost? @relation(fields: [groupPostId], references: [id])
+  feeds       Feed[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model GroupRules {
@@ -460,15 +474,16 @@ model GroupMembers {
 model Page {
   id                 String             @id @default(uuid())
   name               String
-  category           String
+  category           String?
   userId             String
-  admin              User               @relation("managedpages", fields: [userId], references: [id], onUpdate: Cascade)
+  admin              User               @relation(fields: [userId], references: [id], onUpdate: Cascade)
   stories            Story[]
   posts              PagePost[]
   sharedPosts        PageSharePost[]
   sharedPostsToGroup ToGroupSharePost[]
-  following          PageFollowers[]    @relation("followingpage")
-  followedBy         PageFollowers[]    @relation("followerpage")
+  pageFollowings     PageFollow[]       @relation("followingpages")
+  pageFollowers      PageFollow[]       @relation("followerpages")
+  userFollowers      UserPageFollow[]
   sentMessages       Message_PAGE[]     @relation("sentmessages")
   recievedMessages   Message_PAGE[]     @relation("recievedmessages")
   reels              Reel[]
@@ -478,11 +493,13 @@ model Page {
 
 model PagePost {
   id            String             @id @default(uuid())
-  postType      PostType           @default(pagepost)
   pageId        String
   page          Page               @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  content       String
-  location      String
+  content       String?
+  doing         String?
+  doingWhat     String?
+  audience      Audinece?          @default(public)
+  location      String?
   medias        Media[]
   feeds         Feed[]
   sharesByUser  UserSharePost[]
@@ -497,12 +514,12 @@ model PageSharePost {
   pageId String
   page   Page   @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  sharingWhat PostType   @default(pagesharepost)
-  content     String
-  doing       String
-  doingWhat   String
-  audience    Audinece   @default(friends)
-  location    String
+  shareWhat   ShareType
+  content     String?
+  doing       String?
+  doingWhat   String?
+  audience    Audinece?
+  location    String?
   userPostId  String?
   pagePostId  String?
   groupPostId String?
@@ -516,18 +533,27 @@ model PageSharePost {
   updatedAt   DateTime   @updatedAt
 }
 
-model PageFollowers {
-  id              String   @id @default(uuid())
-  followerUserId  String?
-  followerPageId  String?
-  followingPageId String?
-  followerUser    User?    @relation(fields: [followerUserId], references: [id])
-  followerPage    Page?    @relation("followerpage", fields: [followerPageId], references: [id])
-  following       Page?    @relation("followingpage", fields: [followingPageId], references: [id])
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+model UserPageFollow {
+  id        String   @id @default(uuid())
+  userId    String
+  paegId    String
+  page      Page     @relation(fields: [paegId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-  @@unique([followerUserId, followerPageId])
+model PageFollow {
+  id String @id @default(uuid())
+
+  pageId1      String?
+  pageId2      String?
+  followerPage Page?    @relation("followingpages", fields: [pageId1], references: [id])
+  following    Page?    @relation("followerpages", fields: [pageId2], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([pageId1, pageId2])
 }
 
 /**
@@ -539,7 +565,6 @@ model Media {
   userPostId  String?
   pagePostId  String?
   groupPostId String?
-  mediaId     String?
 
   userPost      UserPost?          @relation(fields: [userPostId], references: [id])
   pagePost      PagePost?          @relation(fields: [pagePostId], references: [id])
@@ -550,12 +575,11 @@ model Media {
   sharesByPage  PageSharePost[]
   sharesToGroup ToGroupSharePost[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  reactions MediaReaction[]
 
-  MediaReaction MediaReaction[]
-
-  MediaComment MediaComment[]
+  comments  MediaComment[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
 /**
@@ -566,8 +590,8 @@ model Message_USER {
   id            String               @id @default(uuid())
   senderId      String
   recieverId    String
-  sender        User                 @relation("messagesender", fields: [senderId], references: [id], onUpdate: Cascade)
-  reciever      User                 @relation("messagereciever", fields: [recieverId], references: [id], onUpdate: Cascade)
+  sender        User                 @relation("recievedmessages", fields: [senderId], references: [id], onUpdate: Cascade)
+  reciever      User                 @relation("sentmessages", fields: [recieverId], references: [id], onUpdate: Cascade)
   seen          Boolean              @default(false)
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
@@ -595,10 +619,10 @@ model Message_PAGE {
   senderId_page   String?
   recieverId_page String?
 
-  sender_page   Page?                @relation("sentmessages", fields: [senderId_page], references: [id], onUpdate: Cascade)
-  reciever_page Page?                @relation("recievedmessages", fields: [recieverId_page], references: [id], onUpdate: Cascade)
-  sender        User?                @relation("sentmessagesToPage", fields: [senderId], references: [id], onUpdate: Cascade)
-  reciever      User?                @relation("recievedmessagesFormPage", fields: [recieverId], references: [id], onUpdate: Cascade)
+  sender_page   Page?                @relation("recievedmessages", fields: [senderId_page], references: [id], onUpdate: Cascade)
+  reciever_page Page?                @relation("sentmessages", fields: [recieverId_page], references: [id], onUpdate: Cascade)
+  sender        User?                @relation("recievedmessages", fields: [senderId], references: [id], onUpdate: Cascade)
+  reciever      User?                @relation("sentmessages", fields: [recieverId], references: [id], onUpdate: Cascade)
   seen          Boolean              @default(false)
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
@@ -623,6 +647,7 @@ model Story {
   id        String       @id @default(uuid())
   userId    String?
   pageId    String?
+  content   String?
   page      Page?        @relation(fields: [pageId], references: [id])
   user      User?        @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   medias    StoryMedia[]
@@ -703,8 +728,8 @@ model FeedReply {
 
   userId    String
   user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
+  mediaUrl  String?
+  content   String?
   reactions FeedReplyReactions[]
   replies   FeedReplyReply[]
   createdAt DateTime             @default(now())
@@ -747,8 +772,8 @@ model FeedReplyReply {
   reply     FeedReply                 @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
   user      User                      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
+  mediaUrl  String?
+  content   String?
   reactions FeedReplyReplyReactions[]
   createdAt DateTime                  @default(now())
   updatedAt DateTime                  @updatedAt
@@ -766,6 +791,8 @@ model FeedReplyReplyReactions {
   updatedAt DateTime @updatedAt
 }
 
+// media
+
 model MediaComment {
   id       String  @id @default(uuid())
   mediaId  String
@@ -775,12 +802,11 @@ model MediaComment {
   mediaUrl String?
   content  String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   reactions MediaCommentReaction[]
 
-  replies MediaReply[]
+  replies   MediaReply[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 }
 
 model MediaReaction {
@@ -796,7 +822,7 @@ model MediaReaction {
 }
 
 /**
- * feed comment
+ * media comment
  */
 
 model MediaReply {
@@ -804,16 +830,16 @@ model MediaReply {
   commentId String
   comment   MediaComment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl String?
+  content  String?
 
-  replyReplies MediaReplyReply[]
+  replies MediaReplyReply[]
 
   reactions MediaReplyReactions[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
 }
 
 model MediaCommentReaction {
@@ -852,8 +878,8 @@ model MediaReplyReply {
   reply     MediaReply @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  mediaUrl  String
-  content   String
+  mediaUrl  String?
+  content   String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
