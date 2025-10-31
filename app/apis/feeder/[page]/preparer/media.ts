@@ -1,7 +1,7 @@
 import { MediaType } from "../handler";
 import { mediaPreparer } from "./libs/media";
 
-export const prepareMedia = async (medias: MediaType[]) => {
+export const prepareMedia = async (medias: MediaType[] | undefined) => {
   return (
     medias &&
     medias.map(async (media: MediaType) => {

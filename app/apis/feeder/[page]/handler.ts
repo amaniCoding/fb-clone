@@ -96,7 +96,7 @@ export const getFeeds = async (page: number) => {
                         },
                         take: 1,
                       },
-                      replyReplies: {
+                      replies: {
                         select: {
                           user: {
                             select: {
@@ -238,7 +238,7 @@ export const getFeeds = async (page: number) => {
                         },
                         take: 1,
                       },
-                      replyReplies: {
+                      replies: {
                         select: {
                           user: {
                             select: {
@@ -380,7 +380,7 @@ export const getFeeds = async (page: number) => {
                         },
                         take: 1,
                       },
-                      replyReplies: {
+                      replies: {
                         select: {
                           user: {
                             select: {
@@ -796,7 +796,7 @@ const media = result[0].userPost?.medias[0];
 const comments_media = result[0].userPost?.medias[0].comments;
 const replies_media = result[0].userPost?.medias[0].comments[0].replies;
 const replyReplies_media =
-  result[0].userPost?.medias[0].comments[0].replies[0].replyReplies;
+  result[0].userPost?.medias[0].comments[0].replies[0].replies;
 export type PrepareFeedType = typeof result;
 export type CommentType = typeof comments;
 export type ReplyType = typeof replies;
