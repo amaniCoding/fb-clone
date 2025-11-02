@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { getFeeds } from "./lib";
+import { getComments } from "./lib";
 
 type RouteType = {
   page: string;
@@ -11,16 +11,20 @@ export async function GET(
   { params }: { params: Promise<RouteType> }
 ) {
   try {
-    const { page } = await params;
-    const rowsPerPage = 10;
+    const { page, feedid } = await params;
+    const rowsPerPage = 7;
 
-    const { count, updated } = await getFeeds(parseInt(page));
+    const { count, result } = await getComments(
+      feedid,
+      parseInt(page),
+      rowsPerPage
+    );
 
     const jsonResponse = {
       loading: false,
       error: "",
       page: 1,
-      feeds: updated,
+      comments: result,
       totalRows: count,
       totalPages: Math.ceil(count / rowsPerPage),
     };

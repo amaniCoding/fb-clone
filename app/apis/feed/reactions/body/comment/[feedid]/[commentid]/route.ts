@@ -1,9 +1,10 @@
 import { NextRequest } from "next/server";
-import { getFeeds } from "./lib";
+import { getReactors } from "./lib";
 
 type RouteType = {
-  page: string;
   feedid: string;
+  commentid: string;
+  page: string;
 };
 
 export async function GET(
@@ -11,18 +12,19 @@ export async function GET(
   { params }: { params: Promise<RouteType> }
 ) {
   try {
-    const { page } = await params;
-    const rowsPerPage = 10;
+    const rowsPerPage = 7;
 
-    const { count, updated } = await getFeeds(parseInt(page));
+    const { feedid, page, commentid } = await params;
+
+    const { result } = await getReactors(
+      feedid,
+      commentid,
+      parseInt(page),
+      rowsPerPage
+    );
 
     const jsonResponse = {
-      loading: false,
-      error: "",
-      page: 1,
-      feeds: updated,
-      totalRows: count,
-      totalPages: Math.ceil(count / rowsPerPage),
+      reactions: result,
     };
 
     return Response.json({

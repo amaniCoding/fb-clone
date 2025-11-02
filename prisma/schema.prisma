@@ -385,17 +385,17 @@ model Group {
 model GroupPost {
   id String @id @default(uuid())
 
-  userId    String
-  groupId   String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  group     Group   @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  content   String?
-  location  String?
-  doing     String?
-  doingWhat String?
-  medias    Media[]
-  feeds     Feed[]
-
+  userId        String
+  groupId       String
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  group         Group              @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content       String?
+  location      String?
+  doing         String?
+  doingWhat     String?
+  medias        Media[]
+  feeds         Feed[]
+  audience      Audinece?          @default(public)
   sharesByUser  UserSharePost[]
   sharesByPage  PageSharePost[]
   sharesToGroup ToGroupSharePost[]
