@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
-import { getReactions } from "./lib";
+import { getGReactions } from "./lib";
 
 type RouteType = {
-  feedid: string;
+  replyid: string;
 };
 
 export async function GET(
@@ -10,12 +10,16 @@ export async function GET(
   { params }: { params: Promise<RouteType> }
 ) {
   try {
-    const { feedid } = await params;
+    const rowsPerPage = 7;
 
-    const { result } = await getReactions(feedid);
+    const { replyid } = await params;
+
+    const { count, result } = await getGReactions(replyid);
 
     const jsonResponse = {
-      reactions: result,
+      result,
+      totalRows: count,
+      totalPages: Math.ceil(count / rowsPerPage),
     };
 
     return Response.json({

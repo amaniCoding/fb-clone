@@ -1,8 +1,17 @@
-import { ReactionModalHeader, ReactionModalReactors } from "@/app/apis/types";
 import prisma from "@/app/libs/prisma";
+export const getGReactions = async (replyId: string) => {
+  /**
+   * comments include
+   * first reactors
+   * first replier
+   * g reactions
+   * count reactions and replies
+   * commentors withonly name with profile pic
+   * prepare reactions for modal --- future
+   * prepare replies for modal --- future
+   */
 
-export const getReactions = async (replyId: string) => {
-  const gReactions = await prisma.feedReplyReplyReactions.groupBy({
+  const gReactions = await prisma.replyReplyReactions.groupBy({
     by: ["reactionType"],
     _count: {
       reactionType: true,
@@ -19,6 +28,7 @@ export const getReactions = async (replyId: string) => {
     };
   });
   return {
+    count: result.length,
     result,
   };
 };

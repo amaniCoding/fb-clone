@@ -1,35 +1,37 @@
+import { CommentType } from "@/app/apis/feed/comments/[feedid]/[page]/lib";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-interface FeedComment {
-  [param: string | number]: any;
-}
+import { string } from "zod";
+type commentParams = {
+  id?: string;
+  loading?: boolean;
+  page?: number;
+  error?: string;
+  totalRows?: number;
+  totalPages?: number;
+  comments?: any[];
+};
 
-interface MediaComment {
-  [param: string | number]: any;
-}
 interface commentModalState {
   isOpen: boolean;
-  type: "feed" | "media" | undefined;
-  feed: FeedComment[];
-  media: MediaComment[];
-  feedId: string | undefined;
-  mediaId: string | undefined;
+  id: string | undefined;
+  commentsShown: commentParams[];
 }
 
 type ShowCommentModalPayload = {
-  type: string;
+  id: string;
   isOpen: boolean;
-  feedId: string;
-  mediaId: string | undefined;
 };
 
 const initialState: commentModalState = {
   isOpen: false,
-  type: undefined,
-  feed: [],
-  media: [],
-  feedId: undefined,
-  mediaId: undefined,
+  commentsShown: [],
+  id: undefined,
 };
+
+/**
+ * for which i load comment
+ * for a apost defined by postid and postype
+ */
 
 export const commentModalSlice = createSlice({
   name: "commentModalSlice",
@@ -40,31 +42,57 @@ export const commentModalSlice = createSlice({
       action: PayloadAction<ShowCommentModalPayload>
     ) => {
       state.isOpen = action.payload.isOpen;
-      state.type = action.payload.type;
-      state.feedId = action.payload.feedId;
-      state.mediaId = action.payload.mediaId;
+      state.id = action.payload.id;
+      const currentComment = state.commentsShown.find(
+        (comment) => comment.id === action.payload.id
+      );
+      if (!currentComment) {
+        state.commentsShown.push({
+          // now this id is in
+          id: state.id,
+          loading: false,
+          page: 1,
+          error: undefined,
+          totalRows: 0,
+          totalPages: 0,
+          comments: [],
+        });
+      }
     },
 
     setLoading: (state, action: PayloadAction<{ newLoading: boolean }>) => {
-      switch (state.type) {
-        case "feed":
-          {
-            if (!state.feed.find((feed) => feed.feedId === state.feedId)) {
-              state.feed.push({
-                loading: action.payload.newLoading,
-              });
-            }
-          }
+      const currentComment = state.commentsShown.find(
+        (comment) => comment.id === state.id
+      );
+      if (currentComment) {
+        currentComment.loading = action.payload.newLoading;
+      }
+    },
 
-          break;
+    setComments: (state, action: PayloadAction<{ comments: CommentType }>) => {
+      const currentComment = state.commentsShown.find(
+        (comment) => comment.id === state.id
+      );
+      if (currentComment) {
+        currentComment.comments = [
+          ...currentComment.comments!,
+          ...action.payload.comments,
+        ];
+      }
+    },
 
-        default:
-          break;
+    setError: (state, action: PayloadAction<{ newError: string }>) => {
+      const currentComment = state.commentsShown.find(
+        (comment) => comment.id === state.id
+      );
+      if (currentComment) {
+        currentComment.error = action.payload.newError;
       }
     },
   },
 });
 
-export const { showCommentModal } = commentModalSlice.actions;
+export const { showCommentModal, setLoading, setError } =
+  commentModalSlice.actions;
 
 export default commentModalSlice.reducer;
