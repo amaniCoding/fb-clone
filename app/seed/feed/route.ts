@@ -1,12 +1,8 @@
-import { _seedComments } from "./lib";
-
-const seed = async () => {
-  await Promise.all(_seedComments());
-};
+import { _seedFeeds } from "./libs";
 
 export async function GET() {
   try {
-    await seed();
+    await _seedFeeds();
     //await seedUser();
     return Response.json({ message: "Database seeded successfully" });
   } catch (error) {

@@ -23,6 +23,29 @@ export const dummyTexts = [
   "The robot clicked disapprovingly, gurgled briefly inside its cubical interior and extruded a pony glass of brownish liquid. 'Sir, you will undoubtedly end up in a drunkard's grave, dead of hepatic cirrhosis,' it informed me virtuously as it returned my ID card. I glared as I pushed the glass across the table.",
 ];
 
+export const dummyComments = [
+  " But that point was decided for him a moment later by the animal itself, who, with a sudden twist, jabbed its horns so hard into his lowest ribs that he gave a grunt of anger and disgust.",
+  "She glanced up into the sky to watch the clouds taking shape.",
+  "She was aware that things could go wrong. In fact, she had trained her entire life in anticipation that things would go wrong one day. She had quiet confidence as she started to see that this was the day that all her training would be worthwhile and useful. At this point, she had no idea just how wrong everything would go that day.",
+  "She put the pen to paper but she couldn't bring herself to actually write anything.",
+  "Dragons don't exist they said. They are the stuff of legend and people's imagination. But now that there was a dragon staring directly into his eyes, he questioned everything that he had been told.",
+  "She didn't like the food. But this time was different. Instead of trying to placate her and her unreasonable demands, he just stared at her and watched her meltdown without saying a word.",
+  "Then came the night of the first falling star.",
+  "He walked down the steps from the train station in a bit of a hurry knowing the secrets in the briefcase must be secured as quickly as possible.",
+  "The leather jacked showed the scars of being his favorite for years.",
+  "Was it a whisper or was it the wind? He wasn't quite sure.",
+  "A long black shadow slid across the pavement near their feet and the five Venusians, very much startled, looked overhead.",
+  "'So, what do you think?' he asked nervously.",
+  " He never imagined he'd find himself with writer's block, but here he sat with a blank screen in front of him. That blank screen taunting him day after day had started to play with his mind. He didn't understand why he couldn't even type a single word, just one to begin the process and build from there. And yet, he already knew that the eight hours he was prepared to sit in front of his computer today would end with the screen remaining blank.",
+  "The words him day after day had started to play with his mind.",
+  "It was a question of which of the two she preferred. On the one hand, the choice seemed simple.",
+  "Twenty-five stars were neatly placed on the piece of paper. There was room for five more stars but they would be difficult ones to earn.",
+  "He heard the crack echo in the late afternoon about a mile away. His heart started racing and he bolted into a full sprint.",
+  "She was aware that things could go wrong that things would go wrong one day. She had quiet confidence would be worthwhile and useful..",
+  "Benny was tired. Not the normal every day tired from a hard day o work. The only issue was that he had forgotten where he lived.",
+  "Sir, you will undoubtedly end up in a drunkard's grave, dead of hepatic cirrhosis,' it informed me virtuously as it returned my ID card. I glared as I pushed the glass across the table.",
+];
+
 export const users = [
   {
     userid: 2,

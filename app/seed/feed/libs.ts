@@ -1,14 +1,6 @@
-import {
-  Group,
-  Media,
-  MediaType,
-  Page,
-  ShareType,
-  User,
-} from "@/app/generated/prisma";
+import { MediaType } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
-import { dummyTexts } from "../../dummy";
-import { number } from "zod";
+import { dummyComments, dummyTexts, reactionTypes } from "../dummy";
 
 const sharedPostTypes = ["user", "page", "group", "media"];
 const originalPostTypes = ["user", "page", "group"];
@@ -44,7 +36,7 @@ const getGroups = async () => {
   return await prisma.group.findMany({});
 };
 
-const getRandomUser = async () => {
+export const getRandomUser = async () => {
   const users = await getUsers();
   const rIndex = getRandomNumber(users.length, 0);
   return users[rIndex];
@@ -67,53 +59,64 @@ const getRandomAddedContentForShareTypes = () => {
   return addedContentForShareTypes[rIndex];
 };
 
-const getRandomSharedPost = async (
-  randomSharedPostType: "user" | "page" | "group" | "media"
-) => {
-  switch (randomSharedPostType) {
-    case "user":
-      return await getRandomUserPost();
-      break;
-    case "page":
-      return await getRandomPagePost();
-      break;
-    case "group":
-      return await getRandomGroupPost();
-      break;
+const getRandomOriginalPostType = () => {
+  const rIndex = getRandomNumber(3, 0);
+  return originalPostTypes[rIndex];
+};
 
-    case "media":
-      return await getRandomMedia(
-        getRandomSharedPostType() as "user" | "page" | "group" | "media"
-      );
-      break;
-    default:
-      break;
+const getRandomPost = async (forWhat: "user" | "page" | "group" | "media") => {
+  if (forWhat === "user") {
+    const userPosts = await prisma.userPost.findMany({
+      select: {
+        id: true,
+        medias: true,
+      },
+    });
+    const rIndex = getRandomNumber(userPosts.length, 0);
+    return userPosts[rIndex];
+  }
+
+  if (forWhat === "page") {
+    const pagePosts = await prisma.pagePost.findMany({
+      select: {
+        id: true,
+        medias: true,
+      },
+    });
+    const rIndex = getRandomNumber(pagePosts.length, 0);
+    return pagePosts[rIndex];
+  }
+
+  if (forWhat === "group") {
+    const groupPosts = await prisma.groupPost.findMany({
+      select: {
+        id: true,
+        medias: true,
+      },
+    });
+    const rIndex = getRandomNumber(groupPosts.length, 0);
+    return groupPosts[rIndex];
   }
 };
 
-const getRandomMedia = async (
-  randomSharedPostType: "user" | "page" | "group" | "media"
-) => {
-  switch (randomSharedPostType) {
+const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
+  switch (forWhat) {
     case "user": {
-      const post = await getRandomUserPostMedia();
-      const rIndex = getRandomNumber(post.medias.length, 0);
-      return post.medias[rIndex];
-      break;
+      const post = await getRandomUserPostWithMedia("user");
+      const rIndex = getRandomNumber(post!.medias.length, 0);
+      return post!.medias[rIndex];
     }
 
     case "page": {
-      const post = await getRandomPagePostMedia();
-      const rIndex = getRandomNumber(post.medias.length, 0);
-      return post.medias[rIndex];
-      break;
+      const post = await getRandomUserPostWithMedia("page");
+      const rIndex = getRandomNumber(post!.medias.length, 0);
+      return post!.medias[rIndex];
     }
 
     case "group": {
-      const post = await getRandomGroupPostMedia();
-      const rIndex = getRandomNumber(post.medias.length, 0);
-      return post.medias[rIndex];
-      break;
+      const post = await getRandomUserPostWithMedia("group");
+      const rIndex = getRandomNumber(post!.medias.length, 0);
+      return post!.medias[rIndex];
     }
 
     default:
@@ -123,87 +126,59 @@ const getRandomMedia = async (
 
 // media
 
-const getRandomUserPostMedia = async () => {
-  const userPosts = await prisma.userPost.findMany({
-    where: {
-      NOT: {
-        medias: undefined,
+const getRandomUserPostWithMedia = async (
+  forWhat: "user" | "page" | "group"
+) => {
+  if (forWhat === "user") {
+    const userPosts = await prisma.userPost.findMany({
+      where: {
+        NOT: {
+          medias: undefined,
+        },
       },
-    },
-    select: {
-      id: true,
-      medias: true,
-    },
-  });
-  const rIndex = getRandomNumber(userPosts.length, 0);
-  return userPosts[rIndex];
+      select: {
+        id: true,
+        medias: true,
+      },
+    });
+    const rIndex = getRandomNumber(userPosts.length, 0);
+    return userPosts[rIndex];
+  }
+
+  if (forWhat === "page") {
+    const pagePosts = await prisma.pagePost.findMany({
+      where: {
+        NOT: {
+          medias: undefined,
+        },
+      },
+      select: {
+        id: true,
+        medias: true,
+      },
+    });
+    const rIndex = getRandomNumber(pagePosts.length, 0);
+    return pagePosts[rIndex];
+  }
+
+  if (forWhat === "group") {
+    const groupPosts = await prisma.groupPost.findMany({
+      where: {
+        NOT: {
+          medias: undefined,
+        },
+      },
+      select: {
+        id: true,
+        medias: true,
+      },
+    });
+    const rIndex = getRandomNumber(groupPosts.length, 0);
+    return groupPosts[rIndex];
+  }
 };
 
-const getRandomPagePostMedia = async () => {
-  const pagePosts = await prisma.pagePost.findMany({
-    where: {
-      NOT: {
-        medias: undefined,
-      },
-    },
-    select: {
-      id: true,
-      medias: true,
-    },
-  });
-  const rIndex = getRandomNumber(pagePosts.length, 0);
-  return pagePosts[rIndex];
-};
-
-const getRandomGroupPostMedia = async () => {
-  const groupPosts = await prisma.groupPost.findMany({
-    where: {
-      NOT: {
-        medias: undefined,
-      },
-    },
-    select: {
-      id: true,
-      medias: true,
-    },
-  });
-  const rIndex = getRandomNumber(groupPosts.length, 0);
-  return groupPosts[rIndex];
-};
 //
-
-const getRandomUserPost = async () => {
-  const userPosts = await prisma.userPost.findMany({
-    select: {
-      id: true,
-      medias: true,
-    },
-  });
-  const rIndex = getRandomNumber(userPosts.length, 0);
-  return userPosts[rIndex];
-};
-
-const getRandomPagePost = async () => {
-  const pagePosts = await prisma.pagePost.findMany({
-    select: {
-      id: true,
-      medias: true,
-    },
-  });
-  const rIndex = getRandomNumber(pagePosts.length, 0);
-  return pagePosts[rIndex];
-};
-
-const getRandomGroupPost = async () => {
-  const groupPosts = await prisma.groupPost.findMany({
-    select: {
-      id: true,
-      medias: true,
-    },
-  });
-  const rIndex = getRandomNumber(groupPosts.length, 0);
-  return groupPosts[rIndex];
-};
 
 async function getRandoms() {
   // const _uMedias = prisma.feed.findMany({
@@ -262,10 +237,15 @@ const getRandomSharer = async () => {
   const sharer = toGroupSharerTypes[rIndex] as "user" | "page";
   switch (sharer) {
     case "user":
-      return await getRandomUser();
-      break;
+      return {
+        sharer,
+        which: await getRandomUser(),
+      };
     case "page":
-      return await getRandomPage();
+      return {
+        sharer,
+        which: await getRandomPage(),
+      };
     default:
       break;
   }
@@ -276,13 +256,23 @@ const getRandomPostText = () => {
   return dummyTexts[rIndex];
 };
 
+export const getRandomPostComment = () => {
+  const rIndex = getRandomNumber(dummyComments.length, 0);
+  return dummyComments[rIndex];
+};
+
+export const getRandomReactionType = () => {
+  const rIndex = getRandomNumber(reactionTypes.length, 0);
+  return reactionTypes[rIndex];
+};
+
 const getRandomPhotoCount = () => {
   return getRandomNumber(6, 1);
 };
 
 const createUserPost = async () => {
   const user = await getRandomUser();
-  return prisma.feed.create({
+  return await prisma.feed.create({
     data: {
       postType: "user",
       userPost: {
@@ -313,7 +303,7 @@ const createUserPost = async () => {
 
 const createPagePost = async () => {
   const page = await getRandomPage();
-  return prisma.feed.create({
+  return await prisma.feed.create({
     data: {
       postType: "page",
       pagePost: {
@@ -346,7 +336,7 @@ const createPagePost = async () => {
 const createGroupPost = async () => {
   const user = await getRandomUser();
   const group = await getRandomGroup();
-  return prisma.feed.create({
+  return await prisma.feed.create({
     data: {
       postType: "group",
       groupPost: {
@@ -387,8 +377,8 @@ const createUserSharePost = async () => {
     | "page"
     | "group"
     | "media";
-  const post = await getRandomSharedPost(postSharedType);
-  return prisma.feed.create({
+  const post = await getRandomPost(postSharedType);
+  return await prisma.feed.create({
     data: {
       postType: "ushare",
       userSharePost: {
@@ -452,15 +442,17 @@ const createPageSharePost = async () => {
     | "page"
     | "group"
     | "media";
-  const post = await getRandomSharedPost(postSharedType);
-  return prisma.feed.create({
+  const post = await getRandomPost(postSharedType);
+  const oP = getRandomOriginalPostType();
+
+  return await prisma.feed.create({
     data: {
       postType: "pshare",
       pageSharePost: {
         create: {
           page: {
             connect: {
-              id: (await getRandomUser()).id,
+              id: (await getRandomPage()).id,
             },
           },
 
@@ -496,7 +488,8 @@ const createPageSharePost = async () => {
             postSharedType === "media" && post
               ? {
                   connect: {
-                    id: post.id,
+                    id: (await getRandomMedia(oP as "user" | "page" | "group"))!
+                      .id,
                   },
                 }
               : undefined,
@@ -517,26 +510,30 @@ const createGroupSharePost = async () => {
     | "page"
     | "group"
     | "media";
-  const post = await getRandomSharedPost(postSharedType);
-  return prisma.feed.create({
+
+  const sharer = await getRandomSharer();
+  const post = await getRandomPost(postSharedType);
+  const oP = getRandomOriginalPostType();
+
+  return await prisma.feed.create({
     data: {
       postType: "gshare",
       toGroupSharePost: {
         create: {
           user:
-            postSharedType === "user" && (await getRandomSharer())!.id
+            sharer?.sharer === "user" && sharer.which.id
               ? {
                   connect: {
-                    id: (await getRandomSharer())!.id,
+                    id: sharer.which.id,
                   },
                 }
               : undefined,
 
           page:
-            postSharedType === "page" && (await getRandomSharer())!.id
+            sharer?.sharer === "page" && sharer.which.id
               ? {
                   connect: {
-                    id: (await getRandomSharer())!.id,
+                    id: sharer.which.id,
                   },
                 }
               : undefined,
@@ -546,7 +543,7 @@ const createGroupSharePost = async () => {
             postSharedType === "user"
               ? {
                   connect: {
-                    id: (await getRandomSharedPost(postSharedType))!.id,
+                    id: post?.id,
                   },
                 }
               : undefined,
@@ -555,7 +552,7 @@ const createGroupSharePost = async () => {
             postSharedType === "page"
               ? {
                   connect: {
-                    id: (await getRandomSharedPost(postSharedType))!.id,
+                    id: post?.id,
                   },
                 }
               : undefined,
@@ -564,7 +561,7 @@ const createGroupSharePost = async () => {
             postSharedType === "group"
               ? {
                   connect: {
-                    id: (await getRandomSharedPost(postSharedType))!.id,
+                    id: post?.id,
                   },
                 }
               : undefined,
@@ -573,7 +570,8 @@ const createGroupSharePost = async () => {
             postSharedType === "media"
               ? {
                   connect: {
-                    id: (await getRandomSharedPost(postSharedType))!.id,
+                    id: (await getRandomMedia(oP as "user" | "page" | "group"))!
+                      .id,
                   },
                 }
               : undefined,
@@ -594,18 +592,31 @@ const createGroupSharePost = async () => {
 };
 
 export async function _seedFeeds() {
-  const feedsCreated = Array.from({ length: 50 }, async () => {
+  const feedsCreated = Array.from({ length: 50 }, () => {
     if (getRandomFeedType() === "user") {
-      createUserPost();
-    } else if (getRandomFeedType() === "page") {
-      createPagePost();
-    } else if (getRandomFeedType() === "group") {
-      createGroupPost();
-    } else if (getRandomFeedType() === "ushare") {
-      createUserSharePost();
-    } else if (getRandomFeedType() === "pshare") {
-      createPageSharePost();
-    } else if (getRandomFeedType() === "gshare") {
+      return createUserPost();
+    }
+
+    if (getRandomFeedType() === "page") {
+      return createPagePost();
+    }
+
+    if (getRandomFeedType() === "group") {
+      return createGroupPost();
+    }
+
+    if (getRandomFeedType() === "ushare") {
+      return createUserSharePost();
+    }
+
+    if (getRandomFeedType() === "pshare") {
+      return createPageSharePost();
+    }
+
+    if (getRandomFeedType() === "gshare") {
+      return createGroupSharePost();
     }
   });
+
+  return await Promise.all(feedsCreated);
 }

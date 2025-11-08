@@ -583,6 +583,7 @@ model Media {
   userPostId    String?
   pagePostId    String?
   groupPostId   String?
+  feedId        String?
   userPost      UserPost?          @relation(fields: [userPostId], references: [id])
   pagePost      PagePost?          @relation(fields: [pagePostId], references: [id])
   groupPost     GroupPost?         @relation(fields: [groupPostId], references: [id])
