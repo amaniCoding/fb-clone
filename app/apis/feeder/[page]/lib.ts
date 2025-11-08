@@ -709,3 +709,7 @@ export const getFeeds = async (page: number) => {
 };
 
 // prepare
+
+const feeds = await getFeeds(1);
+const feed = feeds.updated[0];
+export type FeedsType = typeof feed;

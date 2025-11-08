@@ -1,39 +1,37 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Post from "../post/post";
-import CommentModal from "../commentmodal.tsx/comment-modal";
+import CommentModal from "../commentmodal/comment-modal";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import FeedItemSkeleton from "@/app/components/skeletons/feed";
+
+import Link from "next/link";
+import axios from "axios";
 import {
-  feedResponseType,
+  updatePage,
   setFeeds,
   setLoading,
   setNetWorkError,
-  updatePage,
-  updateTotalPagesAndRows,
+  FeedResponseType,
 } from "@/app/store/slices/feed/feed";
-import Link from "next/link";
-import axios from "axios";
 
 export default function Feeder() {
   const isCommentModalOpen = useAppSelector(
-    (state) => state.feed.commentModal.isOpen
+    (state) => state.commentModal.isOpen
   );
   const postForCommentModal = useAppSelector(
-    (state) => state.feed.commentModal.post
+    (state) => state.commentModal.post
   );
   const dispatch = useAppDispatch();
-  const networkNotification = useAppSelector(
-    (state) => state.feed.network.showNumber
-  );
+
   const feeds = useAppSelector((state) => state.feed.feeds.feeds);
 
   const loading = useAppSelector((state) => state.feed.feeds.loading);
   const page = useAppSelector((state) => state.feed.feeds.page);
   const totalPages = useAppSelector((state) => state.feed.feeds.totalPages);
   const [hasError, setHasError] = useState<boolean>(false);
-  const [isOnLine, setIsOnLine] = useState<boolean>(navigator.onLine);
   const observer = useRef<IntersectionObserver>(null);
+  const { isOnline } = useAppSelector((state) => state.feed.network);
 
   const hasMore = page <= totalPages;
 
@@ -54,23 +52,6 @@ export default function Feeder() {
     [hasMore, loading, page]
   );
 
-  const dispatchAccordly = (page: number, result: feedResponseType) => {
-    if (page === 1) {
-      dispatch(
-        setFeeds({
-          firstTime: true,
-          result: result,
-        })
-      );
-    } else {
-      dispatch(
-        setFeeds({
-          firstTime: false,
-          result: result,
-        })
-      );
-    }
-  };
   useEffect(() => {
     const controller = new AbortController();
     const getFeeds = async () => {
@@ -79,7 +60,7 @@ export default function Feeder() {
         const response = await axios.get(`/apis/feeder/${page}`, {
           signal: controller.signal,
         });
-        dispatchAccordly(page, response.data.result as feedResponseType);
+        dispatch(setFeeds(response.data.result as FeedResponseType));
         dispatch(setLoading(false));
       } catch (error) {
         setHasError(true);
@@ -87,42 +68,10 @@ export default function Feeder() {
       }
     };
 
-    if (isOnLine) {
-      dispatch(
-        setNetWorkError({
-          isOnline: true,
-          status: "Your internet connection was restored",
-          showNumber: networkNotification + 1,
-        })
-      );
-
+    if (isOnline) {
       getFeeds();
-    } else {
-      dispatch(
-        setNetWorkError({
-          isOnline: true,
-          status: "You are currently offline",
-          showNumber: networkNotification + 1,
-        })
-      );
     }
-    window.addEventListener("online", () => {
-      setIsOnLine(true);
-    });
-    window.addEventListener("offline", () => {
-      setIsOnLine(false);
-    });
-
-    return () => {
-      window.removeEventListener("online", () => {
-        setIsOnLine(true);
-      });
-      window.removeEventListener("offline", () => {
-        setIsOnLine(false);
-      });
-      controller.abort();
-    };
-  }, [dispatch, isOnLine, page]);
+  }, [dispatch, isOnline, page]);
 
   return (
     <>

@@ -17,9 +17,6 @@ export async function GET(
     const { count, updated } = await getFeeds(parseInt(page));
 
     const jsonResponse = {
-      loading: false,
-      error: "",
-      page: 1,
       feeds: updated,
       totalRows: count,
       totalPages: Math.ceil(count / rowsPerPage),

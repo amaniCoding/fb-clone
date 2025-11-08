@@ -1,9 +1,10 @@
 "use client";
 import Image from "next/image";
-import { useAppSelector } from "@/app/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FaXmark } from "react-icons/fa6";
+import { setNetWorkError } from "@/app/store/slices/feed/feed";
 
 export default function MyApp({
   children,
@@ -20,11 +21,60 @@ export default function MyApp({
   const { isOnline, status, showNumber } = useAppSelector(
     (state) => state.feed.network
   );
+  const networkNotification = useAppSelector(
+    (state) => state.feed.network.showNumber
+  );
+  const dispatch = useAppDispatch();
 
   const [showNetWorkError, setshowNetWorkError] = useState<boolean>(false);
   const timeOutId = useRef<string | number | NodeJS.Timeout | undefined>(
     undefined
   );
+
+  useEffect(() => {
+    if (isOnline) {
+    } else {
+    }
+    window.addEventListener("online", () => {
+      dispatch(
+        setNetWorkError({
+          isOnline: true,
+          status: "Your internet connection was restored",
+          showNumber: networkNotification + 1,
+        })
+      );
+    });
+    window.addEventListener("offline", () => {
+      dispatch(
+        setNetWorkError({
+          isOnline: true,
+          status: "You are currently offline",
+          showNumber: networkNotification + 1,
+        })
+      );
+    });
+
+    return () => {
+      window.removeEventListener("online", () => {
+        dispatch(
+          setNetWorkError({
+            isOnline: true,
+            status: "Your internet connection was restored",
+            showNumber: networkNotification + 1,
+          })
+        );
+      });
+      window.removeEventListener("offline", () => {
+        dispatch(
+          setNetWorkError({
+            isOnline: false,
+            status: "You are currently offline",
+            showNumber: networkNotification + 1,
+          })
+        );
+      });
+    };
+  }, [dispatch, isOnline]);
   useEffect(() => {
     if (isPostBoxOpened || isCommentBoxOpened) {
       document.body.style.overflowY = "hidden";
@@ -50,6 +100,7 @@ export default function MyApp({
       clearInterval(id);
     };
   }, [isOnline]);
+
   return (
     <>
       {showNetWorkError && isOnline && status && showNumber > 1 && (

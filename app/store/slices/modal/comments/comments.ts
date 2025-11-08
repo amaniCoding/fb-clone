@@ -1,4 +1,12 @@
-import { CommentType } from "@/app/apis/feed/comments/[feedid]/[page]/lib";
+import { CommentType } from "@/app/apis/feed/comments/[feedid]/[postid]/[page]/lib";
+import {
+  GroupPost,
+  PagePost,
+  PageSharePost,
+  ToGroupSharePost,
+  UserPost,
+  UserSharePost,
+} from "@/app/generated/prisma";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { string } from "zod";
 type commentParams = {
@@ -13,6 +21,14 @@ type commentParams = {
 
 interface commentModalState {
   isOpen: boolean;
+  post:
+    | UserPost
+    | PagePost
+    | GroupPost
+    | UserSharePost
+    | PageSharePost
+    | ToGroupSharePost
+    | undefined;
   id: string | undefined;
   commentsShown: commentParams[];
 }
@@ -23,6 +39,7 @@ type ShowCommentModalPayload = {
 };
 
 const initialState: commentModalState = {
+  post: undefined,
   isOpen: false,
   commentsShown: [],
   id: undefined,
