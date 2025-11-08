@@ -1,11 +1,11 @@
 import prisma from "@/app/libs/prisma";
+
+import { ReactionType } from "@/app/generated/prisma";
 import {
+  getRandomUser,
   getRandomPostComment,
   getRandomReactionType,
-  getRandomUser,
-} from "../libs";
-import { ReactionType } from "@/app/generated/prisma";
-import { promise } from "zod";
+} from "../feeder/libs";
 
 export const _seedUserPost = async () => {
   const ids = await prisma.userPost.findMany({
@@ -126,6 +126,482 @@ export const _seedUserPost = async () => {
       });
     });
     return Promise.all([update1, Promise.all(update2)]);
+  });
+
+  return await Promise.all(UPDATE);
+};
+
+export const _seedPagePost = async () => {
+  const ids = await prisma.pagePost.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  const UPDATE = ids.map(async (id) => {
+    const user = await getRandomUser();
+    const comment = getRandomPostComment();
+    const reply = getRandomPostComment();
+    const reactionType = getRandomReactionType() as ReactionType;
+
+    const medias = await prisma.media.findMany({
+      where: {
+        pagePostId: id.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const update1 = prisma.userPost.update({
+      where: {
+        id: id.id,
+      },
+      data: {
+        comments: {
+          create: {
+            content: comment,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+            reactions: {
+              create: {
+                reactionType,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+            replies: {
+              create: {
+                content: reply,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+        medias: {
+          update: {
+            where: {
+              id: id.id,
+            },
+            data: {
+              comments: {
+                create: {
+                  content: "hell",
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const update2 = medias.map((media) => {
+      return prisma.media.update({
+        where: {
+          id: media.id,
+        },
+        data: {
+          comments: {
+            create: {
+              content: comment,
+              user: {
+                connect: {
+                  id: user.id,
+                },
+              },
+              reactions: {
+                create: {
+                  reactionType,
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+                },
+              },
+              replies: {
+                create: {
+                  content: reply,
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+    return Promise.all([update1, Promise.all(update2)]);
+  });
+
+  return await Promise.all(UPDATE);
+};
+
+export const _seedGroupPost = async () => {
+  const ids = await prisma.groupPost.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  const UPDATE = ids.map(async (id) => {
+    const user = await getRandomUser();
+    const comment = getRandomPostComment();
+    const reply = getRandomPostComment();
+    const reactionType = getRandomReactionType() as ReactionType;
+
+    const medias = await prisma.media.findMany({
+      where: {
+        groupPostId: id.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const update1 = prisma.userPost.update({
+      where: {
+        id: id.id,
+      },
+      data: {
+        comments: {
+          create: {
+            content: comment,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+            reactions: {
+              create: {
+                reactionType,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+            replies: {
+              create: {
+                content: reply,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+        medias: {
+          update: {
+            where: {
+              id: id.id,
+            },
+            data: {
+              comments: {
+                create: {
+                  content: "hell",
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const update2 = medias.map((media) => {
+      return prisma.media.update({
+        where: {
+          id: media.id,
+        },
+        data: {
+          comments: {
+            create: {
+              content: comment,
+              user: {
+                connect: {
+                  id: user.id,
+                },
+              },
+              reactions: {
+                create: {
+                  reactionType,
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+                },
+              },
+              replies: {
+                create: {
+                  content: reply,
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+    return Promise.all([update1, Promise.all(update2)]);
+  });
+
+  return await Promise.all(UPDATE);
+};
+
+export const _seedUserSharePost = async () => {
+  const ids = await prisma.userSharePost.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  const UPDATE = ids.map(async (id) => {
+    const user = await getRandomUser();
+    const comment = getRandomPostComment();
+    const reply = getRandomPostComment();
+    const reactionType = getRandomReactionType() as ReactionType;
+
+    const update1 = prisma.userPost.update({
+      where: {
+        id: id.id,
+      },
+      data: {
+        comments: {
+          create: {
+            content: comment,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+            reactions: {
+              create: {
+                reactionType,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+            replies: {
+              create: {
+                content: reply,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+        medias: {
+          update: {
+            where: {
+              id: id.id,
+            },
+            data: {
+              comments: {
+                create: {
+                  content: "hell",
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return update1;
+  });
+
+  return await Promise.all(UPDATE);
+};
+
+export const _seedPageSharePost = async () => {
+  const ids = await prisma.pageSharePost.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  const UPDATE = ids.map(async (id) => {
+    const user = await getRandomUser();
+    const comment = getRandomPostComment();
+    const reply = getRandomPostComment();
+    const reactionType = getRandomReactionType() as ReactionType;
+
+    const update1 = prisma.userPost.update({
+      where: {
+        id: id.id,
+      },
+      data: {
+        comments: {
+          create: {
+            content: comment,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+            reactions: {
+              create: {
+                reactionType,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+            replies: {
+              create: {
+                content: reply,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+        medias: {
+          update: {
+            where: {
+              id: id.id,
+            },
+            data: {
+              comments: {
+                create: {
+                  content: "hell",
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return update1;
+  });
+
+  return await Promise.all(UPDATE);
+};
+
+export const _seedToGroupSharePost = async () => {
+  const ids = await prisma.toGroupSharePost.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  const UPDATE = ids.map(async (id) => {
+    const user = await getRandomUser();
+    const comment = getRandomPostComment();
+    const reply = getRandomPostComment();
+    const reactionType = getRandomReactionType() as ReactionType;
+
+    const update1 = prisma.userPost.update({
+      where: {
+        id: id.id,
+      },
+      data: {
+        comments: {
+          create: {
+            content: comment,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+            reactions: {
+              create: {
+                reactionType,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+            replies: {
+              create: {
+                content: reply,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+        medias: {
+          update: {
+            where: {
+              id: id.id,
+            },
+            data: {
+              comments: {
+                create: {
+                  content: "hell",
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return update1;
   });
 
   return await Promise.all(UPDATE);
