@@ -22,6 +22,8 @@ export default function Lower({ post, refFrom, feedId }: TypeProps) {
         isOpen: true,
         post: post,
         id: `${feedId}${post.id}`,
+        // add slash page next
+        urlStart: `/apis/feed/comments/${feedId}/${post.id}`,
       })
     );
   };

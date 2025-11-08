@@ -7,18 +7,10 @@ import {
   UserPostType,
   UserSharePostType,
 } from "@/app/apis/feeder/[page]/lib";
-import {
-  GroupPost,
-  PagePost,
-  PageSharePost,
-  ToGroupSharePost,
-  UserPost,
-  UserSharePost,
-} from "@/app/generated/prisma";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { string } from "zod";
 type commentParams = {
   id?: string;
+  url?: string;
   loading?: boolean;
   page?: number;
   error?: string;
@@ -52,6 +44,7 @@ type ShowCommentModalPayload = {
     | undefined;
   id: string;
   isOpen: boolean;
+  urlStart: string;
 };
 
 const initialState: commentModalState = {
@@ -89,6 +82,7 @@ export const commentModalSlice = createSlice({
           error: undefined,
           totalRows: 0,
           totalPages: 0,
+          url: action.payload.urlStart,
           comments: [],
         });
       }
