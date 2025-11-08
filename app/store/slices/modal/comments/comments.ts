@@ -1,5 +1,13 @@
 import { CommentType } from "@/app/apis/feed/comments/[feedid]/[postid]/[page]/lib";
 import {
+  GroupPostType,
+  PagePostType,
+  PageSharePostType,
+  ToGroupSharePostType,
+  UserPostType,
+  UserSharePostType,
+} from "@/app/apis/feeder/[page]/lib";
+import {
   GroupPost,
   PagePost,
   PageSharePost,
@@ -22,18 +30,26 @@ type commentParams = {
 interface commentModalState {
   isOpen: boolean;
   post:
-    | UserPost
-    | PagePost
-    | GroupPost
-    | UserSharePost
-    | PageSharePost
-    | ToGroupSharePost
+    | UserPostType
+    | PagePostType
+    | GroupPostType
+    | UserSharePostType
+    | PageSharePostType
+    | ToGroupSharePostType
     | undefined;
   id: string | undefined;
   commentsShown: commentParams[];
 }
 
 type ShowCommentModalPayload = {
+  post:
+    | UserPostType
+    | PagePostType
+    | GroupPostType
+    | UserSharePostType
+    | PageSharePostType
+    | ToGroupSharePostType
+    | undefined;
   id: string;
   isOpen: boolean;
 };
@@ -58,6 +74,7 @@ export const commentModalSlice = createSlice({
       state,
       action: PayloadAction<ShowCommentModalPayload>
     ) => {
+      state.post = action.payload.post;
       state.isOpen = action.payload.isOpen;
       state.id = action.payload.id;
       const currentComment = state.commentsShown.find(

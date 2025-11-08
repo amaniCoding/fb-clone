@@ -11,7 +11,6 @@ import {
   updatePage,
   setFeeds,
   setLoading,
-  setNetWorkError,
   FeedResponseType,
 } from "@/app/store/slices/feed/feed";
 

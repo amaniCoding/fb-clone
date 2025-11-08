@@ -1,10 +1,10 @@
 "use client";
-import Grid2 from "./meidas/grid-2";
-import Grid3 from "./meidas/grid-3";
-import Grid4 from "./meidas/grid-4";
-import Grid5 from "./meidas/grid-5";
-import GridMore from "./meidas/grid-more";
-import { UploadedMediasTypes } from "./meidas/types";
+import Grid2 from "../meidas/grid-2";
+import Grid3 from "../meidas/grid-3";
+import Grid4 from "../meidas/grid-4";
+import Grid5 from "../meidas/grid-5";
+import GridMore from "../meidas/grid-more";
+import { UploadedMediasTypes } from "../meidas/types";
 
 export default function Medias({ medias }: UploadedMediasTypes) {
   return (

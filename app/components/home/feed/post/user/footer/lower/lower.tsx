@@ -2,29 +2,26 @@
 import Image from "next/image";
 import { useAppDispatch } from "@/app/store/hooks";
 import { useRef, useState } from "react";
-import ReactionBox from "../../reactionbox";
-import { showCommentModal } from "@/app/store/slices/post/post";
-import { setPost } from "@/app/store/slices/commentmodal/post";
-import { PostsUser } from "../../../types";
-import { FeedsType } from "@/app/apis/feeder/[page]/libs/feed";
-import { openCommentModal } from "@/app/store/slices/feed/feed";
+import ReactionBox from "../../../reactionbox";
+import { UserPostType } from "@/app/apis/feeder/[page]/lib";
+import { showCommentModal } from "@/app/store/slices/modal/comments/comments";
 
-export default function Lower({
-  post,
-  refFrom,
-}: {
-  post: FeedsType | undefined;
+type TypeProps = {
+  post: UserPostType;
   refFrom: string;
-}) {
+  feedId: string;
+};
+export default function Lower({ post, refFrom, feedId }: TypeProps) {
   const dispatch = useAppDispatch();
   const [toShowReactionBox, setToShowReactionBox] = useState<boolean>(false);
   const timeOutId = useRef<NodeJS.Timeout>(null);
 
   const _showCommentModal = () => {
     dispatch(
-      openCommentModal({
+      showCommentModal({
         isOpen: true,
-        post,
+        post: post,
+        id: `${feedId}${post.id}`,
       })
     );
   };

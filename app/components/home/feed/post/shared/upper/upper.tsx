@@ -1,12 +1,34 @@
 "use client";
 import Image from "next/image";
 import { UpperFooter } from "./types";
+import { ReactionType } from "@/app/generated/prisma";
+type PropTypes = {
+  commentsCount: number | undefined;
+  reactionsCount: number | undefined;
+  groupedReactions:
+    | {
+        reactionType: ReactionType;
+        count: number;
+      }[]
+    | undefined;
+  firstReactions:
+    | {
+        user: {
+          firstName: string;
+          lastName: string;
+          Profile: {
+            profilePicture: string | null;
+          } | null;
+        };
+      }[]
+    | undefined;
+};
 export default function Upper({
   commentsCount,
   reactionsCount,
   groupedReactions,
   firstReactions,
-}: UpperFooter) {
+}: PropTypes) {
   const newRxn = groupedReactions
     ? [...groupedReactions].sort((a, b) => b.count - a.count)
     : [];
@@ -14,7 +36,7 @@ export default function Upper({
   return (
     <div className="px-3 py-2">
       <div className="flex items-center justify-between border-b border-b-gray-300 pb-2">
-        {reactionsCount > 0 && (
+        {reactionsCount && reactionsCount > 0 && (
           <div className="flex items-center space-x-1 fill-gray-500">
             <div className="flex items-center -space-x-1.5">
               {newRxn_x.map((rxn, index) => (
@@ -33,7 +55,7 @@ export default function Upper({
           </div>
         )}
         <div className="flex items-center space-x-3">
-          {commentsCount > 0 && (
+          {commentsCount && commentsCount > 0 && (
             <div className="flex items-center space-x-1  rounded-md ">
               <span>{commentsCount}</span>
               <Image

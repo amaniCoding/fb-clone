@@ -8,9 +8,9 @@ export default function Header({
   lastName,
   date,
 }: {
-  firstName: string;
-  lastName: string;
-  date: string;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  date: string | undefined;
 }) {
   return (
     <div className="flex items-center justify-between px-3 pt-3">

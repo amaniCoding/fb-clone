@@ -30,6 +30,17 @@ export const getFeeds = async (page: number) => {
     include: {
       userPost: {
         include: {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              Profile: {
+                select: {
+                  profilePicture: true,
+                },
+              },
+            },
+          },
           medias: {
             include: {
               reactions: {
@@ -223,6 +234,11 @@ export const getFeeds = async (page: number) => {
             },
             take: 1,
           },
+          page: {
+            select: {
+              name: true,
+            },
+          },
         },
       },
       groupPost: {
@@ -236,6 +252,12 @@ export const getFeeds = async (page: number) => {
                   profilePicture: true,
                 },
               },
+            },
+          },
+          group: {
+            select: {
+              name: true,
+              createdAt: true,
             },
           },
           medias: {
@@ -712,4 +734,16 @@ export const getFeeds = async (page: number) => {
 
 const feeds = await getFeeds(1);
 const feed = feeds.updated[0];
+const userpost = feed.userPost;
+const pagepost = feed.pagePost;
+const grouppost = feed.groupPost;
+const usersharepost = feed.userSharePost;
+const pagesharepost = feed.pageSharePost;
+const togroupsharepost = feed.toGroupSharePost;
 export type FeedsType = typeof feed;
+export type UserPostType = typeof userpost;
+export type PagePostType = typeof pagepost;
+export type GroupPostType = typeof grouppost;
+export type UserSharePostType = typeof usersharepost;
+export type PageSharePostType = typeof pagesharepost;
+export type ToGroupSharePostType = typeof togroupsharepost;
