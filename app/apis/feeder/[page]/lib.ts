@@ -1,6 +1,6 @@
 import prisma from "@/app/libs/prisma";
 
-const prepareGReactions = async (id: string) => {
+const prepareGReactions = async (id: string | undefined) => {
   try {
     const r = await prisma.reaction.groupBy({
       by: ["reactionType"],
@@ -30,57 +30,67 @@ export const getFeeds = async (page: number) => {
     include: {
       userPost: {
         include: {
-          user: {
-            select: {
-              firstName: true,
-              lastName: true,
-              Profile: {
-                select: {
-                  profilePicture: true,
-                },
-              },
-            },
-          },
-          medias: {
+          oUserPost: {
             include: {
-              reactions: {
+              user: {
                 select: {
-                  user: {
+                  firstName: true,
+                  lastName: true,
+                  Profile: {
                     select: {
-                      firstName: true,
-                      lastName: true,
-                      Profile: {
-                        select: {
-                          profilePicture: true,
-                        },
-                      },
+                      profilePicture: true,
                     },
                   },
                 },
-                orderBy: {
-                  createdAt: "desc",
-                },
-                take: 1,
               },
-
-              comments: {
+              medias: {
                 include: {
-                  user: {
+                  reactions: {
                     select: {
-                      firstName: true,
-                      lastName: true,
-                      Profile: {
+                      user: {
                         select: {
-                          profilePicture: true,
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
                         },
                       },
                     },
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
+                  },
+
+                  comments: {
+                    include: {
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
+                  },
+                  _count: {
+                    select: {
+                      comments: true,
+                      reactions: true,
+                    },
                   },
                 },
-                orderBy: {
-                  createdAt: "desc",
-                },
-                take: 1,
               },
               _count: {
                 select: {
@@ -90,34 +100,7 @@ export const getFeeds = async (page: number) => {
               },
             },
           },
-          _count: {
-            select: {
-              comments: true,
-              reactions: true,
-            },
-          },
-
-          reactions: {
-            select: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-
-          comments: {
+          userSharePost: {
             include: {
               user: {
                 select: {
@@ -130,56 +113,73 @@ export const getFeeds = async (page: number) => {
                   },
                 },
               },
+              _count: {
+                select: {
+                  comments: true,
+                  reactions: true,
+                },
+              },
             },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
           },
         },
       },
       pagePost: {
         include: {
-          medias: {
+          oPagePost: {
             include: {
-              reactions: {
+              page: {
                 select: {
-                  user: {
-                    select: {
-                      firstName: true,
-                      lastName: true,
-                      Profile: {
-                        select: {
-                          profilePicture: true,
-                        },
-                      },
-                    },
-                  },
+                  name: true,
                 },
-                orderBy: {
-                  createdAt: "desc",
-                },
-                take: 1,
               },
-
-              comments: {
+              medias: {
                 include: {
-                  user: {
+                  reactions: {
                     select: {
-                      firstName: true,
-                      lastName: true,
-                      Profile: {
+                      user: {
                         select: {
-                          profilePicture: true,
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
                         },
                       },
                     },
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
+                  },
+
+                  comments: {
+                    include: {
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
+                  },
+                  _count: {
+                    select: {
+                      comments: true,
+                      reactions: true,
+                    },
                   },
                 },
-                orderBy: {
-                  createdAt: "desc",
-                },
-                take: 1,
               },
               _count: {
                 select: {
@@ -189,117 +189,92 @@ export const getFeeds = async (page: number) => {
               },
             },
           },
-          _count: {
-            select: {
-              comments: true,
-              reactions: true,
-            },
-          },
-          reactions: {
-            select: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-
-          comments: {
+          pageSharePost: {
             include: {
-              user: {
+              page: {
                 select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
+                  name: true,
                 },
               },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-          page: {
-            select: {
-              name: true,
+              _count: {
+                select: {
+                  comments: true,
+                  reactions: true,
+                },
+              },
             },
           },
         },
       },
       groupPost: {
         include: {
-          user: {
-            select: {
-              firstName: true,
-              lastName: true,
-              Profile: {
-                select: {
-                  profilePicture: true,
-                },
-              },
-            },
-          },
-          group: {
-            select: {
-              name: true,
-              createdAt: true,
-            },
-          },
-          medias: {
+          oGroupPost: {
             include: {
-              reactions: {
+              user: {
                 select: {
-                  user: {
+                  firstName: true,
+                  lastName: true,
+                  Profile: {
                     select: {
-                      firstName: true,
-                      lastName: true,
-                      Profile: {
-                        select: {
-                          profilePicture: true,
-                        },
-                      },
+                      profilePicture: true,
                     },
                   },
                 },
-                orderBy: {
-                  createdAt: "desc",
-                },
-                take: 1,
               },
 
-              comments: {
+              group: {
+                select: {
+                  name: true,
+                },
+              },
+              medias: {
                 include: {
-                  user: {
+                  reactions: {
                     select: {
-                      firstName: true,
-                      lastName: true,
-                      Profile: {
+                      user: {
                         select: {
-                          profilePicture: true,
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
                         },
                       },
                     },
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
+                  },
+
+                  comments: {
+                    include: {
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
+                  },
+                  _count: {
+                    select: {
+                      comments: true,
+                      reactions: true,
+                    },
                   },
                 },
-                orderBy: {
-                  createdAt: "desc",
-                },
-                take: 1,
               },
               _count: {
                 select: {
@@ -309,28 +284,7 @@ export const getFeeds = async (page: number) => {
               },
             },
           },
-
-          reactions: {
-            select: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-
-          comments: {
+          toGroupSharedPost: {
             include: {
               user: {
                 select: {
@@ -343,336 +297,17 @@ export const getFeeds = async (page: number) => {
                   },
                 },
               },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-          _count: {
-            select: {
-              comments: true,
-              reactions: true,
-            },
-          },
-        },
-      },
-      userSharePost: {
-        include: {
-          user: {
-            select: {
-              firstName: true,
-              lastName: true,
-              Profile: {
-                select: {
-                  profilePicture: true,
-                },
-              },
-            },
-          },
-          userPost: {
-            include: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          pagePost: {
-            include: {
               page: {
                 select: {
                   name: true,
                 },
               },
-            },
-          },
-
-          groupPost: {
-            include: {
-              group: {
+              _count: {
                 select: {
-                  name: true,
+                  comments: true,
+                  reactions: true,
                 },
               },
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          _count: {
-            select: {
-              comments: true,
-              reactions: true,
-            },
-          },
-          reactions: {
-            select: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-
-          comments: {
-            include: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-        },
-      },
-      pageSharePost: {
-        include: {
-          page: {
-            select: {
-              name: true,
-            },
-          },
-          userPost: {
-            include: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          pagePost: {
-            include: {
-              page: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-
-          groupPost: {
-            include: {
-              group: {
-                select: {
-                  name: true,
-                },
-              },
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          _count: {
-            select: {
-              comments: true,
-              reactions: true,
-            },
-          },
-          reactions: {
-            select: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-
-          comments: {
-            include: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-        },
-      },
-      toGroupSharePost: {
-        include: {
-          page: {
-            select: {
-              name: true,
-            },
-          },
-          user: {
-            select: {
-              firstName: true,
-              lastName: true,
-              Profile: {
-                select: {
-                  profilePicture: true,
-                },
-              },
-            },
-          },
-
-          group: {
-            select: {
-              name: true,
-            },
-          },
-          userPost: {
-            include: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          pagePost: {
-            include: {
-              page: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-
-          groupPost: {
-            include: {
-              group: {
-                select: {
-                  name: true,
-                },
-              },
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          reactions: {
-            select: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-
-          comments: {
-            include: {
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1,
-          },
-          _count: {
-            select: {
-              comments: true,
-              reactions: true,
             },
           },
         },
@@ -686,41 +321,43 @@ export const getFeeds = async (page: number) => {
       ...feed,
       userPost: {
         ...feed.userPost,
-        _gReactions: feed.userPost
-          ? await prepareGReactions(feed.userPost.id)
-          : [],
+        oUserPost: {
+          ...feed.userPost?.oUserPost,
+          _gReactions: await prepareGReactions(feed?.userPost?.oUserPost?.id),
+        },
+        userSharePost: {
+          ...feed.userPost?.userSharePost,
+          _gReactions: await prepareGReactions(
+            feed?.userPost?.userSharePost?.id
+          ),
+        },
       },
       pagePost: {
         ...feed.pagePost,
-        _gReactions: feed.pagePost
-          ? await prepareGReactions(feed.pagePost.id)
-          : [],
+        oPagePost: {
+          ...feed.pagePost?.oPagePost,
+          _gReactions: await prepareGReactions(feed?.pagePost?.oPagePost?.id),
+        },
+        pageSharePost: {
+          ...feed.pagePost?.pageSharePost,
+          _gReactions: await prepareGReactions(
+            feed?.pagePost?.pageSharePost?.id
+          ),
+        },
       },
       groupPost: {
         ...feed.groupPost,
-        _gReactions: feed.groupPost
-          ? await prepareGReactions(feed.groupPost.id)
-          : [],
+        oGroupPost: {
+          ...feed.groupPost?.oGroupPost,
+          _gReactions: await prepareGReactions(feed?.groupPost?.oGroupPost?.id),
+        },
+        toGroupSharedPost: {
+          ...feed.groupPost?.toGroupSharedPost,
+          _gReactions: await prepareGReactions(
+            feed?.groupPost?.toGroupSharedPost?.id
+          ),
+        },
       },
-      userSharePost: {
-        ...feed.userSharePost,
-        _gReactions: feed.userSharePost
-          ? await prepareGReactions(feed.userSharePost.id)
-          : [],
-      },
-      pageSharePost: {
-        ...feed.pageSharePost,
-        _gReactions: feed.pageSharePost
-          ? await prepareGReactions(feed.pageSharePost.id)
-          : [],
-      },
-      toGroupSharePost: {
-        ...feed.toGroupSharePost,
-        _gReactions: feed.toGroupSharePost
-          ? await prepareGReactions(feed.toGroupSharePost.id)
-          : [],
-      },
-      _gReactions: await prepareGReactions(feed.id),
     };
   });
 
@@ -734,16 +371,18 @@ export const getFeeds = async (page: number) => {
 
 const feeds = await getFeeds(1);
 const feed = feeds.updated[0];
-const userpost = feed.userPost;
-const pagepost = feed.pagePost;
-const grouppost = feed.groupPost;
-const usersharepost = feed.userSharePost;
-const pagesharepost = feed.pageSharePost;
-const togroupsharepost = feed.toGroupSharePost;
+const oUserpost = feed.userPost.oUserPost;
+const userSharePost = feed.userPost.userSharePost;
+const oPagepost = feed.pagePost;
+const pageSharePost = feed.pagePost.pageSharePost;
+const oGrouppost = feed.groupPost;
+const toGroupSharedPost = feed.groupPost.toGroupSharedPost;
+
 export type FeedsType = typeof feed;
-export type UserPostType = typeof userpost;
-export type PagePostType = typeof pagepost;
-export type GroupPostType = typeof grouppost;
-export type UserSharePostType = typeof usersharepost;
-export type PageSharePostType = typeof pagesharepost;
-export type ToGroupSharePostType = typeof togroupsharepost;
+export type OriginalUserPostType = typeof oUserpost;
+export type OriginalPagePostType = typeof oPagepost;
+export type OriginalGroupPostType = typeof oGrouppost;
+
+export type UserSharePostType = typeof userSharePost;
+export type PageSharePostType = typeof pageSharePost;
+export type ToGroupSharePostType = typeof toGroupSharedPost;

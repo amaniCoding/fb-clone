@@ -1,12 +1,18 @@
-import { CommentType } from "@/app/apis/feed/comments/[feedid]/[postid]/[page]/lib";
+import { CommentType } from "@/app/apis/feed/comments/[feedid]/[posttype]/[page]/lib";
 import {
-  GroupPostType,
-  PagePostType,
+  OriginalUserPostType,
+  OriginalPagePostType,
+  OriginalGroupPostType,
+  UserSharePostType,
   PageSharePostType,
   ToGroupSharePostType,
-  UserPostType,
-  UserSharePostType,
 } from "@/app/apis/feeder/[page]/lib";
+import {
+  UserPostType,
+  PagePostType,
+  GroupPostType,
+} from "@/app/generated/prisma";
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type commentParams = {
   id?: string;
@@ -22,9 +28,9 @@ type commentParams = {
 interface commentModalState {
   isOpen: boolean;
   post:
-    | UserPostType
-    | PagePostType
-    | GroupPostType
+    | OriginalUserPostType
+    | OriginalPagePostType
+    | OriginalGroupPostType
     | UserSharePostType
     | PageSharePostType
     | ToGroupSharePostType
@@ -35,9 +41,9 @@ interface commentModalState {
 
 type ShowCommentModalPayload = {
   post:
-    | UserPostType
-    | PagePostType
-    | GroupPostType
+    | OriginalUserPostType
+    | OriginalPagePostType
+    | OriginalGroupPostType
     | UserSharePostType
     | PageSharePostType
     | ToGroupSharePostType
@@ -97,7 +103,10 @@ export const commentModalSlice = createSlice({
       }
     },
 
-    setComments: (state, action: PayloadAction<{ comments: CommentType }>) => {
+    setComments: (
+      state,
+      action: PayloadAction<{ comments: CommentType[] }>
+    ) => {
       const currentComment = state.commentsShown.find(
         (comment) => comment.id === state.id
       );

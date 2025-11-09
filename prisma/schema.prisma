@@ -43,13 +43,25 @@ enum SuperAudinece {
   customList
 }
 
-enum PostType {
+enum FeedPostType {
   user
   group
   page
-  ushare
-  gshare
-  pshare
+}
+
+enum UserPostType {
+  original
+  share
+}
+
+enum PagePostType {
+  original
+  share
+}
+
+enum GroupPostType {
+  original
+  share
 }
 
 enum ShareType {
@@ -102,7 +114,7 @@ model User {
 
   //groups
   memberedGroups     GroupMembers[]
-  groupPosts         GroupPost[]
+  groupPosts         OGroupPost[]
   sharedPostsToGroup ToGroupSharePost[]
   superAdminTo       Group?
   adminTo            GroupAdmin[]
@@ -113,7 +125,7 @@ model User {
   followedPages UserPageFollow[]
   managedPages  Page[]
   //post
-  ownPosts      UserPost[]       @relation("userposts")
+  ownPosts      OUserPost[]      @relation("userposts")
 
   //shares
   sharedPosts              UserSharePost[]
@@ -168,9 +180,18 @@ model User {
 }
 
 model UserPost {
-  id   String @id @unique @default(uuid())
-  feed Feed?
+  id              String         @id @default(uuid())
+  feed            Feed?
+  postType        UserPostType
+  oUserPostId     String?        @unique
+  userSharePostId String?        @unique
+  oUserPost       OUserPost?     @relation(fields: [oUserPostId], references: [id])
+  userSharePost   UserSharePost? @relation(fields: [userSharePostId], references: [id])
+}
 
+model OUserPost {
+  id            String             @id @unique @default(uuid())
+  userPost      UserPost?
   userId        String
   user          User               @relation("userposts", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   content       String?
@@ -200,28 +221,28 @@ model UserFollow {
 }
 
 model UserSharePost {
-  id     String @id @default(uuid())
-  feed   Feed?
-  userId String
+  id       String    @id @default(uuid())
+  userPost UserPost?
+  userId   String
 
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  tags        Tags[]
-  shareWhat   ShareType
-  content     String?
-  doing       String?
-  doingWhat   String?
-  audience    Audinece   @default(friends)
-  location    String?
-  userPostId  String?
-  pagePostId  String?
-  groupPostId String?
-  mediaId     String?
-  media       Media?     @relation(fields: [mediaId], references: [id])
-  userPost    UserPost?  @relation(fields: [userPostId], references: [id])
-  pagePost    PagePost?  @relation(fields: [pagePostId], references: [id])
-  groupPost   GroupPost? @relation(fields: [groupPostId], references: [id])
-  comments    Comment[]
-  reactions   Reaction[]
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tags         Tags[]
+  shareWhat    ShareType
+  content      String?
+  doing        String?
+  doingWhat    String?
+  audience     Audinece    @default(friends)
+  location     String?
+  oUserPostId  String?
+  oPagePostId  String?
+  oGroupPostId String?
+  mediaId      String?
+  media        Media?      @relation(fields: [mediaId], references: [id])
+  oUserPost    OUserPost?  @relation(fields: [oUserPostId], references: [id])
+  oPagePost    OPagePost?  @relation(fields: [oPagePostId], references: [id])
+  oGroupPost   OGroupPost? @relation(fields: [oGroupPostId], references: [id])
+  comments     Comment[]
+  reactions    Reaction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -232,7 +253,7 @@ model Tags {
   userPostId      String?
   userSharePostId String?
   userId          String
-  userPost        UserPost?      @relation(fields: [userPostId], references: [id])
+  userPost        OUserPost?     @relation(fields: [userPostId], references: [id])
   userSharePost   UserSharePost? @relation(fields: [userSharePostId], references: [id])
   user            User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt       DateTime       @default(now())
@@ -378,7 +399,7 @@ model Group {
   name        String
   category    String?
   members     GroupMembers[]
-  posts       GroupPost[]
+  posts       OGroupPost[]
   rules       GroupRules[]
   moderators  GroupModerator[]
   admins      GroupAdmin[]
@@ -388,9 +409,18 @@ model Group {
 }
 
 model GroupPost {
-  id String @id @default(uuid())
+  id                 String            @id @default(uuid())
+  feed               Feed?
+  postType           GroupPostType
+  oGroupPostId       String?           @unique
+  toGroupSharePostId String?           @unique
+  oGroupPost         OGroupPost?       @relation(fields: [oGroupPostId], references: [id])
+  toGroupSharedPost  ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id])
+}
 
-  feed          Feed?
+model OGroupPost {
+  id            String             @id @default(uuid())
+  groupPost     GroupPost?
   userId        String
   groupId       String
   user          User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -413,28 +443,27 @@ model GroupPost {
 }
 
 model ToGroupSharePost {
-  id   String @id @default(uuid())
-  feed Feed?
-
-  userId      String?
-  pageId      String?
-  page        Page?      @relation(fields: [pageId], references: [id])
-  user        User?      @relation(fields: [userId], references: [id])
-  groupId     String
-  group       Group      @relation(fields: [groupId], references: [id])
-  shareWhat   ShareType
-  content     String?
-  doing       String?
-  doingWhat   String?
-  location    String?
-  userPostId  String?
-  pagePostId  String?
-  groupPostId String?
-  mediaId     String?
-  media       Media?     @relation(fields: [mediaId], references: [id])
-  userPost    UserPost?  @relation(fields: [userPostId], references: [id])
-  pagePost    PagePost?  @relation(fields: [pagePostId], references: [id])
-  groupPost   GroupPost? @relation(fields: [groupPostId], references: [id])
+  id           String      @id @default(uuid())
+  groupPost    GroupPost?
+  userId       String?
+  pageId       String?
+  page         Page?       @relation(fields: [pageId], references: [id])
+  user         User?       @relation(fields: [userId], references: [id])
+  groupId      String
+  group        Group       @relation(fields: [groupId], references: [id])
+  shareWhat    ShareType
+  content      String?
+  doing        String?
+  doingWhat    String?
+  location     String?
+  oUserPostId  String?
+  oPagePostId  String?
+  oGroupPostId String?
+  mediaId      String?
+  media        Media?      @relation(fields: [mediaId], references: [id])
+  oUserPost    OUserPost?  @relation(fields: [oUserPostId], references: [id])
+  oPagePost    OPagePost?  @relation(fields: [oPagePostId], references: [id])
+  oGroupPost   OGroupPost? @relation(fields: [oGroupPostId], references: [id])
 
   comments  Comment[]
   reactions Reaction[]
@@ -490,7 +519,7 @@ model Page {
   userId             String
   admin              User               @relation(fields: [userId], references: [id], onUpdate: Cascade)
   stories            Story[]
-  posts              PagePost[]
+  posts              OPagePost[]
   sharedPosts        PageSharePost[]
   sharedPostsToGroup ToGroupSharePost[]
   pageFollowings     PageFollow[]       @relation("followingpages")
@@ -504,9 +533,19 @@ model Page {
 }
 
 model PagePost {
-  id String @id @default(uuid())
+  id       String       @id @default(uuid())
+  feed     Feed?
+  postType PagePostType
 
-  feed          Feed?
+  oPagePostId     String?        @unique
+  pageSharePostId String?        @unique
+  oPagePost       OPagePost?     @relation(fields: [oPagePostId], references: [id])
+  pageSharePost   PageSharePost? @relation(fields: [pageSharePostId], references: [id])
+}
+
+model OPagePost {
+  id            String             @id @default(uuid())
+  pagePost      PagePost?
   pageId        String
   page          Page               @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   content       String?
@@ -525,30 +564,30 @@ model PagePost {
 }
 
 model PageSharePost {
-  id   String @id @default(uuid())
-  feed Feed?
+  id       String    @id @default(uuid())
+  pagePost PagePost?
 
   pageId String
   page   Page   @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  shareWhat   ShareType
-  content     String?
-  doing       String?
-  doingWhat   String?
-  audience    Audinece?
-  location    String?
-  userPostId  String?
-  pagePostId  String?
-  groupPostId String?
-  mediaId     String?
-  media       Media?     @relation(fields: [mediaId], references: [id])
-  userPost    UserPost?  @relation(fields: [userPostId], references: [id])
-  pagePost    PagePost?  @relation(fields: [pagePostId], references: [id])
-  groupPost   GroupPost? @relation(fields: [groupPostId], references: [id])
-  comments    Comment[]
-  reactions   Reaction[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  shareWhat    ShareType
+  content      String?
+  doing        String?
+  doingWhat    String?
+  audience     Audinece?
+  location     String?
+  oUserPostId  String?
+  oPagePostId  String?
+  oGroupPostId String?
+  mediaId      String?
+  media        Media?      @relation(fields: [mediaId], references: [id])
+  oUserPost    OUserPost?  @relation(fields: [oUserPostId], references: [id])
+  oPagePost    OPagePost?  @relation(fields: [oPagePostId], references: [id])
+  oGroupPost   OGroupPost? @relation(fields: [oGroupPostId], references: [id])
+  comments     Comment[]
+  reactions    Reaction[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 model UserPageFollow {
@@ -584,9 +623,9 @@ model Media {
   pagePostId    String?
   groupPostId   String?
   feedId        String?
-  userPost      UserPost?          @relation(fields: [userPostId], references: [id])
-  pagePost      PagePost?          @relation(fields: [pagePostId], references: [id])
-  groupPost     GroupPost?         @relation(fields: [groupPostId], references: [id])
+  userPost      OUserPost?         @relation(fields: [userPostId], references: [id])
+  pagePost      OPagePost?         @relation(fields: [pagePostId], references: [id])
+  groupPost     OGroupPost?        @relation(fields: [groupPostId], references: [id])
   url           String
   type          MediaType
   sharesByUser  UserSharePost[]
@@ -689,22 +728,17 @@ model StoryMedia {
  */
 
 model Feed {
-  id                 String            @id @default(uuid())
-  postType           PostType
-  userPostId         String?           @unique
-  pagePostId         String?           @unique
-  groupPostId        String?           @unique
-  userSharePostId    String?           @unique
-  pageSharePostId    String?           @unique
-  toGroupSharePostId String?           @unique
-  userPost           UserPost?         @relation(fields: [userPostId], references: [id])
-  pagePost           PagePost?         @relation(fields: [pagePostId], references: [id])
-  groupPost          GroupPost?        @relation(fields: [groupPostId], references: [id])
-  userSharePost      UserSharePost?    @relation(fields: [userSharePostId], references: [id])
-  pageSharePost      PageSharePost?    @relation(fields: [pageSharePostId], references: [id])
-  toGroupSharePost   ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id])
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  id          String       @id @default(uuid())
+  postType    FeedPostType
+  userPostId  String?      @unique
+  pagePostId  String?      @unique
+  groupPostId String?      @unique
+
+  userPost  UserPost?  @relation(fields: [userPostId], references: [id])
+  pagePost  PagePost?  @relation(fields: [pagePostId], references: [id])
+  groupPost GroupPost? @relation(fields: [groupPostId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model Comment {
@@ -719,9 +753,9 @@ model Comment {
   userSharePostId    String?
   pageSharePostId    String?
   toGroupSharePostId String?
-  userPost           UserPost?         @relation(fields: [userPostId], references: [id])
-  pagePost           PagePost?         @relation(fields: [pagePostId], references: [id])
-  groupPost          GroupPost?        @relation(fields: [groupPostId], references: [id])
+  userPost           OUserPost?        @relation(fields: [userPostId], references: [id])
+  pagePost           OPagePost?        @relation(fields: [pagePostId], references: [id])
+  groupPost          OGroupPost?       @relation(fields: [groupPostId], references: [id])
   userSharePost      UserSharePost?    @relation(fields: [userSharePostId], references: [id])
   pageSharePost      PageSharePost?    @relation(fields: [pageSharePostId], references: [id])
   toGroupSharePost   ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id])
@@ -744,9 +778,9 @@ model Reaction {
   userSharePostId    String?
   pageSharePostId    String?
   toGroupSharePostId String?
-  userPost           UserPost?         @relation(fields: [userPostId], references: [id])
-  pagePost           PagePost?         @relation(fields: [pagePostId], references: [id])
-  groupPost          GroupPost?        @relation(fields: [groupPostId], references: [id])
+  userPost           OUserPost?        @relation(fields: [userPostId], references: [id])
+  pagePost           OPagePost?        @relation(fields: [pagePostId], references: [id])
+  groupPost          OGroupPost?       @relation(fields: [groupPostId], references: [id])
   userSharePost      UserSharePost?    @relation(fields: [userSharePostId], references: [id])
   pageSharePost      PageSharePost?    @relation(fields: [pageSharePostId], references: [id])
   toGroupSharePost   ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id])

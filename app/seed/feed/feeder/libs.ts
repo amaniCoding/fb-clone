@@ -3,21 +3,60 @@ import prisma from "@/app/libs/prisma";
 import { dummyTexts, dummyComments, reactionTypes } from "../../dummy";
 
 const sharedPostTypes = ["user", "page", "group", "media"];
-const originalPostTypes = ["user", "page", "group"];
+
 const postContentOption = ["contentonly", "mediasonly", "both"];
-export const feedTypes = [
-  "user",
-  "page",
-  "group",
-  "ushare",
-  "pshare",
-  "gshare",
-];
+
+const feedTypes = ["user", "page", "group"];
+const userPostTypes = ["original", "share"];
+const pagePostTypes = ["original", "share"];
+const groupPostTypes = ["original", "share"];
+
+const postMediaTypes = ["user", "page", "group"];
+
 const toGroupSharerTypes = ["user", "page"];
-const addedContentForShareTypes = ["content", "nocontent"];
+const addedContentForSharePostTypes = ["content", "nocontent"];
+/**
+ * seed
+ * 
+ * export const getRandomPostComment = () => {
+  const rIndex = getRandomNumber(dummyComments.length, 0);
+  return dummyComments[rIndex];
+};
+
+export const getRandomReactionType = () => {
+  const rIndex = getRandomNumber(reactionTypes.length, 0);
+  return reactionTypes[rIndex];
+};
+ */
 
 const getRandomNumber = (num: number, from: number) => {
   return Math.floor(Math.random() * num) + from;
+};
+
+const getRandomFeedType = () => {
+  const rIndex = getRandomNumber(feedTypes.length, 0);
+  return feedTypes[rIndex] as "user" | "page" | "group";
+};
+
+const getRandomPostType = () => {
+  const rIndex = getRandomNumber(userPostTypes.length, 0);
+  return userPostTypes[rIndex] as "original" | "share";
+};
+
+const getPostMediaType = () => {
+  const rIndex = getRandomNumber(postMediaTypes.length, 0);
+  return postMediaTypes[rIndex] as "user" | "page" | "group";
+};
+
+const getRandomSharedPostType = () => {
+  const rIndex = getRandomNumber(3, 0);
+  return sharedPostTypes[rIndex];
+};
+
+const getRandomSharer = async () => {
+  const rIndex = getRandomNumber(2, 0);
+  const sharer = toGroupSharerTypes[rIndex] as "user" | "page";
+  return sharer;
 };
 
 const getUsers = async () => {
@@ -54,22 +93,11 @@ const getRandomGroup = async () => {
   return groups[rIndex];
 };
 
-const getRandomAddedContentForShareTypes = () => {
-  const rIndex = getRandomNumber(2, 0);
-  return addedContentForShareTypes[rIndex];
-};
-
-const getRandomOriginalPostType = () => {
-  const rIndex = getRandomNumber(3, 0);
-  return originalPostTypes[rIndex];
-};
-
-const getRandomPost = async (forWhat: "user" | "page" | "group" | "media") => {
+const getRandomPost = async (forWhat: "user" | "page" | "group") => {
   if (forWhat === "user") {
-    const userPosts = await prisma.userPost.findMany({
+    const userPosts = await prisma.oUserPost.findMany({
       select: {
         id: true,
-        medias: true,
       },
     });
     const rIndex = getRandomNumber(userPosts.length, 0);
@@ -77,10 +105,9 @@ const getRandomPost = async (forWhat: "user" | "page" | "group" | "media") => {
   }
 
   if (forWhat === "page") {
-    const pagePosts = await prisma.pagePost.findMany({
+    const pagePosts = await prisma.oPagePost.findMany({
       select: {
         id: true,
-        medias: true,
       },
     });
     const rIndex = getRandomNumber(pagePosts.length, 0);
@@ -88,10 +115,9 @@ const getRandomPost = async (forWhat: "user" | "page" | "group" | "media") => {
   }
 
   if (forWhat === "group") {
-    const groupPosts = await prisma.groupPost.findMany({
+    const groupPosts = await prisma.oGroupPost.findMany({
       select: {
         id: true,
-        medias: true,
       },
     });
     const rIndex = getRandomNumber(groupPosts.length, 0);
@@ -100,37 +126,8 @@ const getRandomPost = async (forWhat: "user" | "page" | "group" | "media") => {
 };
 
 const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
-  switch (forWhat) {
-    case "user": {
-      const post = await getRandomUserPostWithMedia("user");
-      const rIndex = getRandomNumber(post!.medias.length, 0);
-      return post!.medias[rIndex];
-    }
-
-    case "page": {
-      const post = await getRandomUserPostWithMedia("page");
-      const rIndex = getRandomNumber(post!.medias.length, 0);
-      return post!.medias[rIndex];
-    }
-
-    case "group": {
-      const post = await getRandomUserPostWithMedia("group");
-      const rIndex = getRandomNumber(post!.medias.length, 0);
-      return post!.medias[rIndex];
-    }
-
-    default:
-      break;
-  }
-};
-
-// media
-
-const getRandomUserPostWithMedia = async (
-  forWhat: "user" | "page" | "group"
-) => {
   if (forWhat === "user") {
-    const userPosts = await prisma.userPost.findMany({
+    const oUserPosts = await prisma.oUserPost.findMany({
       where: {
         NOT: {
           medias: undefined,
@@ -141,12 +138,14 @@ const getRandomUserPostWithMedia = async (
         medias: true,
       },
     });
-    const rIndex = getRandomNumber(userPosts.length, 0);
-    return userPosts[rIndex];
+    const rIndex = getRandomNumber(oUserPosts.length, 0);
+    const post = oUserPosts[rIndex];
+    const rMIndex = getRandomNumber(post!.medias.length, 0);
+    return post!.medias[rIndex];
   }
 
   if (forWhat === "page") {
-    const pagePosts = await prisma.pagePost.findMany({
+    const oPagePosts = await prisma.oPagePost.findMany({
       where: {
         NOT: {
           medias: undefined,
@@ -157,12 +156,14 @@ const getRandomUserPostWithMedia = async (
         medias: true,
       },
     });
-    const rIndex = getRandomNumber(pagePosts.length, 0);
-    return pagePosts[rIndex];
+    const rIndex = getRandomNumber(oPagePosts.length, 0);
+    const post = oPagePosts[rIndex];
+    const rMIndex = getRandomNumber(post!.medias.length, 0);
+    return post!.medias[rIndex];
   }
 
   if (forWhat === "group") {
-    const groupPosts = await prisma.groupPost.findMany({
+    const OgroupPosts = await prisma.oGroupPost.findMany({
       where: {
         NOT: {
           medias: undefined,
@@ -173,31 +174,22 @@ const getRandomUserPostWithMedia = async (
         medias: true,
       },
     });
-    const rIndex = getRandomNumber(groupPosts.length, 0);
-    return groupPosts[rIndex];
+    const rIndex = getRandomNumber(OgroupPosts.length, 0);
+    const post = OgroupPosts[rIndex];
+    const rMIndex = getRandomNumber(post!.medias.length, 0);
+    return post!.medias[rIndex];
   }
 };
 
-//
-
-async function getRandoms() {
-  // const _uMedias = prisma.feed.findMany({
-  //   where: {
-  //     NOT: {
-  //       medias: undefined,
-  //     },
-  //     postType: "user",
-  //   },
-  //   include: {
-  //     medias: true,
-  //   },
-  // });
-}
-
-const getRandomSharedPostType = () => {
-  const rIndex = getRandomNumber(3, 0);
-  return sharedPostTypes[rIndex];
+const getRandomAddedContentForShareTypes = () => {
+  const rIndex = getRandomNumber(2, 0);
+  return addedContentForSharePostTypes[rIndex];
 };
+
+// const getRandomOriginalPostType = () => {
+//   const rIndex = getRandomNumber(3, 0);
+//   return originalPostTypes[rIndex];
+// };
 
 function generatePhoto(photoCount: number) {
   return Array.from({ length: photoCount }, () => {
@@ -210,60 +202,14 @@ function generatePhoto(photoCount: number) {
   });
 }
 
-const getRandomFeedType = ():
-  | "user"
-  | "page"
-  | "group"
-  | "ushare"
-  | "pshare"
-  | "gshare" => {
-  const rIndex = getRandomNumber(feedTypes.length, 0);
-  return feedTypes[rIndex] as
-    | "user"
-    | "page"
-    | "group"
-    | "ushare"
-    | "pshare"
-    | "gshare";
-};
-
 const getRandomPostContentOption = () => {
   const rIndex = getRandomNumber(postContentOption.length, 0);
   return postContentOption[rIndex];
 };
 
-const getRandomSharer = async () => {
-  const rIndex = getRandomNumber(2, 0);
-  const sharer = toGroupSharerTypes[rIndex] as "user" | "page";
-  switch (sharer) {
-    case "user":
-      return {
-        sharer,
-        which: await getRandomUser(),
-      };
-    case "page":
-      return {
-        sharer,
-        which: await getRandomPage(),
-      };
-    default:
-      break;
-  }
-};
-
 const getRandomPostText = () => {
   const rIndex = getRandomNumber(dummyTexts.length, 0);
   return dummyTexts[rIndex];
-};
-
-export const getRandomPostComment = () => {
-  const rIndex = getRandomNumber(dummyComments.length, 0);
-  return dummyComments[rIndex];
-};
-
-export const getRandomReactionType = () => {
-  const rIndex = getRandomNumber(reactionTypes.length, 0);
-  return reactionTypes[rIndex];
 };
 
 const getRandomPhotoCount = () => {
@@ -272,323 +218,410 @@ const getRandomPhotoCount = () => {
 
 const createUserPost = async () => {
   const user = await getRandomUser();
-  return await prisma.feed.create({
-    data: {
-      postType: "user",
-      userPost: {
-        create: {
-          user: {
-            connect: { id: user.id },
-          },
+  const postType = getRandomPostType();
+  switch (postType) {
+    case "original":
+      {
+        return prisma.feed.create({
+          data: {
+            postType: "user",
+            userPost: {
+              create: {
+                postType: "original",
+                oUserPost: {
+                  create: {
+                    user: {
+                      connect: { id: user.id },
+                    },
 
-          content:
-            getRandomPostText() === "contentonly" ||
-            getRandomPostText() === "both"
-              ? getRandomPostText()
-              : null,
-          medias:
-            getRandomPostText() === "both" ||
-            getRandomPostText() === "mediasonly"
-              ? {
-                  createMany: {
-                    data: generatePhoto(getRandomPhotoCount()),
+                    content:
+                      getRandomPostText() === "contentonly" ||
+                      getRandomPostText() === "both"
+                        ? getRandomPostText()
+                        : null,
+                    medias:
+                      getRandomPostText() === "both" ||
+                      getRandomPostText() === "mediasonly"
+                        ? {
+                            createMany: {
+                              data: generatePhoto(getRandomPhotoCount()),
+                            },
+                          }
+                        : undefined,
                   },
-                }
-              : undefined,
+                },
+              },
+            },
+          },
+        });
+      }
+
+      break;
+    case "share": {
+      const user = await getRandomUser();
+      const postSharedType = getRandomSharedPostType() as
+        | "user"
+        | "page"
+        | "group"
+        | "media";
+
+      const rPostMediaType = getPostMediaType();
+      const postOrMedia =
+        postSharedType === "user" ||
+        postSharedType === "page" ||
+        postSharedType === "group"
+          ? await getRandomPost(postSharedType)
+          : await getRandomMedia(rPostMediaType);
+      return prisma.feed.create({
+        data: {
+          postType: "user",
+          userPost: {
+            create: {
+              postType: "share",
+              userSharePost: {
+                create: {
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+
+                  shareWhat: postSharedType as
+                    | "user"
+                    | "page"
+                    | "group"
+                    | "media",
+                  oUserPost:
+                    postSharedType === "user" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
+
+                  oPagePost:
+                    postSharedType === "page" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
+
+                  oGroupPost:
+                    postSharedType === "group" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
+
+                  media:
+                    postSharedType === "media" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
+
+                  content:
+                    getRandomAddedContentForShareTypes() === "content"
+                      ? getRandomAddedContentForShareTypes()
+                      : null,
+                },
+              },
+            },
+          },
         },
-      },
-    },
-  });
+      });
+    }
+
+    default:
+      break;
+  }
 };
 
 const createPagePost = async () => {
-  const page = await getRandomPage();
-  return await prisma.feed.create({
-    data: {
-      postType: "page",
-      pagePost: {
-        create: {
-          page: {
-            connect: {
-              id: page.id,
+  const user = await getRandomUser();
+  const postType = getRandomPostType();
+  switch (postType) {
+    case "original":
+      {
+        return prisma.feed.create({
+          data: {
+            postType: "page",
+            pagePost: {
+              create: {
+                postType: "original",
+                oPagePost: {
+                  create: {
+                    page: {
+                      connect: { id: user.id },
+                    },
+
+                    content:
+                      getRandomPostText() === "contentonly" ||
+                      getRandomPostText() === "both"
+                        ? getRandomPostText()
+                        : null,
+                    medias:
+                      getRandomPostText() === "both" ||
+                      getRandomPostText() === "mediasonly"
+                        ? {
+                            createMany: {
+                              data: generatePhoto(getRandomPhotoCount()),
+                            },
+                          }
+                        : undefined,
+                  },
+                },
+              },
             },
           },
-          content:
-            getRandomPostContentOption() === "contentonly" ||
-            getRandomPostContentOption() === "both"
-              ? getRandomPostText()
-              : null,
-          medias:
-            getRandomPostContentOption() === "both" ||
-            getRandomPostContentOption() === "mediasonly"
-              ? {
-                  createMany: {
-                    data: generatePhoto(getRandomPhotoCount()),
+        });
+      }
+
+      break;
+    case "share": {
+      const page = await getRandomPage();
+      const postSharedType = getRandomSharedPostType() as
+        | "user"
+        | "page"
+        | "group"
+        | "media";
+
+      const rPostMediaType = getPostMediaType();
+      const postOrMedia =
+        postSharedType === "user" ||
+        postSharedType === "page" ||
+        postSharedType === "group"
+          ? await getRandomPost(postSharedType)
+          : await getRandomMedia(rPostMediaType);
+      return prisma.feed.create({
+        data: {
+          postType: "page",
+          pagePost: {
+            create: {
+              postType: "share",
+              pageSharePost: {
+                create: {
+                  page: {
+                    connect: {
+                      id: page.id,
+                    },
                   },
-                }
-              : undefined,
+
+                  shareWhat: postSharedType as
+                    | "user"
+                    | "page"
+                    | "group"
+                    | "media",
+                  oUserPost:
+                    postSharedType === "user" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
+
+                  oPagePost:
+                    postSharedType === "page" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
+
+                  oGroupPost:
+                    postSharedType === "group" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
+
+                  media:
+                    postSharedType === "media" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
+
+                  content:
+                    getRandomAddedContentForShareTypes() === "content"
+                      ? getRandomAddedContentForShareTypes()
+                      : null,
+                },
+              },
+            },
+          },
         },
-      },
-    },
-  });
+      });
+    }
+
+    default:
+      break;
+  }
 };
 
 const createGroupPost = async () => {
   const user = await getRandomUser();
   const group = await getRandomGroup();
-  return await prisma.feed.create({
-    data: {
-      postType: "group",
-      groupPost: {
-        create: {
-          group: {
-            connect: {
-              id: user.id,
+  const postType = getRandomPostType();
+  switch (postType) {
+    case "original":
+      {
+        return prisma.feed.create({
+          data: {
+            postType: "group",
+            groupPost: {
+              create: {
+                postType: "original",
+                oGroupPost: {
+                  create: {
+                    user: {
+                      connect: { id: user.id },
+                    },
+                    group: {
+                      connect: { id: group.id },
+                    },
+
+                    content:
+                      getRandomPostText() === "contentonly" ||
+                      getRandomPostText() === "both"
+                        ? getRandomPostText()
+                        : null,
+                    medias:
+                      getRandomPostText() === "both" ||
+                      getRandomPostText() === "mediasonly"
+                        ? {
+                            createMany: {
+                              data: generatePhoto(getRandomPhotoCount()),
+                            },
+                          }
+                        : undefined,
+                  },
+                },
+              },
             },
           },
-          user: {
-            connect: {
-              id: group.id,
-            },
-          },
-          content:
-            getRandomPostContentOption() === "contentonly" ||
-            getRandomPostContentOption() === "both"
-              ? getRandomPostText()
-              : null,
-          medias:
-            getRandomPostContentOption() === "both" ||
-            getRandomPostContentOption() === "mediasonly"
-              ? {
-                  createMany: {
-                    data: generatePhoto(getRandomPhotoCount()),
+        });
+      }
+
+      break;
+    case "share": {
+      const sharer = await getRandomSharer();
+      const user = await getRandomUser();
+      const page = await getRandomPage();
+      const group = await getRandomGroup();
+      const postSharedType = getRandomSharedPostType() as
+        | "user"
+        | "page"
+        | "group"
+        | "media";
+
+      const rPostMediaType = getPostMediaType();
+      const postOrMedia =
+        postSharedType === "user" ||
+        postSharedType === "page" ||
+        postSharedType === "group"
+          ? await getRandomPost(postSharedType)
+          : await getRandomMedia(rPostMediaType);
+      return prisma.feed.create({
+        data: {
+          postType: "group",
+          groupPost: {
+            create: {
+              postType: "share",
+              toGroupSharedPost: {
+                create: {
+                  user:
+                    sharer === "user"
+                      ? {
+                          connect: {
+                            id: user.id,
+                          },
+                        }
+                      : undefined,
+
+                  page:
+                    sharer === "page"
+                      ? {
+                          connect: {
+                            id: page.id,
+                          },
+                        }
+                      : undefined,
+                  group: {
+                    connect: {
+                      id: group.id,
+                    },
                   },
-                }
-              : undefined,
-        },
-      },
-    },
-  });
-};
 
-const createUserSharePost = async () => {
-  const postSharedType = getRandomSharedPostType() as
-    | "user"
-    | "page"
-    | "group"
-    | "media";
-  const post = await getRandomPost(postSharedType);
-  return await prisma.feed.create({
-    data: {
-      postType: "ushare",
-      userSharePost: {
-        create: {
-          user: {
-            connect: {
-              id: (await getRandomUser()).id,
-            },
-          },
+                  shareWhat: postSharedType as
+                    | "user"
+                    | "page"
+                    | "group"
+                    | "media",
+                  oUserPost:
+                    postSharedType === "user" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
 
-          shareWhat: postSharedType as "user" | "page" | "group" | "media",
-          userPost:
-            postSharedType === "user" && post
-              ? {
-                  connect: {
-                    id: post.id,
-                  },
-                }
-              : undefined,
+                  oPagePost:
+                    postSharedType === "page" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
 
-          pagePost:
-            postSharedType === "page" && post
-              ? {
-                  connect: {
-                    id: post.id,
-                  },
-                }
-              : undefined,
+                  oGroupPost:
+                    postSharedType === "group" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
 
-          groupPost:
-            postSharedType === "group" && post
-              ? {
-                  connect: {
-                    id: post.id,
-                  },
-                }
-              : undefined,
+                  media:
+                    postSharedType === "media" && postOrMedia
+                      ? {
+                          connect: {
+                            id: postOrMedia.id,
+                          },
+                        }
+                      : undefined,
 
-          media:
-            postSharedType === "media" && post
-              ? {
-                  connect: {
-                    id: post.id,
-                  },
-                }
-              : undefined,
-
-          content:
-            getRandomAddedContentForShareTypes() === "content"
-              ? getRandomAddedContentForShareTypes()
-              : null,
-        },
-      },
-    },
-  });
-};
-
-const createPageSharePost = async () => {
-  const postSharedType = getRandomSharedPostType() as
-    | "user"
-    | "page"
-    | "group"
-    | "media";
-  const post = await getRandomPost(postSharedType);
-  const oP = getRandomOriginalPostType();
-
-  return await prisma.feed.create({
-    data: {
-      postType: "pshare",
-      pageSharePost: {
-        create: {
-          page: {
-            connect: {
-              id: (await getRandomPage()).id,
-            },
-          },
-
-          shareWhat: postSharedType as "user" | "page" | "group" | "media",
-          userPost:
-            postSharedType === "user" && post
-              ? {
-                  connect: {
-                    id: post.id,
-                  },
-                }
-              : undefined,
-
-          pagePost:
-            postSharedType === "page" && post
-              ? {
-                  connect: {
-                    id: post.id,
-                  },
-                }
-              : undefined,
-
-          groupPost:
-            postSharedType === "group" && post
-              ? {
-                  connect: {
-                    id: post.id,
-                  },
-                }
-              : undefined,
-
-          media:
-            postSharedType === "media" && post
-              ? {
-                  connect: {
-                    id: (await getRandomMedia(oP as "user" | "page" | "group"))!
-                      .id,
-                  },
-                }
-              : undefined,
-
-          content:
-            getRandomAddedContentForShareTypes() === "content"
-              ? getRandomAddedContentForShareTypes()
-              : null,
-        },
-      },
-    },
-  });
-};
-
-const createGroupSharePost = async () => {
-  const postSharedType = getRandomSharedPostType() as
-    | "user"
-    | "page"
-    | "group"
-    | "media";
-
-  const sharer = await getRandomSharer();
-  const post = await getRandomPost(postSharedType);
-  const oP = getRandomOriginalPostType();
-
-  return await prisma.feed.create({
-    data: {
-      postType: "gshare",
-      toGroupSharePost: {
-        create: {
-          user:
-            sharer?.sharer === "user" && sharer.which.id
-              ? {
-                  connect: {
-                    id: sharer.which.id,
-                  },
-                }
-              : undefined,
-
-          page:
-            sharer?.sharer === "page" && sharer.which.id
-              ? {
-                  connect: {
-                    id: sharer.which.id,
-                  },
-                }
-              : undefined,
-
-          shareWhat: postSharedType,
-          userPost:
-            postSharedType === "user"
-              ? {
-                  connect: {
-                    id: post?.id,
-                  },
-                }
-              : undefined,
-
-          pagePost:
-            postSharedType === "page"
-              ? {
-                  connect: {
-                    id: post?.id,
-                  },
-                }
-              : undefined,
-
-          groupPost:
-            postSharedType === "group"
-              ? {
-                  connect: {
-                    id: post?.id,
-                  },
-                }
-              : undefined,
-
-          media:
-            postSharedType === "media"
-              ? {
-                  connect: {
-                    id: (await getRandomMedia(oP as "user" | "page" | "group"))!
-                      .id,
-                  },
-                }
-              : undefined,
-
-          content:
-            getRandomAddedContentForShareTypes() === "content"
-              ? getRandomAddedContentForShareTypes()
-              : null,
-          group: {
-            connect: {
-              id: (await getRandomGroup()).id,
+                  content:
+                    getRandomAddedContentForShareTypes() === "content"
+                      ? getRandomAddedContentForShareTypes()
+                      : null,
+                },
+              },
             },
           },
         },
-      },
-    },
-  });
+      });
+    }
+
+    default:
+      break;
+  }
 };
 
 export async function _seedFeeds() {
@@ -603,18 +636,6 @@ export async function _seedFeeds() {
 
     if (getRandomFeedType() === "group") {
       return createGroupPost();
-    }
-
-    if (getRandomFeedType() === "ushare") {
-      return createUserSharePost();
-    }
-
-    if (getRandomFeedType() === "pshare") {
-      return createPageSharePost();
-    }
-
-    if (getRandomFeedType() === "gshare") {
-      return createGroupSharePost();
     }
   });
 
