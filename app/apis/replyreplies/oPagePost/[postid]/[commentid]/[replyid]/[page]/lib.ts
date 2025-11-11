@@ -30,7 +30,7 @@ export const getReplies = async (
   rowsPerPage: number
 ) => {
   const skip = (page - 1) * rowsPerPage;
-  const count = prisma.oGroupPost.findUnique({
+  const count = prisma.oPagePost.findUnique({
     where: {
       id: postId,
     },
@@ -57,7 +57,7 @@ export const getReplies = async (
     },
   });
 
-  const post = prisma.oGroupPost.findUnique({
+  const post = prisma.oPagePost.findUnique({
     where: {
       id: postId,
     },
@@ -109,7 +109,10 @@ export const getReplies = async (
     async (reply) => {
       return {
         ...reply,
-        postType: "oGroupPost",
+        postType: "oPagePost",
+        postId: _post.id,
+        commentId: _post.comments[0].id,
+        replyId: _post.comments[0].replies[0].id,
         _gReactions: await commentPreparer.prepareGReactions(reply.id),
         _reactions: {
           header: {

@@ -93,6 +93,7 @@ export const getComments = async (
     return {
       ...comment,
       mediaId: _post.medias[0].id,
+      postId: _post.id,
       postType: "oGroupPost",
       _gReactions: await commentPreparer.prepareGReactions(comment.id),
       _reactions: {

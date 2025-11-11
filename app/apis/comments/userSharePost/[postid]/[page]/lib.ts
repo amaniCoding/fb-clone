@@ -76,6 +76,8 @@ export const getComments = async (
     return {
       ...comment,
       postType: "userSharePost",
+      postId: _post.id,
+
       _gReactions: await commentPreparer.prepareGReactions(comment.id),
       _reactions: {
         header: {

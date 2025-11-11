@@ -1,6 +1,6 @@
 import prisma from "@/app/libs/prisma";
 export const getReactions = async (replyId: string) => {
-  const r = await prisma.commentReaction.groupBy({
+  const r = await prisma.mediaReplyReactions.groupBy({
     by: ["reactionType"],
     _count: {
       reactionType: true,

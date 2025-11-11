@@ -62,6 +62,8 @@ export const getReactors = async (
     return {
       ...reactor,
       postId: _post.id,
+
+      postType: "oPagePost",
     };
   });
   return {

@@ -93,6 +93,8 @@ export const getReplies = async (
     return {
       ...reply,
       postType: "oPagePost",
+      postId: _post.id,
+      commentId: _post.comments[0].id,
       _gReactions: await commentPreparer.prepareGReactions(reply.id),
       _reactions: {
         header: {

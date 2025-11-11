@@ -78,6 +78,7 @@ export const getReactors = async (
     return {
       ...reactor,
       postId: _post.id,
+      postType: "oPagePost",
       mediaId: _post.medias[0].id,
     };
   });

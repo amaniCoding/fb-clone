@@ -61,6 +61,8 @@ export const getReactors = async (
   const updatedReactors = _post?.reactions.map((reactor) => {
     return {
       ...reactor,
+      postType: "toGroupSharePost",
+
       postId: _post.id,
     };
   });

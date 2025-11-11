@@ -92,6 +92,8 @@ export const getReplies = async (
   const updatedReplies = _post?.comments[0].replies.map(async (reply) => {
     return {
       ...reply,
+      postId: _post.id,
+      commentId: _post.comments[0].id,
       postType: "pageSharePost",
       _gReactions: await commentPreparer.prepareGReactions(reply.id),
       _reactions: {
