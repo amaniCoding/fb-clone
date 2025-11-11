@@ -1,4 +1,4 @@
-export type ReactionModalReactors = {
+export type Reactor = {
   reactionType: string;
   loading: boolean;
   page: boolean;
@@ -7,7 +7,7 @@ export type ReactionModalReactors = {
   totalPages: number;
 };
 
-export type ReactionModalHeader = {
+export type GReaction = {
   reactionType: string;
   count: number;
 };
