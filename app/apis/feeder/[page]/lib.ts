@@ -1,4 +1,5 @@
 import prisma from "@/app/libs/prisma";
+import { GReaction, Reactor } from "../../types";
 
 const prepareGReactions = async (id: string | undefined) => {
   try {
@@ -20,6 +21,27 @@ const prepareGReactions = async (id: string | undefined) => {
     });
   } catch (error) {}
 };
+
+const prepareMeidaGReactions = async (mediaId: string | undefined) => {
+  try {
+    const r = await prisma.mediaReaction.groupBy({
+      by: ["reactionType"],
+      _count: {
+        reactionType: true,
+      },
+      where: {
+        id: mediaId,
+      },
+    });
+
+    return r.map((rxn) => {
+      return {
+        reactionType: rxn.reactionType,
+        count: rxn._count.reactionType,
+      };
+    });
+  } catch (error) {}
+};
 export const getFeeds = async (page: number) => {
   const skip = (page - 1) * 10;
   const count = prisma.feed.count();
@@ -27,11 +49,64 @@ export const getFeeds = async (page: number) => {
   const feeds = prisma.feed.findMany({
     take: 10,
     skip: skip,
-    include: {
+    select: {
+      id: true,
+      postType: true,
       userPost: {
-        include: {
+        select: {
           oUserPost: {
-            include: {
+            select: {
+              id: true,
+              postType: true,
+              content: true,
+              createdAt: true,
+              // first reactors
+              reactions: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // first commentros
+              comments: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // counts
+              _count: {
+                select: {
+                  comments: true,
+                  reactions: true,
+                },
+              },
               user: {
                 select: {
                   firstName: true,
@@ -44,7 +119,9 @@ export const getFeeds = async (page: number) => {
                 },
               },
               medias: {
-                include: {
+                select: {
+                  id: true,
+                  // first media reactors
                   reactions: {
                     select: {
                       user: {
@@ -64,9 +141,9 @@ export const getFeeds = async (page: number) => {
                     },
                     take: 1,
                   },
-
+                  // first media commentors
                   comments: {
-                    include: {
+                    select: {
                       user: {
                         select: {
                           firstName: true,
@@ -84,6 +161,7 @@ export const getFeeds = async (page: number) => {
                     },
                     take: 1,
                   },
+                  // counts
                   _count: {
                     select: {
                       comments: true,
@@ -92,16 +170,14 @@ export const getFeeds = async (page: number) => {
                   },
                 },
               },
-              _count: {
-                select: {
-                  comments: true,
-                  reactions: true,
-                },
-              },
             },
           },
           userSharePost: {
-            include: {
+            select: {
+              id: true,
+              postType: true,
+              content: true,
+              createdAt: true,
               user: {
                 select: {
                   firstName: true,
@@ -113,10 +189,117 @@ export const getFeeds = async (page: number) => {
                   },
                 },
               },
+              // first media reactors
+              reactions: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // first media commentors
+              comments: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // counts
               _count: {
                 select: {
                   comments: true,
                   reactions: true,
+                },
+              },
+
+              oUserPost: {
+                select: {
+                  id: true,
+                  postType: true,
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                  content: true,
+                  medias: true,
+                },
+              },
+              oPagePost: {
+                select: {
+                  id: true,
+                  postType: true,
+                  page: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
+                  },
+                  content: true,
+                  medias: true,
+                },
+              },
+              oGroupPost: {
+                select: {
+                  id: true,
+                  postType: true,
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                  group: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
+                  },
+                  content: true,
+                  medias: true,
+                },
+              },
+
+              media: {
+                select: {
+                  id: true,
+                  url: true,
                 },
               },
             },
@@ -124,16 +307,24 @@ export const getFeeds = async (page: number) => {
         },
       },
       pagePost: {
-        include: {
+        select: {
           oPagePost: {
-            include: {
+            select: {
+              id: true,
+              postType: true,
+              content: true,
+              createdAt: true,
+              // first reactors
+
               page: {
                 select: {
                   name: true,
                 },
               },
               medias: {
-                include: {
+                select: {
+                  id: true,
+                  //first media reactors
                   reactions: {
                     select: {
                       user: {
@@ -153,9 +344,9 @@ export const getFeeds = async (page: number) => {
                     },
                     take: 1,
                   },
-
+                  //first media commentors
                   comments: {
-                    include: {
+                    select: {
                       user: {
                         select: {
                           firstName: true,
@@ -173,6 +364,7 @@ export const getFeeds = async (page: number) => {
                     },
                     take: 1,
                   },
+                  // counts
                   _count: {
                     select: {
                       comments: true,
@@ -181,6 +373,46 @@ export const getFeeds = async (page: number) => {
                   },
                 },
               },
+              reactions: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // first commentros
+              comments: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // counts
               _count: {
                 select: {
                   comments: true,
@@ -190,12 +422,123 @@ export const getFeeds = async (page: number) => {
             },
           },
           pageSharePost: {
-            include: {
+            select: {
+              id: true,
+              content: true,
+              createdAt: true,
               page: {
                 select: {
                   name: true,
                 },
               },
+
+              // sharedposts
+              oUserPost: {
+                select: {
+                  id: true,
+                  postType: true,
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                  content: true,
+                  medias: true,
+                },
+              },
+              oPagePost: {
+                select: {
+                  id: true,
+                  postType: true,
+                  page: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
+                  },
+                  content: true,
+                  medias: true,
+                },
+              },
+              oGroupPost: {
+                select: {
+                  id: true,
+                  postType: true,
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                  group: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
+                  },
+                  content: true,
+                  medias: true,
+                },
+              },
+
+              media: {
+                select: {
+                  id: true,
+                  url: true,
+                },
+              },
+              // first reactors
+              reactions: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // first commentros
+              comments: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // counts
               _count: {
                 select: {
                   comments: true,
@@ -207,9 +550,14 @@ export const getFeeds = async (page: number) => {
         },
       },
       groupPost: {
-        include: {
+        select: {
           oGroupPost: {
-            include: {
+            select: {
+              id: true,
+              postType: true,
+              content: true,
+              createdAt: true,
+
               user: {
                 select: {
                   firstName: true,
@@ -227,8 +575,11 @@ export const getFeeds = async (page: number) => {
                   name: true,
                 },
               },
+
               medias: {
-                include: {
+                select: {
+                  id: true,
+                  // first media reactors
                   reactions: {
                     select: {
                       user: {
@@ -248,9 +599,9 @@ export const getFeeds = async (page: number) => {
                     },
                     take: 1,
                   },
-
+                  // first media commentors
                   comments: {
-                    include: {
+                    select: {
                       user: {
                         select: {
                           firstName: true,
@@ -268,6 +619,7 @@ export const getFeeds = async (page: number) => {
                     },
                     take: 1,
                   },
+                  // counts
                   _count: {
                     select: {
                       comments: true,
@@ -276,6 +628,47 @@ export const getFeeds = async (page: number) => {
                   },
                 },
               },
+              // first reactors
+              reactions: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // first commentors
+              comments: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // counts
               _count: {
                 select: {
                   comments: true,
@@ -285,7 +678,10 @@ export const getFeeds = async (page: number) => {
             },
           },
           toGroupSharedPost: {
-            include: {
+            select: {
+              id: true,
+              postType: true,
+              content: true,
               user: {
                 select: {
                   firstName: true,
@@ -302,6 +698,115 @@ export const getFeeds = async (page: number) => {
                   name: true,
                 },
               },
+
+              // shared posts
+
+              oUserPost: {
+                select: {
+                  id: true,
+                  postType: true,
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                  content: true,
+                  medias: true,
+                },
+              },
+              oPagePost: {
+                select: {
+                  id: true,
+                  postType: true,
+                  page: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
+                  },
+                  content: true,
+                  medias: true,
+                },
+              },
+              oGroupPost: {
+                select: {
+                  id: true,
+                  postType: true,
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                  group: {
+                    select: {
+                      id: true,
+                      name: true,
+                    },
+                  },
+                  content: true,
+                  medias: true,
+                },
+              },
+
+              media: {
+                select: {
+                  id: true,
+                  url: true,
+                },
+              },
+              // first reactors
+              reactions: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // first commentors
+              comments: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // counts
               _count: {
                 select: {
                   comments: true,
@@ -317,48 +822,264 @@ export const getFeeds = async (page: number) => {
 
   const [result, length] = await Promise.all([feeds, count]);
   const updated = result.map(async (feed) => {
-    return {
-      ...feed,
-      userPost: {
-        ...feed.userPost,
-        oUserPost: {
-          ...feed.userPost?.oUserPost,
-          _gReactions: await prepareGReactions(feed?.userPost?.oUserPost?.id),
+    if (feed.userPost && feed.userPost.oUserPost) {
+      return {
+        ...feed,
+        userPost: {
+          ...feed.userPost,
+          oUserPost: {
+            ...feed.userPost.oUserPost,
+            _comments: {
+              loading: false,
+              page: 1,
+              error: "",
+              totalPages: 0,
+              totalRows: 0,
+              comments: [],
+            },
+            _reactions: {
+              header: {
+                currentReactionType: undefined,
+                loading: false,
+                error: undefined,
+                gReactions: [] as GReaction[],
+              },
+              body: [] as Reactor[],
+            },
+            _gReactions: await prepareGReactions(feed.userPost.oUserPost.id),
+
+            medias: feed.userPost.oUserPost.medias.map(async (media) => {
+              return {
+                ...media,
+                _comments: {
+                  loading: false,
+                  page: 1,
+                  error: "",
+                  totalPages: 0,
+                  totalRows: 0,
+                  comments: [],
+                },
+
+                _reactions: {
+                  header: {
+                    currentReactionType: undefined,
+                    loading: false,
+                    error: undefined,
+                    gReactions: [] as GReaction[],
+                  },
+                  body: [] as Reactor[],
+                },
+                _gReactions: await prepareMeidaGReactions(media.id),
+              };
+            }),
+          },
         },
-        userSharePost: {
-          ...feed.userPost?.userSharePost,
-          _gReactions: await prepareGReactions(
-            feed?.userPost?.userSharePost?.id
-          ),
+      };
+    }
+    if (feed.userPost && feed.userPost.userSharePost) {
+      return {
+        ...feed,
+        userPost: {
+          ...feed.userPost,
+          oUserPost: {
+            ...feed.userPost.userSharePost,
+            _comments: {
+              loading: false,
+              page: 1,
+              error: "",
+              totalPages: 0,
+              totalRows: 0,
+              comments: [],
+            },
+            _reactions: {
+              header: {
+                currentReactionType: undefined,
+                loading: false,
+                error: undefined,
+                gReactions: [] as GReaction[],
+              },
+              body: [] as Reactor[],
+            },
+            _gReactions: await prepareGReactions(
+              feed.userPost.userSharePost.id
+            ),
+          },
         },
-      },
-      pagePost: {
-        ...feed.pagePost,
-        oPagePost: {
-          ...feed.pagePost?.oPagePost,
-          _gReactions: await prepareGReactions(feed?.pagePost?.oPagePost?.id),
+      };
+    }
+    if (feed.pagePost && feed.pagePost.oPagePost) {
+      return {
+        ...feed,
+        userPost: {
+          ...feed.userPost,
+          oUserPost: {
+            ...feed.pagePost.oPagePost,
+            _comments: {
+              loading: false,
+              page: 1,
+              error: "",
+              totalPages: 0,
+              totalRows: 0,
+              comments: [],
+            },
+            _reactions: {
+              header: {
+                currentReactionType: undefined,
+                loading: false,
+                error: undefined,
+                gReactions: [] as GReaction[],
+              },
+              body: [] as Reactor[],
+            },
+            _gReactions: await prepareGReactions(feed.pagePost.oPagePost.id),
+
+            medias: feed.pagePost.oPagePost.medias.map(async (media) => {
+              return {
+                ...media,
+                _comments: {
+                  loading: false,
+                  page: 1,
+                  error: "",
+                  totalPages: 0,
+                  totalRows: 0,
+                  comments: [],
+                },
+
+                _reactions: {
+                  header: {
+                    currentReactionType: undefined,
+                    loading: false,
+                    error: undefined,
+                    gReactions: [] as GReaction[],
+                  },
+                  body: [] as Reactor[],
+                },
+                _gReactions: await prepareMeidaGReactions(media.id),
+              };
+            }),
+          },
         },
-        pageSharePost: {
-          ...feed.pagePost?.pageSharePost,
-          _gReactions: await prepareGReactions(
-            feed?.pagePost?.pageSharePost?.id
-          ),
+      };
+    }
+
+    if (feed.pagePost && feed.pagePost.pageSharePost) {
+      return {
+        ...feed,
+        userPost: {
+          ...feed.userPost,
+          oUserPost: {
+            ...feed.pagePost.pageSharePost,
+            _comments: {
+              loading: false,
+              page: 1,
+              error: "",
+              totalPages: 0,
+              totalRows: 0,
+              comments: [],
+            },
+            _reactions: {
+              header: {
+                currentReactionType: undefined,
+                loading: false,
+                error: undefined,
+                gReactions: [] as GReaction[],
+              },
+              body: [] as Reactor[],
+            },
+            _gReactions: await prepareGReactions(
+              feed.pagePost.pageSharePost.id
+            ),
+          },
         },
-      },
-      groupPost: {
-        ...feed.groupPost,
-        oGroupPost: {
-          ...feed.groupPost?.oGroupPost,
-          _gReactions: await prepareGReactions(feed?.groupPost?.oGroupPost?.id),
+      };
+    }
+
+    if (feed.groupPost && feed.groupPost.oGroupPost) {
+      return {
+        ...feed,
+        userPost: {
+          ...feed.userPost,
+          oUserPost: {
+            ...feed.groupPost.oGroupPost,
+            _comments: {
+              loading: false,
+              page: 1,
+              error: "",
+              totalPages: 0,
+              totalRows: 0,
+              comments: [],
+            },
+            _reactions: {
+              header: {
+                currentReactionType: undefined,
+                loading: false,
+                error: undefined,
+                gReactions: [] as GReaction[],
+              },
+              body: [] as Reactor[],
+            },
+            _gReactions: await prepareGReactions(feed.groupPost.oGroupPost.id),
+
+            medias: feed.groupPost.oGroupPost.medias.map(async (media) => {
+              return {
+                ...media,
+                _comments: {
+                  loading: false,
+                  page: 1,
+                  error: "",
+                  totalPages: 0,
+                  totalRows: 0,
+                  comments: [],
+                },
+
+                _reactions: {
+                  header: {
+                    currentReactionType: undefined,
+                    loading: false,
+                    error: undefined,
+                    gReactions: [] as GReaction[],
+                  },
+                  body: [] as Reactor[],
+                },
+                _gReactions: await prepareMeidaGReactions(media.id),
+              };
+            }),
+          },
         },
-        toGroupSharedPost: {
-          ...feed.groupPost?.toGroupSharedPost,
-          _gReactions: await prepareGReactions(
-            feed?.groupPost?.toGroupSharedPost?.id
-          ),
+      };
+    }
+
+    if (feed.groupPost && feed.groupPost.toGroupSharedPost) {
+      return {
+        ...feed,
+        userPost: {
+          ...feed.userPost,
+          oUserPost: {
+            ...feed.groupPost.toGroupSharedPost,
+            _comments: {
+              loading: false,
+              page: 1,
+              error: "",
+              totalPages: 0,
+              totalRows: 0,
+              comments: [],
+            },
+            _reactions: {
+              header: {
+                currentReactionType: undefined,
+                loading: false,
+                error: undefined,
+                gReactions: [] as GReaction[],
+              },
+              body: [] as Reactor[],
+            },
+            _gReactions: await prepareGReactions(
+              feed.groupPost.toGroupSharedPost.id
+            ),
+          },
         },
-      },
-    };
+      };
+    }
   });
 
   return {
@@ -371,12 +1092,12 @@ export const getFeeds = async (page: number) => {
 
 const feeds = await getFeeds(1);
 const feed = feeds.updated[0];
-const oUserpost = feed.userPost.oUserPost;
-const userSharePost = feed.userPost.userSharePost;
-const oPagepost = feed.pagePost;
-const pageSharePost = feed.pagePost.pageSharePost;
-const oGrouppost = feed.groupPost;
-const toGroupSharedPost = feed.groupPost.toGroupSharedPost;
+const oUserpost = feed && feed?.userPost.oUserPost;
+const userSharePost = feed && feed?.userPost.userSharePost;
+const oPagepost = feed && feed?.pagePost;
+const pageSharePost = feed && feed?.pagePost?.pageSharePost;
+const oGrouppost = feed && feed?.groupPost;
+const toGroupSharedPost = feed && feed?.groupPost?.toGroupSharedPost;
 
 export type FeedsType = typeof feed;
 export type OriginalUserPostType = typeof oUserpost;

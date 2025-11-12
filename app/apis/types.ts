@@ -1,7 +1,7 @@
 export type Reactor = {
   reactionType: string;
   loading: boolean;
-  page: boolean;
+  page: number;
   error: string;
   totalRows: number;
   totalPages: number;

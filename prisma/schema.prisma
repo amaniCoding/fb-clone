@@ -81,6 +81,15 @@ enum ReactionType {
   wow
 }
 
+enum PostType {
+  oUserPost
+  oPagePost
+  oGroupPost
+  userSharePost
+  pageSharePost
+  toGroupSharedPost
+}
+
 /**
  * Entities
  */
@@ -191,6 +200,7 @@ model UserPost {
 
 model OUserPost {
   id            String             @id @unique @default(uuid())
+  postType      PostType           @default(oUserPost)
   userPost      UserPost?
   userId        String
   user          User               @relation("userposts", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -221,7 +231,9 @@ model UserFollow {
 }
 
 model UserSharePost {
-  id       String    @id @default(uuid())
+  id       String   @id @default(uuid())
+  postType PostType @default(userSharePost)
+
   userPost UserPost?
   userId   String
 
@@ -419,7 +431,9 @@ model GroupPost {
 }
 
 model OGroupPost {
-  id            String             @id @default(uuid())
+  id       String   @id @default(uuid())
+  postType PostType @default(oGroupPost)
+
   groupPost     GroupPost?
   userId        String
   groupId       String
@@ -443,7 +457,9 @@ model OGroupPost {
 }
 
 model ToGroupSharePost {
-  id           String      @id @default(uuid())
+  id       String   @id @default(uuid())
+  postType PostType @default(toGroupSharedPost)
+
   groupPost    GroupPost?
   userId       String?
   pageId       String?
@@ -544,7 +560,9 @@ model PagePost {
 }
 
 model OPagePost {
-  id            String             @id @default(uuid())
+  id       String   @id @default(uuid())
+  postType PostType @default(oPagePost)
+
   pagePost      PagePost?
   pageId        String
   page          Page               @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -564,7 +582,9 @@ model OPagePost {
 }
 
 model PageSharePost {
-  id       String    @id @default(uuid())
+  id       String   @id @default(uuid())
+  postType PostType @default(pageSharePost)
+
   pagePost PagePost?
 
   pageId String

@@ -124,6 +124,13 @@ export const getReplies = async (
           },
           body: [] as Reactor[],
         },
+        replies: {
+          loading: false,
+          page: 1,
+          totalPages: 0,
+          totalRows: 0,
+          replies: [],
+        },
       };
     }
   );
