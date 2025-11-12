@@ -848,30 +848,32 @@ export const getFeeds = async (page: number) => {
             },
             _gReactions: await prepareGReactions(feed.userPost.oUserPost.id),
 
-            medias: feed.userPost.oUserPost.medias.map(async (media) => {
-              return {
-                ...media,
-                _comments: {
-                  loading: false,
-                  page: 1,
-                  error: "",
-                  totalPages: 0,
-                  totalRows: 0,
-                  comments: [],
-                },
-
-                _reactions: {
-                  header: {
-                    currentReactionType: undefined,
+            medias: await Promise.all(
+              feed.userPost.oUserPost.medias.map(async (media) => {
+                return {
+                  ...media,
+                  _comments: {
                     loading: false,
-                    error: undefined,
-                    gReactions: [] as GReaction[],
+                    page: 1,
+                    error: "",
+                    totalPages: 0,
+                    totalRows: 0,
+                    comments: [],
                   },
-                  body: [] as Reactor[],
-                },
-                _gReactions: await prepareMeidaGReactions(media.id),
-              };
-            }),
+
+                  _reactions: {
+                    header: {
+                      currentReactionType: undefined,
+                      loading: false,
+                      error: undefined,
+                      gReactions: [] as GReaction[],
+                    },
+                    body: [] as Reactor[],
+                  },
+                  _gReactions: await prepareMeidaGReactions(media.id),
+                };
+              })
+            ),
           },
         },
       };
@@ -933,30 +935,32 @@ export const getFeeds = async (page: number) => {
             },
             _gReactions: await prepareGReactions(feed.pagePost.oPagePost.id),
 
-            medias: feed.pagePost.oPagePost.medias.map(async (media) => {
-              return {
-                ...media,
-                _comments: {
-                  loading: false,
-                  page: 1,
-                  error: "",
-                  totalPages: 0,
-                  totalRows: 0,
-                  comments: [],
-                },
-
-                _reactions: {
-                  header: {
-                    currentReactionType: undefined,
+            medias: await Promise.all(
+              feed.pagePost.oPagePost.medias.map(async (media) => {
+                return {
+                  ...media,
+                  _comments: {
                     loading: false,
-                    error: undefined,
-                    gReactions: [] as GReaction[],
+                    page: 1,
+                    error: "",
+                    totalPages: 0,
+                    totalRows: 0,
+                    comments: [],
                   },
-                  body: [] as Reactor[],
-                },
-                _gReactions: await prepareMeidaGReactions(media.id),
-              };
-            }),
+
+                  _reactions: {
+                    header: {
+                      currentReactionType: undefined,
+                      loading: false,
+                      error: undefined,
+                      gReactions: [] as GReaction[],
+                    },
+                    body: [] as Reactor[],
+                  },
+                  _gReactions: await prepareMeidaGReactions(media.id),
+                };
+              })
+            ),
           },
         },
       };
@@ -1020,30 +1024,32 @@ export const getFeeds = async (page: number) => {
             },
             _gReactions: await prepareGReactions(feed.groupPost.oGroupPost.id),
 
-            medias: feed.groupPost.oGroupPost.medias.map(async (media) => {
-              return {
-                ...media,
-                _comments: {
-                  loading: false,
-                  page: 1,
-                  error: "",
-                  totalPages: 0,
-                  totalRows: 0,
-                  comments: [],
-                },
-
-                _reactions: {
-                  header: {
-                    currentReactionType: undefined,
+            medias: await Promise.all(
+              feed.groupPost.oGroupPost.medias.map(async (media) => {
+                return {
+                  ...media,
+                  _comments: {
                     loading: false,
-                    error: undefined,
-                    gReactions: [] as GReaction[],
+                    page: 1,
+                    error: "",
+                    totalPages: 0,
+                    totalRows: 0,
+                    comments: [],
                   },
-                  body: [] as Reactor[],
-                },
-                _gReactions: await prepareMeidaGReactions(media.id),
-              };
-            }),
+
+                  _reactions: {
+                    header: {
+                      currentReactionType: undefined,
+                      loading: false,
+                      error: undefined,
+                      gReactions: [] as GReaction[],
+                    },
+                    body: [] as Reactor[],
+                  },
+                  _gReactions: await prepareMeidaGReactions(media.id),
+                };
+              })
+            ),
           },
         },
       };
