@@ -1,24 +1,116 @@
 import prisma from "@/app/libs/prisma";
 import { GReaction, Reactor } from "../../types";
 
-const prepareGReactions = async (id: string | undefined) => {
+const prepareGReactions = async (
+  type:
+    | "oUserPost"
+    | "userSharePost"
+    | "oPagePost"
+    | "pageSharePost"
+    | "oGroupPost"
+    | "toGroupSharedPost",
+  id: string
+) => {
   try {
-    const r = await prisma.reaction.groupBy({
-      by: ["reactionType"],
-      _count: {
-        reactionType: true,
-      },
-      where: {
-        id: id,
-      },
-    });
+    switch (type) {
+      case "oUserPost": {
+        const r = await prisma.reaction.groupBy({
+          by: ["reactionType"],
+          _count: {
+            reactionType: true,
+          },
+          where: {
+            userPostId: id,
+          },
+        });
 
-    return r.map((rxn) => {
-      return {
-        reactionType: rxn.reactionType,
-        count: rxn._count.reactionType,
-      };
-    });
+        return r.map((rxn) => {
+          return {
+            reactionType: rxn.reactionType,
+            count: rxn._count.reactionType,
+          };
+        });
+      }
+
+      case "userSharePost": {
+        const r = await prisma.reaction.groupBy({
+          by: ["reactionType"],
+          _count: {
+            reactionType: true,
+          },
+          where: {
+            userSharePostId: id,
+          },
+        });
+
+        return r.map((rxn) => {
+          return {
+            reactionType: rxn.reactionType,
+            count: rxn._count.reactionType,
+          };
+        });
+      }
+      case "oPagePost": {
+        const r = await prisma.reaction.groupBy({
+          by: ["reactionType"],
+          _count: {
+            reactionType: true,
+          },
+          where: {
+            pagePostId: id,
+          },
+        });
+
+        return r.map((rxn) => {
+          return {
+            reactionType: rxn.reactionType,
+            count: rxn._count.reactionType,
+          };
+        });
+      }
+
+      case "pageSharePost": {
+        const r = await prisma.reaction.groupBy({
+          by: ["reactionType"],
+          _count: {
+            reactionType: true,
+          },
+          where: {
+            pageSharePostId: id,
+          },
+        });
+
+        return r.map((rxn) => {
+          return {
+            reactionType: rxn.reactionType,
+            count: rxn._count.reactionType,
+          };
+        });
+      }
+      case "toGroupSharedPost":
+        {
+          const r = await prisma.reaction.groupBy({
+            by: ["reactionType"],
+            _count: {
+              reactionType: true,
+            },
+            where: {
+              toGroupSharePostId: id,
+            },
+          });
+
+          return r.map((rxn) => {
+            return {
+              reactionType: rxn.reactionType,
+              count: rxn._count.reactionType,
+            };
+          });
+        }
+        break;
+
+      default:
+        break;
+    }
   } catch (error) {}
 };
 
@@ -846,7 +938,10 @@ export const getFeeds = async (page: number) => {
               },
               body: [] as Reactor[],
             },
-            _gReactions: await prepareGReactions(feed.userPost.oUserPost.id),
+            _gReactions: await prepareGReactions(
+              "oUserPost",
+              feed.userPost.oUserPost.id
+            ),
 
             medias: await Promise.all(
               feed.userPost.oUserPost.medias.map(async (media) => {
@@ -903,6 +998,7 @@ export const getFeeds = async (page: number) => {
               body: [] as Reactor[],
             },
             _gReactions: await prepareGReactions(
+              "userSharePost",
               feed.userPost.userSharePost.id
             ),
           },
@@ -933,7 +1029,10 @@ export const getFeeds = async (page: number) => {
               },
               body: [] as Reactor[],
             },
-            _gReactions: await prepareGReactions(feed.pagePost.oPagePost.id),
+            _gReactions: await prepareGReactions(
+              "oPagePost",
+              feed.pagePost.oPagePost.id
+            ),
 
             medias: await Promise.all(
               feed.pagePost.oPagePost.medias.map(async (media) => {
@@ -991,6 +1090,7 @@ export const getFeeds = async (page: number) => {
               body: [] as Reactor[],
             },
             _gReactions: await prepareGReactions(
+              "pageSharePost",
               feed.pagePost.pageSharePost.id
             ),
           },
@@ -1022,7 +1122,10 @@ export const getFeeds = async (page: number) => {
               },
               body: [] as Reactor[],
             },
-            _gReactions: await prepareGReactions(feed.groupPost.oGroupPost.id),
+            _gReactions: await prepareGReactions(
+              "oGroupPost",
+              feed.groupPost.oGroupPost.id
+            ),
 
             medias: await Promise.all(
               feed.groupPost.oGroupPost.medias.map(async (media) => {
@@ -1080,6 +1183,7 @@ export const getFeeds = async (page: number) => {
               body: [] as Reactor[],
             },
             _gReactions: await prepareGReactions(
+              "toGroupSharedPost",
               feed.groupPost.toGroupSharedPost.id
             ),
           },
