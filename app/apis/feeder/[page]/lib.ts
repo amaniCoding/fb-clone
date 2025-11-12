@@ -146,12 +146,24 @@ export const getFeeds = async (page: number) => {
       postType: true,
       userPost: {
         select: {
+          postType: true,
           oUserPost: {
             select: {
               id: true,
               postType: true,
               content: true,
               createdAt: true,
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  Profile: {
+                    select: {
+                      profilePicture: true,
+                    },
+                  },
+                },
+              },
               // first reactors
               reactions: {
                 select: {
@@ -199,17 +211,7 @@ export const getFeeds = async (page: number) => {
                   reactions: true,
                 },
               },
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  Profile: {
-                    select: {
-                      profilePicture: true,
-                    },
-                  },
-                },
-              },
+
               medias: {
                 select: {
                   id: true,
@@ -400,6 +402,7 @@ export const getFeeds = async (page: number) => {
       },
       pagePost: {
         select: {
+          postType: true,
           oPagePost: {
             select: {
               id: true,
@@ -643,6 +646,7 @@ export const getFeeds = async (page: number) => {
       },
       groupPost: {
         select: {
+          postType: true,
           oGroupPost: {
             select: {
               id: true,
@@ -978,7 +982,7 @@ export const getFeeds = async (page: number) => {
         ...feed,
         userPost: {
           ...feed.userPost,
-          oUserPost: {
+          userSharePost: {
             ...feed.userPost.userSharePost,
             _comments: {
               loading: false,
@@ -1008,9 +1012,9 @@ export const getFeeds = async (page: number) => {
     if (feed.pagePost && feed.pagePost.oPagePost) {
       return {
         ...feed,
-        userPost: {
-          ...feed.userPost,
-          oUserPost: {
+        pagePost: {
+          ...feed.pagePost,
+          oPagePost: {
             ...feed.pagePost.oPagePost,
             _comments: {
               loading: false,
@@ -1068,9 +1072,9 @@ export const getFeeds = async (page: number) => {
     if (feed.pagePost && feed.pagePost.pageSharePost) {
       return {
         ...feed,
-        userPost: {
-          ...feed.userPost,
-          oUserPost: {
+        pagePost: {
+          ...feed.pagePost,
+          pageSharePost: {
             ...feed.pagePost.pageSharePost,
             _comments: {
               loading: false,
@@ -1101,9 +1105,9 @@ export const getFeeds = async (page: number) => {
     if (feed.groupPost && feed.groupPost.oGroupPost) {
       return {
         ...feed,
-        userPost: {
-          ...feed.userPost,
-          oUserPost: {
+        groupPost: {
+          ...feed.groupPost,
+          oGroupPost: {
             ...feed.groupPost.oGroupPost,
             _comments: {
               loading: false,
@@ -1161,9 +1165,9 @@ export const getFeeds = async (page: number) => {
     if (feed.groupPost && feed.groupPost.toGroupSharedPost) {
       return {
         ...feed,
-        userPost: {
-          ...feed.userPost,
-          oUserPost: {
+        groupPost: {
+          ...feed.groupPost,
+          toGroupSharedPost: {
             ...feed.groupPost.toGroupSharedPost,
             _comments: {
               loading: false,
@@ -1202,12 +1206,21 @@ export const getFeeds = async (page: number) => {
 
 const feeds = await getFeeds(1);
 const feed = feeds.updated[0];
-const oUserpost = feed && feed?.userPost.oUserPost;
-const userSharePost = feed && feed?.userPost.userSharePost;
-const oPagepost = feed && feed?.pagePost;
-const pageSharePost = feed && feed?.pagePost?.pageSharePost;
-const oGrouppost = feed && feed?.groupPost;
-const toGroupSharedPost = feed && feed?.groupPost?.toGroupSharedPost;
+
+const userPost = feed?.userPost;
+const pagePost = feed?.pagePost;
+const groupPost = feed?.groupPost;
+
+const oUserpost = feed?.userPost?.oUserPost;
+const userSharePost = feed?.userPost?.userSharePost;
+const oPagepost = feed?.pagePost;
+const pageSharePost = feed?.pagePost?.pageSharePost;
+const oGrouppost = feed?.groupPost;
+const toGroupSharedPost = feed?.groupPost?.toGroupSharedPost;
+
+export type UserPostType = typeof userPost;
+export type PagePostType = typeof pagePost;
+export type GroupPostType = typeof groupPost;
 
 export type FeedsType = typeof feed;
 export type OriginalUserPostType = typeof oUserpost;

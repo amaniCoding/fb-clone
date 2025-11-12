@@ -134,7 +134,7 @@ model User {
   followedPages UserPageFollow[]
   managedPages  Page[]
   //post
-  ownPosts      OUserPost[]      @relation("userposts")
+  ownPosts      OUserPost[]
 
   //shares
   sharedPosts              UserSharePost[]
@@ -203,7 +203,7 @@ model OUserPost {
   postType      PostType           @default(oUserPost)
   userPost      UserPost?
   userId        String
-  user          User               @relation("userposts", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   content       String?
   tags          Tags[]
   medias        Media[]
