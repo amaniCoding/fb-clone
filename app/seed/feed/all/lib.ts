@@ -342,6 +342,89 @@ export const _seedAll = async () => {
         });
       });
     }
+    if (oPPostMedias) {
+      oPPostMedias.map((media) => {
+        return prisma.media.update({
+          where: {
+            id: media.id,
+          },
+          data: {
+            comments: {
+              create: {
+                content: comment,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+                reactions: {
+                  create: {
+                    reactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
+                replies: {
+                  create: {
+                    content: reply,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+      });
+    }
+
+    if (oGPostMedias) {
+      oGPostMedias.map((media) => {
+        return prisma.media.update({
+          where: {
+            id: media.id,
+          },
+          data: {
+            comments: {
+              create: {
+                content: comment,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+                reactions: {
+                  create: {
+                    reactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
+                replies: {
+                  create: {
+                    content: reply,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+      });
+    }
   });
 
   return await Promise.all(UPDATE);
