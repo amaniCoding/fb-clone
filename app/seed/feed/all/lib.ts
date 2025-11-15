@@ -304,35 +304,52 @@ export const _seedAll = async () => {
     if (oUPostMedias) {
       await Promise.all(
         oUPostMedias.map((media) => {
-          return prisma.media.update({
+          return prisma.feed.update({
             where: {
-              id: media.id,
+              id: feed.id,
             },
             data: {
-              comments: {
-                create: {
-                  content: comment,
-                  user: {
-                    connect: {
-                      id: user.id,
-                    },
-                  },
-                  reactions: {
-                    create: {
-                      reactionType,
-                      user: {
-                        connect: {
-                          id: user.id,
-                        },
-                      },
-                    },
-                  },
-                  replies: {
-                    create: {
-                      content: reply,
-                      user: {
-                        connect: {
-                          id: user.id,
+              userPost: {
+                update: {
+                  oUserPost: {
+                    update: {
+                      medias: {
+                        update: {
+                          where: {
+                            id: media.id,
+                          },
+                          data: {
+                            comments: {
+                              create: {
+                                content: comment,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                                reactions: {
+                                  create: {
+                                    reactionType,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
+                                },
+                                replies: {
+                                  create: {
+                                    content: reply,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
                         },
                       },
                     },
@@ -347,35 +364,52 @@ export const _seedAll = async () => {
     if (oPPostMedias) {
       await Promise.all(
         oPPostMedias.map((media) => {
-          return prisma.media.update({
+          return prisma.feed.update({
             where: {
-              id: media.id,
+              id: feed.id,
             },
             data: {
-              comments: {
-                create: {
-                  content: comment,
-                  user: {
-                    connect: {
-                      id: user.id,
-                    },
-                  },
-                  reactions: {
-                    create: {
-                      reactionType,
-                      user: {
-                        connect: {
-                          id: user.id,
-                        },
-                      },
-                    },
-                  },
-                  replies: {
-                    create: {
-                      content: reply,
-                      user: {
-                        connect: {
-                          id: user.id,
+              pagePost: {
+                update: {
+                  oPagePost: {
+                    update: {
+                      medias: {
+                        update: {
+                          where: {
+                            id: media.id,
+                          },
+                          data: {
+                            comments: {
+                              create: {
+                                content: comment,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                                reactions: {
+                                  create: {
+                                    reactionType,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
+                                },
+                                replies: {
+                                  create: {
+                                    content: reply,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
                         },
                       },
                     },
@@ -391,35 +425,52 @@ export const _seedAll = async () => {
     if (oGPostMedias) {
       await Promise.all(
         oGPostMedias.map((media) => {
-          return prisma.media.update({
+          return prisma.feed.update({
             where: {
-              id: media.id,
+              id: feed.id,
             },
             data: {
-              comments: {
-                create: {
-                  content: comment,
-                  user: {
-                    connect: {
-                      id: user.id,
-                    },
-                  },
-                  reactions: {
-                    create: {
-                      reactionType,
-                      user: {
-                        connect: {
-                          id: user.id,
-                        },
-                      },
-                    },
-                  },
-                  replies: {
-                    create: {
-                      content: reply,
-                      user: {
-                        connect: {
-                          id: user.id,
+              groupPost: {
+                update: {
+                  oGroupPost: {
+                    update: {
+                      medias: {
+                        update: {
+                          where: {
+                            id: media.id,
+                          },
+                          data: {
+                            comments: {
+                              create: {
+                                content: comment,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                                reactions: {
+                                  create: {
+                                    reactionType,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
+                                },
+                                replies: {
+                                  create: {
+                                    content: reply,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
                         },
                       },
                     },
