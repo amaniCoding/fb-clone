@@ -75,7 +75,7 @@ export const _seedAll = async () => {
     const oPPostMedias = feed.pagePost?.oPagePost?.medias;
     const oGPostMedias = feed.groupPost?.oGroupPost?.medias;
 
-    await prisma.feed.update({
+    const up1 = prisma.feed.update({
       where: {
         id: feed.id,
       },
@@ -301,8 +301,12 @@ export const _seedAll = async () => {
       },
     });
 
+    let up2;
+    let up3;
+    let up4;
+
     if (oUPostMedias) {
-      await Promise.all(
+      up2 = Promise.all(
         oUPostMedias.map((media) => {
           return prisma.feed.update({
             where: {
@@ -362,7 +366,7 @@ export const _seedAll = async () => {
       );
     }
     if (oPPostMedias) {
-      await Promise.all(
+      up3 = Promise.all(
         oPPostMedias.map((media) => {
           return prisma.feed.update({
             where: {
@@ -423,7 +427,7 @@ export const _seedAll = async () => {
     }
 
     if (oGPostMedias) {
-      await Promise.all(
+      up4 = Promise.all(
         oGPostMedias.map((media) => {
           return prisma.feed.update({
             where: {
@@ -482,6 +486,7 @@ export const _seedAll = async () => {
         })
       );
     }
+    return Promise.all([up1, up2, up3, up4]);
   });
 
   return await Promise.all(UPDATE);
