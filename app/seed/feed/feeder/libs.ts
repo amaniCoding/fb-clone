@@ -1,4 +1,4 @@
-import { MediaType } from "@/app/generated/prisma";
+import { MediaOwnerType, MediaType } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
 import { dummyTexts, dummyComments, reactionTypes } from "../../dummy";
 
@@ -191,13 +191,14 @@ const getRandomAddedContentForShareTypes = () => {
 //   return originalPostTypes[rIndex];
 // };
 
-function generatePhoto(photoCount: number) {
+function generatePhoto(owner: MediaOwnerType, photoCount: number) {
   return Array.from({ length: photoCount }, () => {
     const randomPhoto = getRandomNumber(15, 1);
 
     return {
       url: `/users/${randomPhoto}.jpg`,
       type: "image" as MediaType,
+      owner,
     };
   });
 }
@@ -244,7 +245,10 @@ const createUserPost = async () => {
                       getRandomPostText() === "mediasonly"
                         ? {
                             createMany: {
-                              data: generatePhoto(getRandomPhotoCount()),
+                              data: generatePhoto(
+                                "user",
+                                getRandomPhotoCount()
+                              ),
                             },
                           }
                         : undefined,
@@ -372,7 +376,10 @@ const createPagePost = async () => {
                       getRandomPostText() === "mediasonly"
                         ? {
                             createMany: {
-                              data: generatePhoto(getRandomPhotoCount()),
+                              data: generatePhoto(
+                                "page",
+                                getRandomPhotoCount()
+                              ),
                             },
                           }
                         : undefined,
@@ -504,7 +511,10 @@ const createGroupPost = async () => {
                       getRandomPostText() === "mediasonly"
                         ? {
                             createMany: {
-                              data: generatePhoto(getRandomPhotoCount()),
+                              data: generatePhoto(
+                                "group",
+                                getRandomPhotoCount()
+                              ),
                             },
                           }
                         : undefined,
@@ -543,6 +553,7 @@ const createGroupPost = async () => {
               postType: "share",
               toGroupSharedPost: {
                 create: {
+                  sharer: sharer,
                   user:
                     sharer === "user"
                       ? {

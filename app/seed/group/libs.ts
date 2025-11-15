@@ -3,10 +3,11 @@ import { groups } from "../dummy";
 import bcrypt from "bcryptjs/umd/types";
 
 export function _seeder() {
-  return groups.map((page) => {
+  return groups.map((group) => {
     return prisma.group.create({
       data: {
-        name: page,
+        name: group.name,
+        profilePicture: group.profilePicture,
         superAdmin: {
           create: {
             firstName: "Amanuel",

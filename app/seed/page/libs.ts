@@ -6,7 +6,8 @@ export function _seeder() {
   return pages.map((page) => {
     return prisma.page.create({
       data: {
-        name: page,
+        name: page.name,
+        profilePicture: page.profilePicture,
         admin: {
           create: {
             firstName: "Amanuel",
