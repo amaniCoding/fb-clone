@@ -2,13 +2,13 @@
 import { Prisma, ReactionType } from "@/app/generated/prisma";
 import Image from "next/image";
 export default function Upper({
-  comments,
-  reactions,
+  commentsCount,
+  reactionsCount,
   groupedReactions,
   firtReactions,
 }: {
-  comments: number;
-  reactions: number;
+  commentsCount: number | undefined;
+  reactionsCount: number | undefined;
   groupedReactions:
     | {
         reactionType: ReactionType;
@@ -16,12 +16,17 @@ export default function Upper({
       }[]
     | undefined;
 
-  firtReactions: {
-    user: {
-      firstName: string;
-      lastName: string;
-    };
-  }[];
+  firtReactions:
+    | {
+        user: {
+          firstName: string;
+          lastName: string;
+          Profile: {
+            profilePicture: string | null;
+          } | null;
+        };
+      }[]
+    | undefined;
 }) {
   const newRxn = groupedReactions
     ? [...groupedReactions!].sort((a, b) => b.count - a.count)
@@ -45,12 +50,12 @@ export default function Upper({
                 />
               ))}
             </div>
-            <p className="text-gray-500">{reactions}</p>
+            <p className="text-gray-500">{reactionsCount}</p>
           </div>
         )}
 
         <div className="flex items-center space-x-3">
-          <p className="text-gray-500">{comments}</p>
+          <p className="text-gray-500">{commentsCount}</p>
 
           {/* <p className="text-gray-500">1k shares</p> */}
         </div>

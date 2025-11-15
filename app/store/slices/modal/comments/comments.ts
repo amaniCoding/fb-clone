@@ -1,4 +1,9 @@
-import { CommentType } from "@/app/apis/feed/comments/[feedid]/[posttype]/[page]/lib";
+import { oGroupPostCommentType } from "@/app/apis/comments/oGroupPost/[postid]/[page]/lib";
+import { oPagePostCommentType } from "@/app/apis/comments/oPagePost/[postid]/[page]/lib";
+import { oUserPostCommentType } from "@/app/apis/comments/oUserPost/[postid]/[page]/lib";
+import { PageSharePostCommentType } from "@/app/apis/comments/pageSharePost/[postid]/[page]/lib";
+import { toGroupSharePostCommentType } from "@/app/apis/comments/toGroupSharePost/[postid]/[page]/lib";
+import { userSharePostCommentType } from "@/app/apis/comments/userSharePost/[postid]/[page]/lib";
 import {
   OriginalUserPostType,
   OriginalPagePostType,
@@ -7,27 +12,12 @@ import {
   PageSharePostType,
   ToGroupSharePostType,
 } from "@/app/apis/feeder/[page]/lib";
-import {
-  UserPostType,
-  PagePostType,
-  GroupPostType,
-} from "@/app/generated/prisma";
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-type commentParams = {
-  id?: string;
-  url?: string;
-  loading?: boolean;
-  page?: number;
-  error?: string;
-  totalRows?: number;
-  totalPages?: number;
-  comments?: any[];
-};
 
 interface commentModalState {
   isOpen: boolean;
-  post:
+  currentPost:
     | OriginalUserPostType
     | OriginalPagePostType
     | OriginalGroupPostType
@@ -35,12 +25,10 @@ interface commentModalState {
     | PageSharePostType
     | ToGroupSharePostType
     | undefined;
-  id: string | undefined;
-  commentsShown: commentParams[];
 }
 
 type ShowCommentModalPayload = {
-  post:
+  currentPost:
     | OriginalUserPostType
     | OriginalPagePostType
     | OriginalGroupPostType
@@ -48,16 +36,23 @@ type ShowCommentModalPayload = {
     | PageSharePostType
     | ToGroupSharePostType
     | undefined;
-  id: string;
   isOpen: boolean;
-  urlStart: string;
+  starterUrl: string;
+};
+
+type SetCommentActionPayload = {
+  comments:
+    | oUserPostCommentType
+    | oPagePostCommentType
+    | oGroupPostCommentType
+    | userSharePostCommentType
+    | PageSharePostCommentType
+    | toGroupSharePostCommentType;
 };
 
 const initialState: commentModalState = {
-  post: undefined,
+  currentPost: undefined,
   isOpen: false,
-  commentsShown: [],
-  id: undefined,
 };
 
 /**
@@ -73,57 +68,30 @@ export const commentModalSlice = createSlice({
       state,
       action: PayloadAction<ShowCommentModalPayload>
     ) => {
-      state.post = action.payload.post;
+      state.currentPost = action.payload.currentPost;
       state.isOpen = action.payload.isOpen;
-      state.id = action.payload.id;
-      const currentComment = state.commentsShown.find(
-        (comment) => comment.id === action.payload.id
-      );
-      if (!currentComment) {
-        state.commentsShown.push({
-          // now this id is in
-          id: state.id,
-          loading: false,
-          page: 1,
-          error: undefined,
-          totalRows: 0,
-          totalPages: 0,
-          url: action.payload.urlStart,
-          comments: [],
-        });
-      }
     },
 
     setLoading: (state, action: PayloadAction<{ newLoading: boolean }>) => {
-      const currentComment = state.commentsShown.find(
-        (comment) => comment.id === state.id
-      );
-      if (currentComment) {
-        currentComment.loading = action.payload.newLoading;
+      if (state.currentPost) {
+        state.currentPost._comments.loading = action.payload.newLoading;
       }
     },
 
-    setComments: (
-      state,
-      action: PayloadAction<{ comments: CommentType[] }>
-    ) => {
-      const currentComment = state.commentsShown.find(
-        (comment) => comment.id === state.id
-      );
-      if (currentComment) {
-        currentComment.comments = [
-          ...currentComment.comments!,
-          ...action.payload.comments,
-        ];
+    setComments: (state, action: PayloadAction<SetCommentActionPayload>) => {
+      if (state.currentPost) {
+        if (action.payload.comments && state.currentPost._comments.comments) {
+          state.currentPost._comments.comments = [
+            ...state.currentPost._comments.comments,
+            ...action.payload.comments,
+          ];
+        }
       }
     },
 
     setError: (state, action: PayloadAction<{ newError: string }>) => {
-      const currentComment = state.commentsShown.find(
-        (comment) => comment.id === state.id
-      );
-      if (currentComment) {
-        currentComment.error = action.payload.newError;
+      if (state.currentPost) {
+        state.currentPost._comments.error = action.payload.newError;
       }
     },
   },

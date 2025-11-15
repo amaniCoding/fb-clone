@@ -19,7 +19,7 @@ export default function Feeder() {
     (state) => state.commentModal.isOpen
   );
   const postForCommentModal = useAppSelector(
-    (state) => state.commentModal.post
+    (state) => state.commentModal.currentPost
   );
   const dispatch = useAppDispatch();
 

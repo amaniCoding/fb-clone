@@ -104,3 +104,7 @@ export const getComments = async (
     count: _count?._count.comments,
   };
 };
+
+const result = await getComments("someid", 1, 7);
+const comments = result.result;
+export type oUserPostCommentType = typeof comments;

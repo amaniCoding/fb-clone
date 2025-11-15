@@ -71,6 +71,17 @@ enum ShareType {
   media
 }
 
+enum ToGroupSharerType {
+  user
+  page
+}
+
+enum MediaOwnerType {
+  user
+  page
+  group
+}
+
 enum ReactionType {
   like
   love
@@ -408,16 +419,17 @@ model Group {
   userId     String @unique
   superAdmin User   @relation(fields: [userId], references: [id])
 
-  name        String
-  category    String?
-  members     GroupMembers[]
-  posts       OGroupPost[]
-  rules       GroupRules[]
-  moderators  GroupModerator[]
-  admins      GroupAdmin[]
-  sharedPosts ToGroupSharePost[]
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  name           String
+  category       String?
+  profilePicture String?
+  members        GroupMembers[]
+  posts          OGroupPost[]
+  rules          GroupRules[]
+  moderators     GroupModerator[]
+  admins         GroupAdmin[]
+  sharedPosts    ToGroupSharePost[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 }
 
 model GroupPost {
@@ -463,11 +475,12 @@ model ToGroupSharePost {
   groupPost    GroupPost?
   userId       String?
   pageId       String?
-  page         Page?       @relation(fields: [pageId], references: [id])
-  user         User?       @relation(fields: [userId], references: [id])
+  page         Page?             @relation(fields: [pageId], references: [id])
+  user         User?             @relation(fields: [userId], references: [id])
   groupId      String
-  group        Group       @relation(fields: [groupId], references: [id])
+  group        Group             @relation(fields: [groupId], references: [id])
   shareWhat    ShareType
+  sharer       ToGroupSharerType
   content      String?
   doing        String?
   doingWhat    String?
@@ -476,10 +489,10 @@ model ToGroupSharePost {
   oPagePostId  String?
   oGroupPostId String?
   mediaId      String?
-  media        Media?      @relation(fields: [mediaId], references: [id])
-  oUserPost    OUserPost?  @relation(fields: [oUserPostId], references: [id])
-  oPagePost    OPagePost?  @relation(fields: [oPagePostId], references: [id])
-  oGroupPost   OGroupPost? @relation(fields: [oGroupPostId], references: [id])
+  media        Media?            @relation(fields: [mediaId], references: [id])
+  oUserPost    OUserPost?        @relation(fields: [oUserPostId], references: [id])
+  oPagePost    OPagePost?        @relation(fields: [oPagePostId], references: [id])
+  oGroupPost   OGroupPost?       @relation(fields: [oGroupPostId], references: [id])
 
   comments  Comment[]
   reactions Reaction[]
@@ -532,6 +545,7 @@ model Page {
   id                 String             @id @default(uuid())
   name               String
   category           String?
+  profilePicture     String?
   userId             String
   admin              User               @relation(fields: [userId], references: [id], onUpdate: Cascade)
   stories            Story[]
@@ -643,6 +657,7 @@ model Media {
   pagePostId    String?
   groupPostId   String?
   feedId        String?
+  owner         MediaOwnerType
   userPost      OUserPost?         @relation(fields: [userPostId], references: [id])
   pagePost      OPagePost?         @relation(fields: [pagePostId], references: [id])
   groupPost     OGroupPost?        @relation(fields: [groupPostId], references: [id])
