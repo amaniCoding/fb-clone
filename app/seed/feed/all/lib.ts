@@ -75,7 +75,7 @@ export const _seedAll = async () => {
     const oPPostMedias = feed.pagePost?.oPagePost?.medias;
     const oGPostMedias = feed.groupPost?.oGroupPost?.medias;
 
-    const update1 = prisma.feed.update({
+    await prisma.feed.update({
       where: {
         id: feed.id,
       },
@@ -302,128 +302,134 @@ export const _seedAll = async () => {
     });
 
     if (oUPostMedias) {
-      oUPostMedias.map((media) => {
-        return prisma.media.update({
-          where: {
-            id: media.id,
-          },
-          data: {
-            comments: {
-              create: {
-                content: comment,
-                user: {
-                  connect: {
-                    id: user.id,
+      await Promise.all(
+        oUPostMedias.map((media) => {
+          return prisma.media.update({
+            where: {
+              id: media.id,
+            },
+            data: {
+              comments: {
+                create: {
+                  content: comment,
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
                   },
-                },
-                reactions: {
-                  create: {
-                    reactionType,
-                    user: {
-                      connect: {
-                        id: user.id,
+                  reactions: {
+                    create: {
+                      reactionType,
+                      user: {
+                        connect: {
+                          id: user.id,
+                        },
                       },
                     },
                   },
-                },
-                replies: {
-                  create: {
-                    content: reply,
-                    user: {
-                      connect: {
-                        id: user.id,
+                  replies: {
+                    create: {
+                      content: reply,
+                      user: {
+                        connect: {
+                          id: user.id,
+                        },
                       },
                     },
                   },
                 },
               },
             },
-          },
-        });
-      });
+          });
+        })
+      );
     }
     if (oPPostMedias) {
-      oPPostMedias.map((media) => {
-        return prisma.media.update({
-          where: {
-            id: media.id,
-          },
-          data: {
-            comments: {
-              create: {
-                content: comment,
-                user: {
-                  connect: {
-                    id: user.id,
+      await Promise.all(
+        oPPostMedias.map((media) => {
+          return prisma.media.update({
+            where: {
+              id: media.id,
+            },
+            data: {
+              comments: {
+                create: {
+                  content: comment,
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
                   },
-                },
-                reactions: {
-                  create: {
-                    reactionType,
-                    user: {
-                      connect: {
-                        id: user.id,
+                  reactions: {
+                    create: {
+                      reactionType,
+                      user: {
+                        connect: {
+                          id: user.id,
+                        },
                       },
                     },
                   },
-                },
-                replies: {
-                  create: {
-                    content: reply,
-                    user: {
-                      connect: {
-                        id: user.id,
+                  replies: {
+                    create: {
+                      content: reply,
+                      user: {
+                        connect: {
+                          id: user.id,
+                        },
                       },
                     },
                   },
                 },
               },
             },
-          },
-        });
-      });
+          });
+        })
+      );
     }
 
     if (oGPostMedias) {
-      oGPostMedias.map((media) => {
-        return prisma.media.update({
-          where: {
-            id: media.id,
-          },
-          data: {
-            comments: {
-              create: {
-                content: comment,
-                user: {
-                  connect: {
-                    id: user.id,
+      await Promise.all(
+        oGPostMedias.map((media) => {
+          return prisma.media.update({
+            where: {
+              id: media.id,
+            },
+            data: {
+              comments: {
+                create: {
+                  content: comment,
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
                   },
-                },
-                reactions: {
-                  create: {
-                    reactionType,
-                    user: {
-                      connect: {
-                        id: user.id,
+                  reactions: {
+                    create: {
+                      reactionType,
+                      user: {
+                        connect: {
+                          id: user.id,
+                        },
                       },
                     },
                   },
-                },
-                replies: {
-                  create: {
-                    content: reply,
-                    user: {
-                      connect: {
-                        id: user.id,
+                  replies: {
+                    create: {
+                      content: reply,
+                      user: {
+                        connect: {
+                          id: user.id,
+                        },
                       },
                     },
                   },
                 },
               },
             },
-          },
-        });
-      });
+          });
+        })
+      );
     }
   });
 
