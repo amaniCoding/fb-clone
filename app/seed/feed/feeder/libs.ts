@@ -75,7 +75,7 @@ const getGroups = async () => {
   return await prisma.group.findMany({});
 };
 
-export const getRandomUser = async () => {
+const getRandomUser = async () => {
   const users = await getUsers();
   const rIndex = getRandomNumber(users.length, 0);
   return users[rIndex];
