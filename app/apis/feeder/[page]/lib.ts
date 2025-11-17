@@ -1,13 +1,8 @@
 import prisma from "@/app/libs/prisma";
 import { GReaction, Reactor } from "../../types";
-import { oUserPostCommentType } from "../../comments/oUserPost/[postid]/[page]/lib";
-import { userSharePostCommentType } from "../../comments/userSharePost/[postid]/[page]/lib";
-import { oPagePostCommentType } from "../../comments/oPagePost/[postid]/[page]/lib";
-import { PageSharePostCommentType } from "../../comments/pageSharePost/[postid]/[page]/lib";
-import { oGroupPostCommentType } from "../../comments/oGroupPost/[postid]/[page]/lib";
-import { toGroupSharePostCommentType } from "../../comments/toGroupSharePost/[postid]/[page]/lib";
 import { ReactionType } from "@/app/generated/prisma";
-import { MediaCommentType } from "../../comments/media/oPagePost/[postid]/[mediaid]/[page]/lib";
+import { MediaCommentType } from "../../comments/media/oUserPost/[postid]/[mediaid]/[page]/lib";
+import { CommentType } from "../../comments/oUserPost/[postid]/[page]/lib";
 
 const prepareGReactions = async (
   type:
@@ -1005,7 +1000,7 @@ export const getFeeds = async (page: number) => {
             error: "",
             totalPages: 0,
             totalRows: 0,
-            comments: [] as oUserPostCommentType,
+            comments: [] as CommentType,
           },
           _reactions: {
             header: {
@@ -1061,7 +1056,7 @@ export const getFeeds = async (page: number) => {
             error: "",
             totalPages: 0,
             totalRows: 0,
-            comments: [] as userSharePostCommentType,
+            comments: [] as CommentType,
           },
           _reactions: {
             header: {
@@ -1090,7 +1085,7 @@ export const getFeeds = async (page: number) => {
             error: "",
             totalPages: 0,
             totalRows: 0,
-            comments: [] as oPagePostCommentType,
+            comments: [] as CommentType,
           },
           _reactions: {
             header: {
@@ -1146,7 +1141,7 @@ export const getFeeds = async (page: number) => {
             error: "",
             totalPages: 0,
             totalRows: 0,
-            comments: [] as PageSharePostCommentType,
+            comments: [] as CommentType,
           },
           _reactions: {
             header: {
@@ -1177,7 +1172,7 @@ export const getFeeds = async (page: number) => {
             error: "",
             totalPages: 0,
             totalRows: 0,
-            comments: [] as oGroupPostCommentType,
+            comments: [] as CommentType,
           },
           _reactions: {
             header: {
@@ -1232,7 +1227,7 @@ export const getFeeds = async (page: number) => {
             error: "",
             totalPages: 0,
             totalRows: 0,
-            comments: [] as toGroupSharePostCommentType,
+            comments: [] as CommentType,
           },
           _reactions: {
             header: {

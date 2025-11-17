@@ -1,4 +1,4 @@
-import { MediaCommentType } from "@/app/apis/comments/media/oPagePost/[postid]/[mediaid]/[page]/lib";
+import { MediaCommentType } from "@/app/apis/comments/media/oUserPost/[postid]/[mediaid]/[page]/lib";
 import { PostType } from "@/app/generated/prisma";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 

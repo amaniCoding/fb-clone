@@ -1,10 +1,4 @@
-import { oGroupPostCommentType } from "@/app/apis/comments/oGroupPost/[postid]/[page]/lib";
-import { oPagePostCommentType } from "@/app/apis/comments/oPagePost/[postid]/[page]/lib";
-import { oUserPostCommentType } from "@/app/apis/comments/oUserPost/[postid]/[page]/lib";
-import { PageSharePostCommentType } from "@/app/apis/comments/pageSharePost/[postid]/[page]/lib";
-import { toGroupSharePostCommentType } from "@/app/apis/comments/toGroupSharePost/[postid]/[page]/lib";
-import { userSharePostCommentType } from "@/app/apis/comments/userSharePost/[postid]/[page]/lib";
-
+import { CommentType } from "@/app/apis/comments/oUserPost/[postid]/[page]/lib";
 import { PostType } from "@/app/generated/prisma";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 
@@ -25,13 +19,7 @@ type ShowCommentModalPayload = {
 };
 
 type SetCommentActionPayload = {
-  comments:
-    | oUserPostCommentType
-    | oPagePostCommentType
-    | oGroupPostCommentType
-    | userSharePostCommentType
-    | PageSharePostCommentType
-    | toGroupSharePostCommentType;
+  comments: CommentType;
 };
 
 const initialState: commentModalState = {

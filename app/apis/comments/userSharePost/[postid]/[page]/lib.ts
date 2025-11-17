@@ -1,4 +1,4 @@
-import { OUserSahrePostRepliesType } from "@/app/apis/replies/userSharePost/[postid]/[commentid]/[page]/lib";
+import { ReplyType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
 import { GReaction, Reactor } from "@/app/apis/types";
 import prisma from "@/app/libs/prisma";
 const commentPreparer = {
@@ -94,7 +94,7 @@ export const getComments = async (
         page: 1,
         totalPages: 0,
         totalRows: 0,
-        replies: [] as OUserSahrePostRepliesType,
+        replies: [] as ReplyType,
       },
     };
   });
@@ -105,7 +105,3 @@ export const getComments = async (
     count: _count?._count.comments,
   };
 };
-
-const result = await getComments("someid", 1, 7);
-const comments = result.result;
-export type userSharePostCommentType = typeof comments;

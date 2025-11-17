@@ -124,4 +124,4 @@ export const getReplies = async (
 
 const result = await getReplies("pid", "cid", 1, 7);
 const replies = result.result;
-export type OUserPostRepliesType = typeof replies;
+export type ReplyType = typeof replies;
