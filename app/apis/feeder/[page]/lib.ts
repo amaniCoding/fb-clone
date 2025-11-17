@@ -6,6 +6,8 @@ import { oPagePostCommentType } from "../../comments/oPagePost/[postid]/[page]/l
 import { PageSharePostCommentType } from "../../comments/pageSharePost/[postid]/[page]/lib";
 import { oGroupPostCommentType } from "../../comments/oGroupPost/[postid]/[page]/lib";
 import { toGroupSharePostCommentType } from "../../comments/toGroupSharePost/[postid]/[page]/lib";
+import { ReactionType } from "@/app/generated/prisma";
+import { MediaCommentType } from "../../comments/media/oPagePost/[postid]/[mediaid]/[page]/lib";
 
 const prepareGReactions = async (
   type:
@@ -1007,7 +1009,7 @@ export const getFeeds = async (page: number) => {
           },
           _reactions: {
             header: {
-              currentReactionType: undefined,
+              currentReactionType: undefined as ReactionType | undefined,
               loading: false,
               error: undefined,
               gReactions: [] as GReaction[],
@@ -1029,7 +1031,7 @@ export const getFeeds = async (page: number) => {
                   error: "",
                   totalPages: 0,
                   totalRows: 0,
-                  comments: [] as oUserPostCommentType,
+                  comments: [] as MediaCommentType,
                 },
 
                 _reactions: {
@@ -1063,7 +1065,7 @@ export const getFeeds = async (page: number) => {
           },
           _reactions: {
             header: {
-              currentReactionType: undefined,
+              currentReactionType: undefined as ReactionType | undefined,
               loading: false,
               error: undefined,
               gReactions: [] as GReaction[],
@@ -1092,7 +1094,7 @@ export const getFeeds = async (page: number) => {
           },
           _reactions: {
             header: {
-              currentReactionType: undefined,
+              currentReactionType: undefined as ReactionType | undefined,
               loading: false,
               error: undefined,
               gReactions: [] as GReaction[],
@@ -1114,7 +1116,7 @@ export const getFeeds = async (page: number) => {
                   error: "",
                   totalPages: 0,
                   totalRows: 0,
-                  comments: [],
+                  comments: [] as MediaCommentType,
                 },
 
                 _reactions: {
@@ -1148,7 +1150,7 @@ export const getFeeds = async (page: number) => {
           },
           _reactions: {
             header: {
-              currentReactionType: undefined,
+              currentReactionType: undefined as ReactionType | undefined,
               loading: false,
               error: undefined,
               gReactions: [] as GReaction[],
@@ -1179,7 +1181,7 @@ export const getFeeds = async (page: number) => {
           },
           _reactions: {
             header: {
-              currentReactionType: undefined,
+              currentReactionType: undefined as ReactionType | undefined,
               loading: false,
               error: undefined,
               gReactions: [] as GReaction[],
@@ -1201,7 +1203,7 @@ export const getFeeds = async (page: number) => {
                   error: "",
                   totalPages: 0,
                   totalRows: 0,
-                  comments: [],
+                  comments: [] as MediaCommentType,
                 },
 
                 _reactions: {
@@ -1234,7 +1236,7 @@ export const getFeeds = async (page: number) => {
           },
           _reactions: {
             header: {
-              currentReactionType: undefined,
+              currentReactionType: undefined as ReactionType | undefined,
               loading: false,
               error: undefined,
               gReactions: [] as GReaction[],
@@ -1273,6 +1275,8 @@ const oGrouppost = feed?.groupPost.oGroupPost;
 const toGroupSharedPost = feed?.groupPost?.toGroupSharedPost;
 
 const oUserPostMedia = oUserpost.medias;
+
+const oUserPostMediaComment = oUserpost.medias[0]._comments.comments;
 
 const rawO_U_UserMedia = userPost.userSharePost.rawOUserPost?.medias;
 

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useAppDispatch } from "@/app/store/hooks";
 import { useRef, useState } from "react";
 import { OriginalUserPostType } from "@/app/apis/feeder/[page]/lib";
-import { showCommentModal } from "@/app/store/slices/modal/comments/comments";
+import { showCommentModal } from "@/app/store/slices/modal/comments/post/comments";
 import ReactionBox from "../../reactionbox";
 
 type TypeProps = {

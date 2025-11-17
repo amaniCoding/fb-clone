@@ -1,3 +1,4 @@
+import { OUserPostRepliesType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
 import { GReaction, Reactor } from "@/app/apis/types";
 import prisma from "@/app/libs/prisma";
 const commentPreparer = {
@@ -93,7 +94,7 @@ export const getComments = async (
         page: 1,
         totalPages: 0,
         totalRows: 0,
-        replies: [],
+        replies: [] as OUserPostRepliesType,
       },
     };
   });

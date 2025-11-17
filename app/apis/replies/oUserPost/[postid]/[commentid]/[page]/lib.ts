@@ -121,3 +121,7 @@ export const getReplies = async (
     count: _count?.comments[0]._count.replies,
   };
 };
+
+const result = await getReplies("pid", "cid", 1, 7);
+const replies = result.result;
+export type OUserPostRepliesType = typeof replies;

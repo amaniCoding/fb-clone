@@ -1,3 +1,4 @@
+import { OUserPostRepliesType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
 import { GReaction, Reactor } from "@/app/apis/types";
 import prisma from "@/app/libs/prisma";
 const commentPreparer = {
@@ -111,7 +112,7 @@ export const getComments = async (
         page: 1,
         totalPages: 0,
         totalRows: 0,
-        replies: [],
+        replies: [] as OUserPostRepliesType,
       },
     };
   });
@@ -122,3 +123,7 @@ export const getComments = async (
     count: _count?.medias[0]._count.comments,
   };
 };
+
+const result = await getComments("someid", "somemediaid", 1, 7);
+const comment = result.result;
+export type MediaCommentType = typeof comment;
