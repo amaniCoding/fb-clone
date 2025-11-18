@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { getComments } from "./lib";
+import { CommentType, getComments } from "./lib";
 
 type RouteType = {
   postid: string;
@@ -21,7 +21,7 @@ export async function GET(
     );
 
     const jsonResponse = {
-      result,
+      comments: result,
       totalRows: count ? count : 0,
       totalPages: Math.ceil(count ? count / rowsPerPage : 0),
     };
@@ -35,3 +35,9 @@ export async function GET(
     return Response.json({ error }, { status: 500 });
   }
 }
+
+export type CommentsResponseType = {
+  comments: CommentType;
+  totalRows: number;
+  totalPages: number;
+};

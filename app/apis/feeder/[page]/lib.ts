@@ -1,6 +1,6 @@
 import prisma from "@/app/libs/prisma";
 import { GReaction, Reactor } from "../../types";
-import { ReactionType } from "@/app/generated/prisma";
+import { ReactionType, ToGroupSharerType } from "@/app/generated/prisma";
 import { MediaCommentType } from "../../comments/media/oUserPost/[postid]/[mediaid]/[page]/lib";
 import { CommentType } from "../../comments/oUserPost/[postid]/[page]/lib";
 
@@ -994,23 +994,6 @@ export const getFeeds = async (page: number) => {
         ...feed.userPost,
         oUserPost: {
           ...feed.userPost?.oUserPost,
-          _comments: {
-            loading: false,
-            page: 1,
-            error: "",
-            totalPages: 0,
-            totalRows: 0,
-            comments: [] as CommentType,
-          },
-          _reactions: {
-            header: {
-              currentReactionType: undefined as ReactionType | undefined,
-              loading: false,
-              error: undefined,
-              gReactions: [] as GReaction[],
-            },
-            body: [] as Reactor[],
-          },
           _gReactions: await prepareGReactions(
             "oUserPost",
             feed.userPost?.oUserPost?.id
@@ -1020,24 +1003,7 @@ export const getFeeds = async (page: number) => {
             feed.userPost?.oUserPost?.medias.map(async (media) => {
               return {
                 ...media,
-                _comments: {
-                  loading: false,
-                  page: 1,
-                  error: "",
-                  totalPages: 0,
-                  totalRows: 0,
-                  comments: [] as MediaCommentType,
-                },
 
-                _reactions: {
-                  header: {
-                    currentReactionType: undefined,
-                    loading: false,
-                    error: undefined,
-                    gReactions: [] as GReaction[],
-                  },
-                  body: [] as Reactor[],
-                },
                 _gReactions: await prepareMeidaGReactions(media.id),
               };
             })!
@@ -1050,23 +1016,6 @@ export const getFeeds = async (page: number) => {
           rawOPagePost: feed.userPost?.userSharePost?.oPagePost,
           rawOGroupPost: feed.userPost?.userSharePost?.oGroupPost,
 
-          _comments: {
-            loading: false,
-            page: 1,
-            error: "",
-            totalPages: 0,
-            totalRows: 0,
-            comments: [] as CommentType,
-          },
-          _reactions: {
-            header: {
-              currentReactionType: undefined as ReactionType | undefined,
-              loading: false,
-              error: undefined,
-              gReactions: [] as GReaction[],
-            },
-            body: [] as Reactor[],
-          },
           _gReactions: await prepareGReactions(
             "userSharePost",
             feed.userPost?.userSharePost?.id
@@ -1079,23 +1028,7 @@ export const getFeeds = async (page: number) => {
         ...feed.pagePost,
         oPagePost: {
           ...feed.pagePost?.oPagePost,
-          _comments: {
-            loading: false,
-            page: 1,
-            error: "",
-            totalPages: 0,
-            totalRows: 0,
-            comments: [] as CommentType,
-          },
-          _reactions: {
-            header: {
-              currentReactionType: undefined as ReactionType | undefined,
-              loading: false,
-              error: undefined,
-              gReactions: [] as GReaction[],
-            },
-            body: [] as Reactor[],
-          },
+
           _gReactions: await prepareGReactions(
             "oPagePost",
             feed.pagePost?.oPagePost?.id
@@ -1105,24 +1038,7 @@ export const getFeeds = async (page: number) => {
             feed.pagePost?.oPagePost?.medias.map(async (media) => {
               return {
                 ...media,
-                _comments: {
-                  loading: false,
-                  page: 1,
-                  error: "",
-                  totalPages: 0,
-                  totalRows: 0,
-                  comments: [] as MediaCommentType,
-                },
 
-                _reactions: {
-                  header: {
-                    currentReactionType: undefined,
-                    loading: false,
-                    error: undefined,
-                    gReactions: [] as GReaction[],
-                  },
-                  body: [] as Reactor[],
-                },
                 _gReactions: await prepareMeidaGReactions(media.id),
               };
             })!
@@ -1135,23 +1051,7 @@ export const getFeeds = async (page: number) => {
           rawOUserPost: feed.pagePost?.pageSharePost?.oUserPost,
           rawOPagePost: feed.pagePost?.pageSharePost?.oPagePost,
           rawOGroupPost: feed.pagePost?.pageSharePost?.oGroupPost,
-          _comments: {
-            loading: false,
-            page: 1,
-            error: "",
-            totalPages: 0,
-            totalRows: 0,
-            comments: [] as CommentType,
-          },
-          _reactions: {
-            header: {
-              currentReactionType: undefined as ReactionType | undefined,
-              loading: false,
-              error: undefined,
-              gReactions: [] as GReaction[],
-            },
-            body: [] as Reactor[],
-          },
+
           _gReactions: await prepareGReactions(
             "pageSharePost",
             feed.pagePost?.pageSharePost?.id
@@ -1166,23 +1066,6 @@ export const getFeeds = async (page: number) => {
         oGroupPost: {
           ...feed.groupPost?.oGroupPost,
 
-          _comments: {
-            loading: false,
-            page: 1,
-            error: "",
-            totalPages: 0,
-            totalRows: 0,
-            comments: [] as CommentType,
-          },
-          _reactions: {
-            header: {
-              currentReactionType: undefined as ReactionType | undefined,
-              loading: false,
-              error: undefined,
-              gReactions: [] as GReaction[],
-            },
-            body: [] as Reactor[],
-          },
           _gReactions: await prepareGReactions(
             "oGroupPost",
             feed.groupPost?.oGroupPost?.id
@@ -1192,24 +1075,7 @@ export const getFeeds = async (page: number) => {
             feed.groupPost?.oGroupPost?.medias.map(async (media) => {
               return {
                 ...media,
-                _comments: {
-                  loading: false,
-                  page: 1,
-                  error: "",
-                  totalPages: 0,
-                  totalRows: 0,
-                  comments: [] as MediaCommentType,
-                },
 
-                _reactions: {
-                  header: {
-                    currentReactionType: undefined,
-                    loading: false,
-                    error: undefined,
-                    gReactions: [] as GReaction[],
-                  },
-                  body: [] as Reactor[],
-                },
                 _gReactions: await prepareMeidaGReactions(media.id),
               };
             })!
@@ -1221,23 +1087,7 @@ export const getFeeds = async (page: number) => {
           rawOUserPost: feed.groupPost?.toGroupSharedPost?.oUserPost,
           rawOPagePost: feed.groupPost?.toGroupSharedPost?.oPagePost,
           rawOGroupPost: feed.groupPost?.toGroupSharedPost?.oGroupPost,
-          _comments: {
-            loading: false,
-            page: 1,
-            error: "",
-            totalPages: 0,
-            totalRows: 0,
-            comments: [] as CommentType,
-          },
-          _reactions: {
-            header: {
-              currentReactionType: undefined as ReactionType | undefined,
-              loading: false,
-              error: undefined,
-              gReactions: [] as GReaction[],
-            },
-            body: [] as Reactor[],
-          },
+
           _gReactions: await prepareGReactions(
             "toGroupSharedPost",
             feed.groupPost?.toGroupSharedPost?.id
@@ -1269,57 +1119,11 @@ const pageSharePost = feed?.pagePost?.pageSharePost;
 const oGrouppost = feed?.groupPost.oGroupPost;
 const toGroupSharedPost = feed?.groupPost?.toGroupSharedPost;
 
-const oUserPostMedia = oUserpost.medias;
-
-const oUserPostMediaComment = oUserpost.medias[0]._comments.comments;
-
-const rawO_U_UserMedia = userPost.userSharePost.rawOUserPost?.medias;
-
-const rawO_U_User = userPost.userSharePost.rawOUserPost;
-const rawO_U_Page = userPost.userSharePost.rawOPagePost;
-const rawO_U_Group = userPost.userSharePost.rawOGroupPost;
-
-const rawO_P_User = pagePost.pageSharePost.rawOUserPost;
-const rawO_P_Page = pagePost.pageSharePost.rawOPagePost;
-const rawO_P_Group = pagePost.pageSharePost.rawOGroupPost;
-
-const rawO_TG_User = groupPost.toGroupSharedPost.rawOUserPost;
-const rawO_TG_Page = groupPost.toGroupSharedPost.rawOPagePost;
-const rawO_TG_Group = groupPost.toGroupSharedPost.rawOGroupPost;
-
-const rawOUserPostMedia = userPost.userSharePost.rawOUserPost?.medias;
-const rawOPagePostMedia = pagePost.pageSharePost.rawOPagePost?.medias;
-const rawOGroupPostMedia = groupPost?.toGroupSharedPost.rawOGroupPost?.medias;
-
-export type UserPostType = typeof userPost;
-export type PagePostType = typeof pagePost;
-export type GroupPostType = typeof groupPost;
-
-export type OriginalUserPostType = typeof oUserpost;
-export type OriginalPagePostType = typeof oPagepost;
-export type OriginalGroupPostType = typeof oGrouppost;
-
-export type rawO_U_UserType = typeof rawO_U_User;
-export type rawO_U_PageType = typeof rawO_U_Page;
-export type rawO_U_GroupType = typeof rawO_U_Group;
-
-export type rawO_P_UserType = typeof rawO_P_User;
-export type rawO_P_PageType = typeof rawO_P_Page;
-export type rawO_P_GroupType = typeof rawO_P_Group;
-
-export type rawO_TG_UserType = typeof rawO_TG_User;
-export type rawO_TG_PageType = typeof rawO_TG_Page;
-export type rawO_TG_GroupType = typeof rawO_TG_Group;
-
-export type OriginalRawUserPostMediaType = typeof rawOUserPostMedia;
-export type OriginalRawPagePostMediaType = typeof rawOPagePostMedia;
-export type OriginalRawGroupPostMediaType = typeof rawOGroupPostMedia;
-
-export type UserSharePostType = typeof userSharePost;
-export type PageSharePostType = typeof pageSharePost;
-export type ToGroupSharePostType = typeof toGroupSharedPost;
-
-export type OriginalPostMediaType = typeof oUserPostMedia;
-export type rawMediaType = typeof rawO_U_UserMedia;
+export type OUserPost = typeof oUserpost;
+export type UserSharePost = typeof userSharePost;
+export type OPagePost = typeof oPagepost;
+export type PageSharePost = typeof pageSharePost;
+export type OGroupPost = typeof oGrouppost;
+export type ToGroupSharedPost = typeof ToGroupSharerType;
 
 export type FeedsType = typeof feed;

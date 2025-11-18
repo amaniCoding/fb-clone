@@ -70,6 +70,9 @@ export default function Feeder() {
     if (isOnline) {
       getFeeds();
     }
+    return () => {
+      controller.abort();
+    };
   }, [dispatch, isOnline, page]);
 
   return (
