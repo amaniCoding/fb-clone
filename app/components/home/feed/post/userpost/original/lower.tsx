@@ -1,17 +1,17 @@
 "use client";
 import Image from "next/image";
+
 import { useAppDispatch } from "@/app/store/hooks";
 import { useRef, useState } from "react";
-import { OriginalUserPostType } from "@/app/apis/feeder/[page]/lib";
-import { showCommentModal } from "@/app/store/slices/modal/comments/post/comments";
+
+import { showCommentModal } from "@/app/store/slices/modal/comment";
+import { OUserPost } from "@/app/apis/feeder/[page]/lib";
 import ReactionBox from "../../reactionbox";
 
 type TypeProps = {
-  post: OriginalUserPostType;
-  refFrom: string;
-  feedId: string;
+  post: OUserPost;
 };
-export default function Lower({ post, refFrom, feedId }: TypeProps) {
+export default function Lower({ post }: TypeProps) {
   const dispatch = useAppDispatch();
   const [toShowReactionBox, setToShowReactionBox] = useState<boolean>(false);
   const timeOutId = useRef<NodeJS.Timeout>(null);
@@ -20,8 +20,12 @@ export default function Lower({ post, refFrom, feedId }: TypeProps) {
     dispatch(
       showCommentModal({
         isOpen: true,
-        currentPost: post,
-        starterUrl: `/apis/comments/${post.postType}/${post.id}`,
+        id: post.postId,
+        starterUrl: `/comments/${post.postType}/${post.postId}`,
+        currentPost: {
+          postType: "oUserPost",
+          oUserPost: post,
+        },
       })
     );
   };
@@ -71,7 +75,7 @@ export default function Lower({ post, refFrom, feedId }: TypeProps) {
       </div>
       <div
         className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100"
-        onClick={refFrom === "post" ? _showCommentModal : () => {}}
+        onClick={_showCommentModal}
       >
         <div className="flex items-center px-3 py-1.5 space-x-1 ">
           <Image

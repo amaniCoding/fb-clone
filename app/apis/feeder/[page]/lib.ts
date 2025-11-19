@@ -670,6 +670,52 @@ export const getFeeds = async (page: number) => {
                   url: true,
                 },
               },
+              reactions: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              //first media commentors
+              comments: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // counts
+              _count: {
+                select: {
+                  comments: true,
+                  reactions: true,
+                },
+              },
             },
           },
         },
@@ -994,6 +1040,8 @@ export const getFeeds = async (page: number) => {
         ...feed.userPost,
         oUserPost: {
           ...feed.userPost?.oUserPost,
+          feedId: feed.id,
+          postId: feed.userPost?.oUserPost?.id,
           _gReactions: await prepareGReactions(
             "oUserPost",
             feed.userPost?.oUserPost?.id
@@ -1003,7 +1051,9 @@ export const getFeeds = async (page: number) => {
             feed.userPost?.oUserPost?.medias.map(async (media) => {
               return {
                 ...media,
-
+                feedId: feed.id,
+                postId: feed.userPost?.oUserPost?.id,
+                mediaId: media.id,
                 _gReactions: await prepareMeidaGReactions(media.id),
               };
             })!
@@ -1012,10 +1062,8 @@ export const getFeeds = async (page: number) => {
         // share
         userSharePost: {
           ...feed.userPost?.userSharePost,
-          rawOUserPost: feed.userPost?.userSharePost?.oUserPost,
-          rawOPagePost: feed.userPost?.userSharePost?.oPagePost,
-          rawOGroupPost: feed.userPost?.userSharePost?.oGroupPost,
-
+          feedId: feed.id,
+          postId: feed.userPost?.userSharePost?.id,
           _gReactions: await prepareGReactions(
             "userSharePost",
             feed.userPost?.userSharePost?.id
@@ -1028,7 +1076,8 @@ export const getFeeds = async (page: number) => {
         ...feed.pagePost,
         oPagePost: {
           ...feed.pagePost?.oPagePost,
-
+          feedId: feed.id,
+          postId: feed.pagePost?.oPagePost?.id,
           _gReactions: await prepareGReactions(
             "oPagePost",
             feed.pagePost?.oPagePost?.id
@@ -1038,7 +1087,9 @@ export const getFeeds = async (page: number) => {
             feed.pagePost?.oPagePost?.medias.map(async (media) => {
               return {
                 ...media,
-
+                feedId: feed.id,
+                postId: feed.pagePost?.oPagePost?.id,
+                mediaId: media.id,
                 _gReactions: await prepareMeidaGReactions(media.id),
               };
             })!
@@ -1048,10 +1099,8 @@ export const getFeeds = async (page: number) => {
         // apge share post
         pageSharePost: {
           ...feed.pagePost?.pageSharePost,
-          rawOUserPost: feed.pagePost?.pageSharePost?.oUserPost,
-          rawOPagePost: feed.pagePost?.pageSharePost?.oPagePost,
-          rawOGroupPost: feed.pagePost?.pageSharePost?.oGroupPost,
-
+          feedId: feed.id,
+          postId: feed.pagePost?.pageSharePost?.id,
           _gReactions: await prepareGReactions(
             "pageSharePost",
             feed.pagePost?.pageSharePost?.id
@@ -1065,7 +1114,8 @@ export const getFeeds = async (page: number) => {
         ...feed.groupPost,
         oGroupPost: {
           ...feed.groupPost?.oGroupPost,
-
+          feedId: feed.id,
+          postId: feed.groupPost?.oGroupPost?.id,
           _gReactions: await prepareGReactions(
             "oGroupPost",
             feed.groupPost?.oGroupPost?.id
@@ -1075,7 +1125,9 @@ export const getFeeds = async (page: number) => {
             feed.groupPost?.oGroupPost?.medias.map(async (media) => {
               return {
                 ...media,
-
+                feedId: feed.id,
+                postId: feed.groupPost?.oGroupPost?.id,
+                mediaId: media.id,
                 _gReactions: await prepareMeidaGReactions(media.id),
               };
             })!
@@ -1084,10 +1136,8 @@ export const getFeeds = async (page: number) => {
         // share
         toGroupSharedPost: {
           ...feed.groupPost?.toGroupSharedPost,
-          rawOUserPost: feed.groupPost?.toGroupSharedPost?.oUserPost,
-          rawOPagePost: feed.groupPost?.toGroupSharedPost?.oPagePost,
-          rawOGroupPost: feed.groupPost?.toGroupSharedPost?.oGroupPost,
-
+          feedId: feed.id,
+          postId: feed.groupPost?.toGroupSharedPost?.id,
           _gReactions: await prepareGReactions(
             "toGroupSharedPost",
             feed.groupPost?.toGroupSharedPost?.id
@@ -1119,11 +1169,44 @@ const pageSharePost = feed?.pagePost?.pageSharePost;
 const oGrouppost = feed?.groupPost.oGroupPost;
 const toGroupSharedPost = feed?.groupPost?.toGroupSharedPost;
 
+export type UserPostType = typeof userPost;
+export type PagePostType = typeof pagePost;
+export type GroupPostType = typeof groupPost;
+
 export type OUserPost = typeof oUserpost;
 export type UserSharePost = typeof userSharePost;
 export type OPagePost = typeof oPagepost;
 export type PageSharePost = typeof pageSharePost;
 export type OGroupPost = typeof oGrouppost;
-export type ToGroupSharedPost = typeof ToGroupSharerType;
+export type ToGroupSharedPost = typeof toGroupSharedPost;
 
 export type FeedsType = typeof feed;
+
+export type CurrentPostType = {
+  _gReactions:
+    | {
+        reactionType: ReactionType;
+        count: number;
+      }[]
+    | undefined;
+
+  comments: {
+    user: {
+      firstName: string;
+      lastName: string;
+      Profile: {
+        profilePicture: string | null;
+      } | null;
+    };
+  }[];
+
+  reactions: {
+    user: {
+      firstName: string;
+      lastName: string;
+      Profile: {
+        profilePicture: string | null;
+      } | null;
+    };
+  }[];
+};

@@ -1,20 +1,17 @@
-import { PagePostType, UserPostType } from "@/app/apis/feeder/[page]/lib";
-import Share from "./share/post";
-import Original from "./original/post";
+import { PagePostType } from "@/app/apis/feeder/[page]/lib";
+import OPage_Post from "./original/post";
+import PageShare_Post from "./share/post";
 
-type PagePostProps = {
+type PropsTypes = {
   post: PagePostType;
-  feedId: string;
 };
-export default function PagePost({ post, feedId }: PagePostProps) {
+export default function PagePost({ post }: PropsTypes) {
   return (
     <>
-      {post?.postType === "original" && (
-        <Original post={post.oPagePost} feedId={feedId} />
-      )}
+      {post?.postType === "original" && <OPage_Post post={post.oPagePost} />}
 
       {post?.postType === "share" && (
-        <Share post={post.pageSharePost} feedId={feedId} />
+        <PageShare_Post post={post.pageSharePost} />
       )}
     </>
   );

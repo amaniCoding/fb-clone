@@ -1,18 +1,16 @@
 "use client";
-import { OriginalUserPostType } from "@/app/apis/feeder/[page]/lib";
-import Header from "./header";
-import Content from "./content";
-import Medias from "./Medias";
-import Upper from "./upper";
+import Header from "../header";
+import Content from "../shared/content";
+import Medias from "../shared/Medias";
+import Upper from "../shared/upper";
 import Lower from "./lower";
+import { OUserPost } from "@/app/apis/feeder/[page]/lib";
 
 type PropsTypes = {
-  post: OriginalUserPostType;
-
-  feedId: string;
+  post: OUserPost;
 };
 
-export default function Original({ post, feedId }: PropsTypes) {
+export default function OUser_Post({ post }: PropsTypes) {
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       <Header
@@ -29,7 +27,7 @@ export default function Original({ post, feedId }: PropsTypes) {
         groupedReactions={post?._gReactions}
         firstReactions={post?.reactions}
       />
-      <Lower post={post} feedId={feedId} refFrom="post" />
+      <Lower post={post} />
     </div>
   );
 }

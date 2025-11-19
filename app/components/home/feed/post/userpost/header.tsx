@@ -3,7 +3,7 @@ import Image from "next/image";
 import { IoIosMore } from "react-icons/io";
 import { CgClose } from "react-icons/cg";
 
-export default function User({
+export default function UserHeader({
   firstName,
   lastName,
   date,

@@ -3,7 +3,7 @@ import { useFetchComments } from "../comments";
 import { useAppDispatch } from "@/app/store/hooks";
 import { updateRepliesPage } from "@/app/store/slices/modal/comment";
 
-const useCommentsLastNodeRef = () => {
+export const useCommentsLastNodeRef = () => {
   const { loading, page, totalPages } = useFetchComments();
   const hasMore = page! <= totalPages!;
 

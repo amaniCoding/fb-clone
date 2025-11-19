@@ -7,10 +7,12 @@ import {
 } from "@/app/store/slices/modal/comment";
 import axios from "axios";
 import { useEffect } from "react";
+import { useAppropriatePost } from "./appropriatepost";
 
 export const useFetchComments = () => {
   const dispatch = useAppDispatch();
   const refId = useAppSelector((state) => state.commentModal.id);
+
   const commentsShown = useAppSelector(
     (state) => state.commentModal.commentsShown
   );
@@ -18,6 +20,10 @@ export const useFetchComments = () => {
   const currentRef = commentsShown.find((cs) => {
     return cs.id === refId;
   });
+
+  const currentPostData = useAppSelector(
+    (state) => state.commentModal.currentPost
+  );
 
   const fullUrl = `${starterUrl}/${currentRef?.page}`;
 
@@ -51,7 +57,6 @@ export const useFetchComments = () => {
   const comments = currentRef?.comments;
   const totalPages = currentRef?.totalPages;
   const totalRows = currentRef?.totalRows;
-
   return {
     loading,
     page,
@@ -59,5 +64,6 @@ export const useFetchComments = () => {
     comments,
     totalPages,
     totalRows,
+    currentPostData,
   };
 };

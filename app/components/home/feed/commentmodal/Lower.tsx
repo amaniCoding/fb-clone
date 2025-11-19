@@ -2,32 +2,12 @@
 import Image from "next/image";
 import { useAppDispatch } from "@/app/store/hooks";
 import { useRef, useState } from "react";
+import ReactionBox from "../post/reactionbox";
 
-import { showCommentModal } from "@/app/store/slices/modal/comment";
-import { ToGroupSharedPost } from "@/app/apis/feeder/[page]/lib";
-import ReactionBox from "../../reactionbox";
-
-type TypeProps = {
-  post: ToGroupSharedPost;
-};
-export default function Lower({ post }: TypeProps) {
+export default function Lower() {
   const dispatch = useAppDispatch();
   const [toShowReactionBox, setToShowReactionBox] = useState<boolean>(false);
   const timeOutId = useRef<NodeJS.Timeout>(null);
-
-  const _showCommentModal = () => {
-    dispatch(
-      showCommentModal({
-        isOpen: true,
-        id: post.postId,
-        starterUrl: `/comments/${post.postType}/${post.postId}`,
-        currentPost: {
-          postType: "oUserPost",
-          toGroupSharedPost: post,
-        },
-      })
-    );
-  };
 
   const showReactionBox = () => {
     setTimeout(() => {
@@ -72,10 +52,7 @@ export default function Lower({ post }: TypeProps) {
           <p>Like</p>
         </div>
       </div>
-      <div
-        className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100"
-        onClick={_showCommentModal}
-      >
+      <div className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100">
         <div className="flex items-center px-3 py-1.5 space-x-1 ">
           <Image
             alt=""

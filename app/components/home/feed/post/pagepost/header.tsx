@@ -3,13 +3,13 @@ import Image from "next/image";
 import { IoIosMore } from "react-icons/io";
 import { CgClose } from "react-icons/cg";
 
-export default function Header({
+export default function PageHeader({
   name,
   profilePicture,
   date,
 }: {
-  profilePicture: string | undefined | null;
   name: string | undefined;
+  profilePicture: string | undefined | null;
   date: string | undefined;
 }) {
   return (

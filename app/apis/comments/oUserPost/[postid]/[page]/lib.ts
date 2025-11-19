@@ -66,6 +66,53 @@ export const getComments = async (
               },
             },
           },
+
+          reactions: {
+            select: {
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  Profile: {
+                    select: {
+                      profilePicture: true,
+                    },
+                  },
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+            take: 1,
+          },
+          // first commentors
+          replies: {
+            select: {
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  Profile: {
+                    select: {
+                      profilePicture: true,
+                    },
+                  },
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+            take: 1,
+          },
+          // counts
+          _count: {
+            select: {
+              replies: true,
+              reactions: true,
+            },
+          },
         },
       },
     },
@@ -80,22 +127,6 @@ export const getComments = async (
       postId: _post.id,
 
       _gReactions: await commentPreparer.prepareGReactions(comment.id),
-      _reactions: {
-        header: {
-          loading: false,
-          currentReactionType: undefined,
-          gReactions: [] as GReaction[],
-          error: "",
-        },
-        body: [] as Reactor[],
-      },
-      replies: {
-        loading: false,
-        page: 1,
-        totalPages: 0,
-        totalRows: 0,
-        replies: [] as ReplyType,
-      },
     };
   });
   // reuslt can be undefined

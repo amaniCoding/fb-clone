@@ -2,16 +2,16 @@
 import Image from "next/image";
 import { useAppDispatch } from "@/app/store/hooks";
 import { useRef, useState } from "react";
-import { UserSharePostType } from "@/app/apis/feeder/[page]/lib";
-import { showCommentModal } from "@/app/store/slices/modal/comments/post/comments";
+
+import { showCommentModal } from "@/app/store/slices/modal/comment";
+import { OUserPost, UserSharePost } from "@/app/apis/feeder/[page]/lib";
 import ReactionBox from "../../reactionbox";
 
 type TypeProps = {
-  post: UserSharePostType;
-  refFrom: string;
-  feedId: string;
+  refFrom: "post" | "modal";
+  post: UserSharePost;
 };
-export default function Lower({ post, refFrom, feedId }: TypeProps) {
+export default function Lower({ refFrom, post }: TypeProps) {
   const dispatch = useAppDispatch();
   const [toShowReactionBox, setToShowReactionBox] = useState<boolean>(false);
   const timeOutId = useRef<NodeJS.Timeout>(null);
@@ -20,8 +20,12 @@ export default function Lower({ post, refFrom, feedId }: TypeProps) {
     dispatch(
       showCommentModal({
         isOpen: true,
-        currentPost: post,
-        starterUrl: `/apis/comments/${post.postType}/${post.id}`,
+        id: post.postId,
+        starterUrl: `/comments/${post.postType}/${post.postId}`,
+        currentPost: {
+          postType: "oUserPost",
+          userSharePost: post,
+        },
       })
     );
   };

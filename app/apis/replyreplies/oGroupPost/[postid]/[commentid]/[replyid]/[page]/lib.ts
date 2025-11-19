@@ -81,7 +81,6 @@ export const getReplies = async (
                 select: {
                   id: true,
                   content: true,
-                  mediaUrl: true,
                   createdAt: true,
                   user: {
                     select: {
@@ -92,6 +91,33 @@ export const getReplies = async (
                           profilePicture: true,
                         },
                       },
+                    },
+                  },
+
+                  reactions: {
+                    select: {
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
+                  },
+
+                  // counts
+                  _count: {
+                    select: {
+                      reactions: true,
                     },
                   },
                 },

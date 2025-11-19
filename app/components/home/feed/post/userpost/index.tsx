@@ -1,21 +1,17 @@
 import { UserPostType } from "@/app/apis/feeder/[page]/lib";
-import User from "./original/post";
-import Share from "./share";
-import Original from "./original/post";
+import OUser_Post from "./original/post";
+import UserShare_Post from "./share/post";
 
-type UserPostProps = {
+type PropsTypes = {
   post: UserPostType;
-  feedId: string;
 };
-export default function UserPost({ post, feedId }: UserPostProps) {
+export default function UserPost({ post }: PropsTypes) {
   return (
     <>
-      {post?.postType === "original" && (
-        <Original post={post.oUserPost} feedId={feedId} />
-      )}
+      {post?.postType === "original" && <OUser_Post post={post.oUserPost} />}
 
       {post?.postType === "share" && (
-        <Share post={post.userSharePost} feedId={feedId} />
+        <UserShare_Post post={post.userSharePost} />
       )}
     </>
   );

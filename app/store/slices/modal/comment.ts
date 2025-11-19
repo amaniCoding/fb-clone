@@ -6,10 +6,10 @@ import {
   OUserPost,
   ToGroupSharedPost,
   UserSharePost,
+  PageSharePost,
 } from "@/app/apis/feeder/[page]/lib";
 import { ReplyType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
 import { PostType } from "@/app/generated/prisma";
-import { PageSharePost } from "@/app/generated/prisma/index.d (2)";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type CommentsShownType = {
   id?: string;
@@ -44,33 +44,34 @@ type ReplyRepliesShownType = {
 };
 type ShowModalPayLoadType = {
   isOpen: boolean;
-  id: string | undefined;
-  postType: PostType | undefined;
-  currentPost:
-    | OUserPost
-    | UserSharePost
-    | OPagePost
-    | PageSharePost
-    | OGroupPost
-    | ToGroupSharedPost
-    | undefined;
-  starterUrl: string | undefined;
+  id?: string | undefined;
+  starterUrl?: string;
+  currentPost?: {
+    postType: PostType | undefined;
+    oUserPost?: OUserPost;
+    userSharePost?: UserSharePost;
+    oPagePost?: OPagePost;
+    pageSharePost?: PageSharePost;
+    oGroupPost?: OGroupPost;
+    toGroupSharedPost?: ToGroupSharedPost;
+  };
 };
 // Define a type for the slice state
 interface CommentModalState {
   isOpen: boolean;
   id: string | undefined;
-  postType: PostType | undefined;
-  currentPost:
-    | OUserPost
-    | UserSharePost
-    | OPagePost
-    | PageSharePost
-    | OGroupPost
-    | ToGroupSharedPost
-    | undefined;
   commentId: string | undefined;
   replyId: string | undefined;
+  currentPost: {
+    postType: PostType | undefined;
+    oUserPost?: OUserPost;
+    userSharePost?: UserSharePost;
+    oPagePost?: OPagePost;
+    pageSharePost?: PageSharePost;
+    oGroupPost?: OGroupPost;
+    toGroupSharedPost?: ToGroupSharedPost;
+  };
+
   commentsShown: CommentsShownType[];
   starterUrl: string | undefined;
 }
@@ -78,8 +79,9 @@ interface CommentModalState {
 // Define the initial state using that type
 const initialState: CommentModalState = {
   isOpen: false,
-  currentPost: undefined,
-  postType: undefined,
+  currentPost: {
+    postType: undefined,
+  },
   id: undefined,
   commentId: undefined,
   replyId: undefined,
@@ -93,9 +95,36 @@ export const commentModalSlice = createSlice({
   reducers: {
     showCommentModal: (state, action: PayloadAction<ShowModalPayLoadType>) => {
       state.isOpen = action.payload.isOpen;
-      state.postType = action.payload.postType;
-      state.currentPost = action.payload.currentPost;
+
       state.id = action.payload.id;
+
+      if (action.payload.currentPost) {
+        state.currentPost.postType = action.payload.currentPost.postType;
+
+        if (action.payload.currentPost.postType === "oUserPost") {
+          state.currentPost.oUserPost = action.payload.currentPost.oUserPost;
+        }
+
+        if (action.payload.currentPost.postType === "userSharePost") {
+          state.currentPost.userSharePost =
+            action.payload.currentPost.userSharePost;
+        }
+        if (action.payload.currentPost.postType === "oPagePost") {
+          state.currentPost.oPagePost = action.payload.currentPost.oPagePost;
+        }
+        if (action.payload.currentPost.postType === "pageSharePost") {
+          state.currentPost.pageSharePost =
+            action.payload.currentPost.pageSharePost;
+        }
+        if (action.payload.currentPost.postType === "oGroupPost") {
+          state.currentPost.oGroupPost = action.payload.currentPost.oGroupPost;
+        }
+        if (action.payload.currentPost.postType === "toGroupSharedPost") {
+          state.currentPost.toGroupSharedPost =
+            action.payload.currentPost.toGroupSharedPost;
+        }
+      }
+
       const isShown = state.commentsShown.find((cs) => {
         return cs.id === action.payload.id;
       });

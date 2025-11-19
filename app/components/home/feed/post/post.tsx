@@ -13,17 +13,11 @@ export default function Post({
 }) {
   return (
     <div ref={ref}>
-      {post && post.postType === "user" && (
-        <UserPost post={post.userPost} feedId={post.id} />
-      )}
+      {post && post.postType === "user" && <UserPost post={post.userPost} />}
 
-      {post && post.postType === "page" && (
-        <PagePost post={post.pagePost} feedId={post.id} />
-      )}
+      {post && post.postType === "page" && <PagePost post={post.pagePost} />}
 
-      {post && post.postType === "group" && (
-        <GroupPost post={post.groupPost} feedId={post.id} />
-      )}
+      {post && post.postType === "group" && <GroupPost post={post.groupPost} />}
     </div>
   );
 }

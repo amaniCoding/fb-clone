@@ -67,8 +67,8 @@ export const getReplies = async (
             select: {
               id: true,
               content: true,
-              mediaUrl: true,
               createdAt: true,
+              mediaUrl: true,
               user: {
                 select: {
                   firstName: true,
@@ -78,6 +78,53 @@ export const getReplies = async (
                       profilePicture: true,
                     },
                   },
+                },
+              },
+
+              reactions: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // first commentors
+              replies: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // counts
+              _count: {
+                select: {
+                  replies: true,
+                  reactions: true,
                 },
               },
             },
@@ -96,22 +143,6 @@ export const getReplies = async (
       postId: _post.id,
       commentId: _post.comments[0].id,
       _gReactions: await commentPreparer.prepareGReactions(reply.id),
-      _reactions: {
-        header: {
-          loading: false,
-          currentReactionType: undefined,
-          gReactions: [] as GReaction[],
-          error: "",
-        },
-        body: [] as Reactor[],
-      },
-      replies: {
-        loading: false,
-        page: 1,
-        totalPages: 0,
-        totalRows: 0,
-        replies: [],
-      },
     };
   });
   // reuslt can be undefined

@@ -1,20 +1,17 @@
 import { GroupPostType } from "@/app/apis/feeder/[page]/lib";
-import Share from "./share/post";
-import Original from "./original/post";
+import OGroup_Post from "./original/post";
+import ToGroupShare_Post from "./share/post";
 
-type UserPostProps = {
+type PropsTypes = {
   post: GroupPostType;
-  feedId: string;
 };
-export default function GroupPost({ post, feedId }: UserPostProps) {
+export default function GroupPost({ post }: PropsTypes) {
   return (
     <>
-      {post?.postType === "original" && (
-        <Original post={post.oGroupPost} feedId={feedId} />
-      )}
+      {post?.postType === "original" && <OGroup_Post post={post.oGroupPost} />}
 
       {post?.postType === "share" && (
-        <Share post={post.toGroupSharedPost} feedId={feedId} />
+        <ToGroupShare_Post post={post.toGroupSharedPost} />
       )}
     </>
   );

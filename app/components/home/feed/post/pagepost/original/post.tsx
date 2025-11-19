@@ -1,26 +1,21 @@
 "use client";
-import {
-  OriginalPagePostType,
-  OriginalUserPostType,
-} from "@/app/apis/feeder/[page]/lib";
-import Header from "./header";
-import Content from "./content";
-import Medias from "./Medias";
-import Upper from "./upper";
+import PageHeader from "../header";
+import Content from "../shared/content";
+import Medias from "../shared/Medias";
+import Upper from "../shared/upper";
 import Lower from "./lower";
+import { OPagePost } from "@/app/apis/feeder/[page]/lib";
 
-type OUserPostProps = {
-  post: OriginalPagePostType;
-
-  feedId: string;
+type PropsTypes = {
+  post: OPagePost;
 };
 
-export default function Original({ post, feedId }: OUserPostProps) {
+export default function OPage_Post({ post }: PropsTypes) {
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
-      <Header
-        name={post?.page?.name}
-        profilePicture={post?.page?.profilePicture}
+      <PageHeader
+        name={post.page?.name}
+        profilePicture={post.page?.profilePicture}
         date={post?.createdAt?.toISOString()}
       />
 
@@ -32,7 +27,7 @@ export default function Original({ post, feedId }: OUserPostProps) {
         groupedReactions={post?._gReactions}
         firstReactions={post?.reactions}
       />
-      <Lower post={post} feedId={feedId} refFrom="post" />
+      <Lower post={post} />
     </div>
   );
 }

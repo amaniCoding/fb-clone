@@ -1,27 +1,29 @@
 "use client";
 
-import { ToGroupSharedPost } from "@/app/apis/feeder/[page]/lib";
+import { UserSharePost } from "@/app/apis/feeder/[page]/lib";
+import Header from "../header";
 import Content from "../shared/content";
 import Medias from "../shared/Medias";
 import Upper from "../shared/upper";
-import PageHeader from "../../pagepost/header";
-import UserHeader from "../../userpost/header";
-import GroupHeader from "../header";
 import Lower from "./lower";
+import UserHeader from "../header";
+import PageHeader from "../../pagepost/header";
+import GroupHeader from "../../grouppost/header";
 
 type PropsTypes = {
-  post: ToGroupSharedPost;
+  post: UserSharePost;
 };
 
-export default function ToGroupShare_Post({ post }: PropsTypes) {
+export default function UserShare_Post({ post }: PropsTypes) {
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
-      <GroupHeader
-        group={post?.oGroupPost?.group}
-        memeber={post.oGroupPost?.user}
+      <Header
+        firstName={post?.user?.firstName}
+        lastName={post?.user?.lastName}
         date={post?.createdAt?.toISOString()}
       />
       <Content content={post.content} />
+
       {post.shareWhat === "user" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
           <UserHeader
@@ -38,6 +40,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
             groupedReactions={post?._gReactions}
             firstReactions={post?.reactions}
           />
+          <Lower post={post} refFrom="post" />
         </div>
       )}
 
@@ -57,6 +60,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
             groupedReactions={post?._gReactions}
             firstReactions={post?.reactions}
           />
+          <Lower post={post} refFrom="post" />
         </div>
       )}
 
@@ -76,9 +80,9 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
             groupedReactions={post?._gReactions}
             firstReactions={post?.reactions}
           />
+          <Lower post={post} refFrom="post" />
         </div>
       )}
-      <Lower post={post} />
     </div>
   );
 }

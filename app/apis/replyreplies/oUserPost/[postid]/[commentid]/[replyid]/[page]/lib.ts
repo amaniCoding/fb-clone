@@ -94,6 +94,33 @@ export const getReplies = async (
                       },
                     },
                   },
+
+                  reactions: {
+                    select: {
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
+                  },
+
+                  // counts
+                  _count: {
+                    select: {
+                      reactions: true,
+                    },
+                  },
                 },
               },
             },
