@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FaXmark } from "react-icons/fa6";
-import { setNetWorkError } from "@/app/store/slices/feed/feed";
+import { setNetWorkError } from "@/app/store/slices/app/app";
 
 export default function MyApp({
   children,
@@ -19,10 +19,10 @@ export default function MyApp({
   );
 
   const { isOnline, status, showNumber } = useAppSelector(
-    (state) => state.feed.network
+    (state) => state.app.network
   );
   const networkNotification = useAppSelector(
-    (state) => state.feed.network.showNumber
+    (state) => state.app.network.showNumber
   );
   const dispatch = useAppDispatch();
 

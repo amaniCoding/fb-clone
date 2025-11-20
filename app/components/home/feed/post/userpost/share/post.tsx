@@ -40,7 +40,6 @@ export default function UserShare_Post({ post }: PropsTypes) {
             groupedReactions={post?._gReactions}
             firstReactions={post?.reactions}
           />
-          <Lower post={post} refFrom="post" />
         </div>
       )}
 
@@ -60,7 +59,6 @@ export default function UserShare_Post({ post }: PropsTypes) {
             groupedReactions={post?._gReactions}
             firstReactions={post?.reactions}
           />
-          <Lower post={post} refFrom="post" />
         </div>
       )}
 
@@ -80,9 +78,9 @@ export default function UserShare_Post({ post }: PropsTypes) {
             groupedReactions={post?._gReactions}
             firstReactions={post?.reactions}
           />
-          <Lower post={post} refFrom="post" />
         </div>
       )}
+      <Lower post={post} />
     </div>
   );
 }

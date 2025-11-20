@@ -8,10 +8,9 @@ import { OUserPost, UserSharePost } from "@/app/apis/feeder/[page]/lib";
 import ReactionBox from "../../reactionbox";
 
 type TypeProps = {
-  refFrom: "post" | "modal";
   post: UserSharePost;
 };
-export default function Lower({ refFrom, post }: TypeProps) {
+export default function Lower({ post }: TypeProps) {
   const dispatch = useAppDispatch();
   const [toShowReactionBox, setToShowReactionBox] = useState<boolean>(false);
   const timeOutId = useRef<NodeJS.Timeout>(null);
@@ -75,7 +74,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
       </div>
       <div
         className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100"
-        onClick={refFrom === "post" ? _showCommentModal : () => {}}
+        onClick={_showCommentModal}
       >
         <div className="flex items-center px-3 py-1.5 space-x-1 ">
           <Image

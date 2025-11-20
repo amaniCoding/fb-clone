@@ -1,9 +1,12 @@
 import { NextRequest } from "next/server";
 import { ReactionType } from "@/app/generated/prisma";
-import { getReactions } from "./lib";
+import { getReactors } from "./lib";
 
 type RouteType = {
+  feedid: string;
   postid: string;
+  reactiontype: string;
+  page: string;
 };
 
 export async function GET(
@@ -11,13 +14,21 @@ export async function GET(
   { params }: { params: Promise<RouteType> }
 ) {
   try {
-    const { postid } = await params;
+    const { feedid, postid, reactiontype, page } = await params;
     const rowsPerPage = 7;
 
-    const { result } = await getReactions(postid);
+    const { count, result } = await getReactors(
+      feedid,
+      postid,
+      reactiontype as ReactionType,
+      parseInt(page),
+      rowsPerPage
+    );
 
     const jsonResponse = {
-      result,
+      reactors: result,
+      totalRows: count ? count : 0,
+      totalPages: Math.ceil(count ? count / rowsPerPage : 0),
     };
 
     return Response.json({

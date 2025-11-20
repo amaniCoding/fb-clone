@@ -1,6 +1,8 @@
 "use client";
 import Image from "next/image";
-import { ReactionType } from "@/app/generated/prisma";
+import { PostType, ReactionType } from "@/app/generated/prisma";
+import { useAppDispatch } from "@/app/store/hooks";
+import { showReactionModal } from "@/app/store/slices/modal/reaction/reaction";
 type PropTypes = {
   commentsCount: number | undefined;
   reactionsCount: number | undefined;
@@ -21,17 +23,37 @@ type PropTypes = {
         };
       }[]
     | undefined;
+  feedId: string | undefined;
+  postId: string | undefined;
 };
 export default function Upper({
   commentsCount,
   reactionsCount,
   groupedReactions,
   firstReactions,
+  feedId,
+  postId,
 }: PropTypes) {
+  const dispatch = useAppDispatch();
   const newRxn = groupedReactions
     ? [...groupedReactions].sort((a, b) => b.count - a.count)
     : [];
   const newRxn_x = newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
+
+  const openReactionModal = (currentReactionType: ReactionType) => {
+    const refId = `${feedId}${postId}`;
+    const headerUrl = `/reactions/${PostType}/header/${postId}`;
+    const starterBodyUrl = `/reactions/${PostType}/body/${feedId}/${postId}`;
+    dispatch(
+      showReactionModal({
+        isOpen: true,
+        currentReactionType: currentReactionType,
+        refId: refId,
+        starterHeaderUrl: headerUrl,
+        starterBodyUrl: starterBodyUrl,
+      })
+    );
+  };
   return (
     <div className="px-3 py-2">
       <div className="flex items-center justify-between border-b border-b-gray-300 pb-2">
@@ -40,6 +62,9 @@ export default function Upper({
             <div className="flex items-center -space-x-1.5">
               {newRxn_x.map((rxn, index) => (
                 <Image
+                  onClick={() => {
+                    openReactionModal(rxn.reactionType);
+                  }}
                   key={index}
                   alt=""
                   src={`/reactions/${rxn.reactionType}.png`}

@@ -563,6 +563,7 @@ export const getFeeds = async (page: number) => {
             select: {
               id: true,
               shareWhat: true,
+              postType: true,
               content: true,
               createdAt: true,
               page: {

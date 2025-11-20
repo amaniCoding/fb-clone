@@ -5,7 +5,6 @@ import AddComment from "./addcomment";
 import { useSession } from "next-auth/react";
 
 import { useAppDispatch } from "@/app/store/hooks";
-import { FeedsType } from "@/app/apis/feeder/[page]/lib";
 import { showCommentModal } from "@/app/store/slices/modal/comment";
 import { useFetchComments } from "@/app/hooks/commentsModal/comments";
 import OUser_Post from "../post/userpost/original/post";
@@ -15,16 +14,13 @@ import PageShare_Post from "../post/pagepost/share/post";
 import ToGroupShare_Post from "../post/grouppost/share/post";
 import OGroup_Post from "../post/grouppost/original/post";
 import Lower from "./Lower";
+import { FaXmark } from "react-icons/fa6";
 
-export default function CommentModal({
-  post,
-}: {
-  post: FeedsType | undefined;
-}) {
+export default function CommentModal() {
   const { data, status } = useSession();
   const dispatch = useAppDispatch();
   const commentsModalData = useFetchComments();
-  const closeCommentModal = () => {
+  const closeModal = () => {
     dispatch(
       showCommentModal({
         isOpen: false,
@@ -38,7 +34,13 @@ export default function CommentModal({
 
   return (
     <div className="bg-gray-100/75 fixed top-0 bottom-0 left-0 right-0 z-[300] overflow-hidden">
-      <div className="shadow-2xl  max-w-[650px] mx-auto rounded-xl bg-white my-10 ">
+      <div className="shadow-2xl  max-w-[650px] mx-auto rounded-xl bg-white my-10 relative ">
+        <FaXmark
+          className="w-10 h-10 p-2 hover:bg-gray-50 bg-gray-100 rounded-full cursor-pointer"
+          onClick={() => {
+            closeModal;
+          }}
+        />
         {commentsModalData.currentPostData.postType === "oUserPost" && (
           <OUser_Post post={commentsModalData.currentPostData.oUserPost!} />
         )}

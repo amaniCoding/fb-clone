@@ -3,6 +3,8 @@ import { feedSlice } from "./slices/feed/feed";
 import { addPostSlice } from "./slices/addpost/addpost";
 import { postSlice } from "./slices/post/post";
 import { commentModalSlice } from "./slices/modal/comment";
+import { reactionModalSlice } from "./slices/modal/reaction/reaction";
+import { appSlice } from "./slices/app/app";
 
 export const store = configureStore({
   reducer: {
@@ -10,7 +12,8 @@ export const store = configureStore({
     addPost: addPostSlice.reducer,
     post: postSlice.reducer,
     commentModal: commentModalSlice.reducer,
-    // reactionModal: reactionModalSlice.reducer,
+    reactionModal: reactionModalSlice.reducer,
+    app: appSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

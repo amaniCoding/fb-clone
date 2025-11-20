@@ -5,11 +5,11 @@ import { useAppDispatch } from "@/app/store/hooks";
 import { useRef, useState } from "react";
 
 import { showCommentModal } from "@/app/store/slices/modal/comment";
-import { OUserPost } from "@/app/apis/feeder/[page]/lib";
 import ReactionBox from "../../reactionbox";
+import { OPagePost } from "@/app/apis/feeder/[page]/lib";
 
 type TypeProps = {
-  post: OUserPost;
+  post: OPagePost;
 };
 export default function Lower({ post }: TypeProps) {
   const dispatch = useAppDispatch();

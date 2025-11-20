@@ -26,6 +26,8 @@ export default function OUser_Post({ post }: PropsTypes) {
         reactionsCount={post?._count?.reactions}
         groupedReactions={post?._gReactions}
         firstReactions={post?.reactions}
+        postId={post.postId}
+        feedId={post.feedId}
       />
       <Lower post={post} />
     </div>

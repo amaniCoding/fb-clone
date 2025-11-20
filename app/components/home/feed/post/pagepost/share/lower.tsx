@@ -4,11 +4,11 @@ import { useAppDispatch } from "@/app/store/hooks";
 import { useRef, useState } from "react";
 
 import { showCommentModal } from "@/app/store/slices/modal/comment";
-import { UserSharePost } from "@/app/apis/feeder/[page]/lib";
+import { PageSharePost } from "@/app/apis/feeder/[page]/lib";
 import ReactionBox from "../../reactionbox";
 
 type TypeProps = {
-  post: UserSharePost;
+  post: PageSharePost;
 };
 export default function Lower({ post }: TypeProps) {
   const dispatch = useAppDispatch();

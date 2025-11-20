@@ -1,7 +1,5 @@
 import { FeedsType } from "@/app/apis/feeder/[page]/lib";
-import { PostType } from "@/app/generated/prisma";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { act } from "react";
 
 export type FeedResponseType = {
   feeds: FeedsType[];
@@ -17,19 +15,9 @@ interface FeedState {
     totalRows: number;
     totalPages: number;
   };
-  network: {
-    isOnline: boolean;
-    status: string;
-    showNumber: number;
-  };
 }
 
 const initialState: FeedState = {
-  network: {
-    isOnline: navigator.onLine,
-    status: "",
-    showNumber: 0,
-  },
   feeds: {
     feeds: [],
     loading: true,
@@ -43,16 +31,6 @@ export const feedSlice = createSlice({
   name: "feedSlice",
   initialState,
   reducers: {
-    setNetWorkError: (
-      state,
-      action: PayloadAction<{
-        isOnline: boolean;
-        status: string;
-        showNumber: number;
-      }>
-    ) => {
-      state.network = action.payload;
-    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.feeds.loading = action.payload;
     },
@@ -71,24 +49,9 @@ export const feedSlice = createSlice({
     updatePage: (state, action: PayloadAction<number>) => {
       state.feeds.page = state.feeds.page + 1;
     },
-
-    updateTotalPagesAndRows: (
-      state,
-      action: PayloadAction<{ totalPages: number; totalRows: number }>
-    ) => {
-      state.feeds.totalPages = action.payload.totalPages;
-      state.feeds.totalRows = action.payload.totalRows;
-    },
   },
 });
 
-export const {
-  setNetWorkError,
-  setFeeds,
-  setLoading,
-  addFeed,
-  updatePage,
-  updateTotalPagesAndRows,
-} = feedSlice.actions;
+export const { setFeeds, setLoading, addFeed, updatePage } = feedSlice.actions;
 
 export default feedSlice.reducer;

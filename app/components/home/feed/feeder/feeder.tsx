@@ -13,14 +13,17 @@ import {
   setLoading,
   FeedResponseType,
 } from "@/app/store/slices/feed/feed";
+import ReactionModal from "../reactionmodal/reactionmodal";
 
 export default function Feeder() {
   const isCommentModalOpen = useAppSelector(
     (state) => state.commentModal.isOpen
   );
-  const postForCommentModal = useAppSelector(
-    (state) => state.commentModal.currentPost
+
+  const isReactionModalOpen = useAppSelector(
+    (state) => state.reactionModal.isOpen
   );
+
   const dispatch = useAppDispatch();
 
   const feeds = useAppSelector((state) => state.feed.feeds.feeds);
@@ -30,7 +33,7 @@ export default function Feeder() {
   const totalPages = useAppSelector((state) => state.feed.feeds.totalPages);
   const [hasError, setHasError] = useState<boolean>(false);
   const observer = useRef<IntersectionObserver>(null);
-  const { isOnline } = useAppSelector((state) => state.feed.network);
+  const { isOnline } = useAppSelector((state) => state.app.network);
 
   const hasMore = page <= totalPages;
 
@@ -98,7 +101,8 @@ export default function Feeder() {
           </div>
         </div>
       )}
-      {isCommentModalOpen && <CommentModal post={postForCommentModal} />}
+      {isCommentModalOpen && <CommentModal />}
+      {isReactionModalOpen && <ReactionModal />}
     </>
   );
 }
