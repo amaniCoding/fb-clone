@@ -95,6 +95,8 @@ export const reactionModalSlice = createSlice({
             currentReaction: action.payload.currentReactionType,
           },
         });
+      } else {
+        isShown!.header!.currentReaction = action.payload.currentReactionType;
       }
     },
 

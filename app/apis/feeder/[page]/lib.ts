@@ -1,6 +1,10 @@
 import prisma from "@/app/libs/prisma";
 import { GReaction, Reactor } from "../../types";
-import { ReactionType, ToGroupSharerType } from "@/app/generated/prisma";
+import {
+  FeedPostType,
+  ReactionType,
+  ToGroupSharerType,
+} from "@/app/generated/prisma";
 import { MediaCommentType } from "../../comments/media/oUserPost/[postid]/[mediaid]/[page]/lib";
 import { CommentType } from "../../comments/oUserPost/[postid]/[page]/lib";
 
@@ -1037,6 +1041,7 @@ export const getFeeds = async (page: number) => {
   const updated = result.map(async (feed) => {
     return {
       ...feed,
+      feedId: feed.id,
       userPost: {
         ...feed.userPost,
         oUserPost: {
@@ -1181,7 +1186,24 @@ export type PageSharePost = typeof pageSharePost;
 export type OGroupPost = typeof oGrouppost;
 export type ToGroupSharedPost = typeof toGroupSharedPost;
 
-export type FeedsType = typeof feed;
+export type FeedsType = {
+  id: string;
+  postType: FeedPostType;
+
+  feedId: string;
+  userPost?: {
+    oUserPost?: typeof feed.userPost.oUserPost;
+    userSharePost?: typeof feed.userPost.userSharePost;
+  };
+  pagePost?: {
+    oPagePost?: typeof feed.pagePost.oPagePost;
+    pageSharePost?: typeof feed.pagePost.pageSharePost;
+  };
+  groupPost?: {
+    oGroupPost?: typeof feed.groupPost.oGroupPost;
+    toGroupSharedPost?: typeof feed.groupPost.toGroupSharedPost;
+  };
+};
 
 export type CurrentPostType = {
   _gReactions:
