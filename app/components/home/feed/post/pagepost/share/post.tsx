@@ -32,12 +32,6 @@ export default function PageShare_Post({ post }: PropsTypes) {
 
           <Content content={post?.oUserPost?.content} />
           <Medias medias={post?.oUserPost?.medias} />
-          <Upper
-            commentsCount={post?._count?.comments}
-            reactionsCount={post?._count?.reactions}
-            groupedReactions={post?._gReactions}
-            firstReactions={post?.reactions}
-          />
         </div>
       )}
 
@@ -51,12 +45,6 @@ export default function PageShare_Post({ post }: PropsTypes) {
 
           <Content content={post?.oPagePost?.content} />
           <Medias medias={post?.oPagePost?.medias} />
-          <Upper
-            commentsCount={post?._count?.comments}
-            reactionsCount={post?._count?.reactions}
-            groupedReactions={post?._gReactions}
-            firstReactions={post?.reactions}
-          />
         </div>
       )}
 
@@ -70,14 +58,14 @@ export default function PageShare_Post({ post }: PropsTypes) {
 
           <Content content={post?.oGroupPost?.content} />
           <Medias medias={post?.oGroupPost?.medias} />
-          <Upper
-            commentsCount={post?._count?.comments}
-            reactionsCount={post?._count?.reactions}
-            groupedReactions={post?._gReactions}
-            firstReactions={post?.reactions}
-          />
         </div>
       )}
+      <Upper
+        commentsCount={post?._count?.comments}
+        reactionsCount={post?._count?.reactions}
+        groupedReactions={post?._gReactions}
+        firstReactions={post?.reactions}
+      />
       <Lower post={post} />
     </div>
   );

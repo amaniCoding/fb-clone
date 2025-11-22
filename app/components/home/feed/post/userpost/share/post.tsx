@@ -34,14 +34,6 @@ export default function UserShare_Post({ post }: PropsTypes) {
 
           <Content content={post.oUserPost?.content} />
           <Medias medias={post.oUserPost?.medias} />
-          <Upper
-            commentsCount={post._count?.comments}
-            reactionsCount={post._count?.reactions}
-            groupedReactions={post._gReactions}
-            firstReactions={post.reactions}
-            feedId={post.feedId}
-            postId={post.postId}
-          />
         </div>
       )}
 
@@ -55,14 +47,6 @@ export default function UserShare_Post({ post }: PropsTypes) {
 
           <Content content={post?.oPagePost?.content} />
           <Medias medias={post?.oPagePost?.medias} />
-          <Upper
-            commentsCount={post?._count?.comments}
-            reactionsCount={post?._count?.reactions}
-            groupedReactions={post?._gReactions}
-            firstReactions={post?.reactions}
-            feedId={post.feedId}
-            postId={post.postId}
-          />
         </div>
       )}
 
@@ -76,16 +60,16 @@ export default function UserShare_Post({ post }: PropsTypes) {
 
           <Content content={post?.oGroupPost?.content} />
           <Medias medias={post?.oGroupPost?.medias} />
-          <Upper
-            commentsCount={post?._count?.comments}
-            reactionsCount={post?._count?.reactions}
-            groupedReactions={post?._gReactions}
-            firstReactions={post?.reactions}
-            feedId={post.feedId}
-            postId={post.postId}
-          />
         </div>
       )}
+      <Upper
+        commentsCount={post?._count?.comments}
+        reactionsCount={post?._count?.reactions}
+        groupedReactions={post?._gReactions}
+        firstReactions={post?.reactions}
+        feedId={post.feedId}
+        postId={post.postId}
+      />
       <Lower post={post} />
     </div>
   );
