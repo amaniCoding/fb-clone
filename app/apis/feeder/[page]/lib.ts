@@ -1,12 +1,5 @@
 import prisma from "@/app/libs/prisma";
-import { GReaction, Reactor } from "../../types";
-import {
-  FeedPostType,
-  ReactionType,
-  ToGroupSharerType,
-} from "@/app/generated/prisma";
-import { MediaCommentType } from "../../comments/media/oUserPost/[postid]/[mediaid]/[page]/lib";
-import { CommentType } from "../../comments/oUserPost/[postid]/[page]/lib";
+import { FeedPostType, ReactionType } from "@/app/generated/prisma";
 
 const prepareGReactions = async (
   type:
