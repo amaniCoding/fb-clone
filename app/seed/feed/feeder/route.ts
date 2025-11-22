@@ -3,7 +3,6 @@ import { _seedFeeds } from "./libs";
 export async function GET() {
   try {
     await _seedFeeds();
-    //await seedUser();
     return Response.json({ message: "Database seeded successfully" });
   } catch (error) {
     console.log(error);

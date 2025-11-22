@@ -16,7 +16,7 @@ export default function OGroup_Post({ post }: PropsTypes) {
       <GroupHeader
         group={post?.group}
         memeber={post?.user}
-        date={post?.createdAt?.toISOString()}
+        date={post?.createdAt?.toString()}
       />
 
       <Content content={post?.content} />

@@ -136,7 +136,7 @@ model User {
   memberedGroups     GroupMembers[]
   groupPosts         OGroupPost[]
   sharedPostsToGroup ToGroupSharePost[]
-  superAdminTo       Group?
+  superAdminTo       Group[]
   adminTo            GroupAdmin[]
   moderatorTo        GroupModerator[]
 
@@ -416,8 +416,8 @@ model Works_USER {
 
 model Group {
   id         String @id @default(uuid())
-  userId     String @unique
-  superAdmin User   @relation(fields: [userId], references: [id])
+  userId     String
+  superAdmin User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   name           String
   category       String?
@@ -511,7 +511,7 @@ model GroupRules {
 model GroupAdmin {
   id        String   @id @default(uuid())
   groupId   String
-  userId    String   @unique
+  userId    String
   user      User     @relation(fields: [userId], references: [id])
   group     Group    @relation(fields: [groupId], references: [id])
   createdAt DateTime @default(now())
@@ -547,7 +547,7 @@ model Page {
   category           String?
   profilePicture     String?
   userId             String
-  admin              User               @relation(fields: [userId], references: [id], onUpdate: Cascade)
+  admin              User               @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   stories            Story[]
   posts              OPagePost[]
   sharedPosts        PageSharePost[]

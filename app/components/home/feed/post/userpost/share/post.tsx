@@ -20,7 +20,7 @@ export default function UserShare_Post({ post }: PropsTypes) {
       <Header
         firstName={post?.user?.firstName}
         lastName={post?.user?.lastName}
-        date={post?.createdAt?.toISOString()}
+        date={post?.createdAt?.toString()}
       />
       <Content content={post.content} />
 
@@ -29,16 +29,18 @@ export default function UserShare_Post({ post }: PropsTypes) {
           <UserHeader
             firstName={post?.oUserPost?.user?.firstName}
             lastName={post?.oUserPost?.user?.lastName}
-            date={post?.createdAt?.toISOString()}
+            date={post?.createdAt?.toString()}
           />
 
-          <Content content={post?.oUserPost?.content} />
-          <Medias medias={post?.oUserPost?.medias} />
+          <Content content={post.oUserPost?.content} />
+          <Medias medias={post.oUserPost?.medias} />
           <Upper
-            commentsCount={post?._count?.comments}
-            reactionsCount={post?._count?.reactions}
-            groupedReactions={post?._gReactions}
-            firstReactions={post?.reactions}
+            commentsCount={post._count?.comments}
+            reactionsCount={post._count?.reactions}
+            groupedReactions={post._gReactions}
+            firstReactions={post.reactions}
+            feedId={post.feedId}
+            postId={post.postId}
           />
         </div>
       )}
@@ -48,7 +50,7 @@ export default function UserShare_Post({ post }: PropsTypes) {
           <PageHeader
             name={post?.oPagePost?.page?.name}
             profilePicture={post?.oPagePost?.page?.profilePicture}
-            date={post?.createdAt?.toISOString()}
+            date={post?.createdAt?.toString()}
           />
 
           <Content content={post?.oPagePost?.content} />
@@ -58,6 +60,8 @@ export default function UserShare_Post({ post }: PropsTypes) {
             reactionsCount={post?._count?.reactions}
             groupedReactions={post?._gReactions}
             firstReactions={post?.reactions}
+            feedId={post.feedId}
+            postId={post.postId}
           />
         </div>
       )}
@@ -67,7 +71,7 @@ export default function UserShare_Post({ post }: PropsTypes) {
           <GroupHeader
             group={post?.oGroupPost?.group}
             memeber={post.oGroupPost?.user}
-            date={post?.createdAt?.toISOString()}
+            date={post?.createdAt?.toString()}
           />
 
           <Content content={post?.oGroupPost?.content} />
@@ -77,6 +81,8 @@ export default function UserShare_Post({ post }: PropsTypes) {
             reactionsCount={post?._count?.reactions}
             groupedReactions={post?._gReactions}
             firstReactions={post?.reactions}
+            feedId={post.feedId}
+            postId={post.postId}
           />
         </div>
       )}

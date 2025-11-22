@@ -1,6 +1,7 @@
 import { MediaOwnerType, MediaType } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
 import { dummyTexts, dummyComments, reactionTypes } from "../../dummy";
+import OGroup_Post from "@/app/components/home/feed/post/grouppost/original/post";
 
 const sharedPostTypes = ["user", "page", "group", "media"];
 
@@ -15,19 +16,6 @@ const postMediaTypes = ["user", "page", "group"];
 
 const toGroupSharerTypes = ["user", "page"];
 const addedContentForSharePostTypes = ["content", "nocontent"];
-/**
- * seed
- * 
- * export const getRandomPostComment = () => {
-  const rIndex = getRandomNumber(dummyComments.length, 0);
-  return dummyComments[rIndex];
-};
-
-export const getRandomReactionType = () => {
-  const rIndex = getRandomNumber(reactionTypes.length, 0);
-  return reactionTypes[rIndex];
-};
- */
 
 const getRandomNumber = (num: number, from: number) => {
   return Math.floor(Math.random() * num) + from;
@@ -100,8 +88,35 @@ const getRandomPost = async (forWhat: "user" | "page" | "group") => {
         id: true,
       },
     });
-    const rIndex = getRandomNumber(userPosts.length, 0);
-    return userPosts[rIndex];
+    if (userPosts.length === 0) {
+      const user = await getRandomUser();
+      const newUserPost = await prisma.oUserPost.create({
+        data: {
+          user: {
+            connect: { id: user.id },
+          },
+
+          content:
+            getRandomPostText() === "contentonly" ||
+            getRandomPostText() === "both"
+              ? getRandomPostText()
+              : null,
+          medias:
+            getRandomPostText() === "both" ||
+            getRandomPostText() === "mediasonly"
+              ? {
+                  createMany: {
+                    data: generatePhoto("user", getRandomPhotoCount()),
+                  },
+                }
+              : undefined,
+        },
+      });
+      return newUserPost;
+    } else {
+      const rIndex = getRandomNumber(userPosts.length, 0);
+      return userPosts[rIndex];
+    }
   }
 
   if (forWhat === "page") {
@@ -110,8 +125,36 @@ const getRandomPost = async (forWhat: "user" | "page" | "group") => {
         id: true,
       },
     });
-    const rIndex = getRandomNumber(pagePosts.length, 0);
-    return pagePosts[rIndex];
+
+    if (pagePosts.length === 0) {
+      const page = await getRandomPage();
+      const newPagePost = await prisma.oPagePost.create({
+        data: {
+          page: {
+            connect: { id: page.id },
+          },
+
+          content:
+            getRandomPostText() === "contentonly" ||
+            getRandomPostText() === "both"
+              ? getRandomPostText()
+              : null,
+          medias:
+            getRandomPostText() === "both" ||
+            getRandomPostText() === "mediasonly"
+              ? {
+                  createMany: {
+                    data: generatePhoto("page", getRandomPhotoCount()),
+                  },
+                }
+              : undefined,
+        },
+      });
+      return newPagePost;
+    } else {
+      const rIndex = getRandomNumber(pagePosts.length, 0);
+      return pagePosts[rIndex];
+    }
   }
 
   if (forWhat === "group") {
@@ -120,8 +163,40 @@ const getRandomPost = async (forWhat: "user" | "page" | "group") => {
         id: true,
       },
     });
-    const rIndex = getRandomNumber(groupPosts.length, 0);
-    return groupPosts[rIndex];
+
+    if (groupPosts.length === 0) {
+      const user = await getRandomUser();
+      const group = await getRandomGroup();
+      const newGroupPost = await prisma.oGroupPost.create({
+        data: {
+          user: {
+            connect: { id: user.id },
+          },
+          group: {
+            connect: { id: group.id },
+          },
+
+          content:
+            getRandomPostText() === "contentonly" ||
+            getRandomPostText() === "both"
+              ? getRandomPostText()
+              : null,
+          medias:
+            getRandomPostText() === "both" ||
+            getRandomPostText() === "mediasonly"
+              ? {
+                  createMany: {
+                    data: generatePhoto("group", getRandomPhotoCount()),
+                  },
+                }
+              : undefined,
+        },
+      });
+      return newGroupPost;
+    } else {
+      const rIndex = getRandomNumber(groupPosts.length, 0);
+      return groupPosts[rIndex];
+    }
   }
 };
 
@@ -135,13 +210,48 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
       },
       select: {
         id: true,
-        medias: true,
+        medias: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
-    const rIndex = getRandomNumber(oUserPosts.length, 0);
-    const post = oUserPosts[rIndex];
-    const rMIndex = getRandomNumber(post!.medias.length, 0);
-    return post!.medias[rIndex];
+    if (oUserPosts.length === 0) {
+      const user = await getRandomUser();
+      const newUserPostMedia = await prisma.oUserPost.create({
+        data: {
+          user: {
+            connect: { id: user.id },
+          },
+
+          content:
+            getRandomPostText() === "contentonly" ||
+            getRandomPostText() === "both"
+              ? getRandomPostText()
+              : null,
+          medias: {
+            createMany: {
+              data: generatePhoto("user", getRandomPhotoCount()),
+            },
+          },
+        },
+        include: {
+          medias: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+      const rMIndex = getRandomNumber(newUserPostMedia.medias.length, 0);
+      return newUserPostMedia.medias[rMIndex];
+    } else {
+      const rIndex = getRandomNumber(oUserPosts.length, 0);
+      const post = oUserPosts[rIndex];
+      const rMIndex = getRandomNumber(post.medias.length, 0);
+      return post!.medias[rMIndex];
+    }
   }
 
   if (forWhat === "page") {
@@ -153,13 +263,49 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
       },
       select: {
         id: true,
-        medias: true,
+        medias: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
-    const rIndex = getRandomNumber(oPagePosts.length, 0);
-    const post = oPagePosts[rIndex];
-    const rMIndex = getRandomNumber(post!.medias.length, 0);
-    return post!.medias[rIndex];
+
+    if (oPagePosts.length === 0) {
+      const page = await getRandomPage();
+      const newPostPostMedia = await prisma.oPagePost.create({
+        data: {
+          page: {
+            connect: { id: page.id },
+          },
+
+          content:
+            getRandomPostText() === "contentonly" ||
+            getRandomPostText() === "both"
+              ? getRandomPostText()
+              : null,
+          medias: {
+            createMany: {
+              data: generatePhoto("page", getRandomPhotoCount()),
+            },
+          },
+        },
+        include: {
+          medias: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+      const rMIndex = getRandomNumber(newPostPostMedia.medias.length, 0);
+      return newPostPostMedia.medias[rMIndex];
+    } else {
+      const rIndex = getRandomNumber(oPagePosts.length, 0);
+      const post = oPagePosts[rIndex];
+      const rMIndex = getRandomNumber(post.medias.length, 0);
+      return post.medias[rMIndex];
+    }
   }
 
   if (forWhat === "group") {
@@ -171,13 +317,53 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
       },
       select: {
         id: true,
-        medias: true,
+        medias: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
-    const rIndex = getRandomNumber(OgroupPosts.length, 0);
-    const post = OgroupPosts[rIndex];
-    const rMIndex = getRandomNumber(post!.medias.length, 0);
-    return post!.medias[rIndex];
+
+    if (OgroupPosts.length === 0) {
+      const user = await getRandomUser();
+      const group = await getRandomGroup();
+      const newGroupPostMedia = await prisma.oGroupPost.create({
+        data: {
+          user: {
+            connect: { id: user.id },
+          },
+          group: {
+            connect: { id: group.id },
+          },
+
+          content:
+            getRandomPostText() === "contentonly" ||
+            getRandomPostText() === "both"
+              ? getRandomPostText()
+              : null,
+          medias: {
+            createMany: {
+              data: generatePhoto("group", getRandomPhotoCount()),
+            },
+          },
+        },
+        include: {
+          medias: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+      const rMIndex = getRandomNumber(newGroupPostMedia.medias.length, 0);
+      return newGroupPostMedia.medias[rMIndex];
+    } else {
+      const rIndex = getRandomNumber(OgroupPosts.length, 0);
+      const post = OgroupPosts[rIndex];
+      const rMIndex = getRandomNumber(post.medias.length, 0);
+      return post.medias[rIndex];
+    }
   }
 };
 
@@ -185,11 +371,6 @@ const getRandomAddedContentForShareTypes = () => {
   const rIndex = getRandomNumber(2, 0);
   return addedContentForSharePostTypes[rIndex];
 };
-
-// const getRandomOriginalPostType = () => {
-//   const rIndex = getRandomNumber(3, 0);
-//   return originalPostTypes[rIndex];
-// };
 
 function generatePhoto(owner: MediaOwnerType, photoCount: number) {
   return Array.from({ length: photoCount }, () => {
@@ -221,46 +402,42 @@ const createUserPost = async () => {
   const user = await getRandomUser();
   const postType = getRandomPostType();
   switch (postType) {
-    case "original":
-      {
-        return prisma.feed.create({
-          data: {
-            postType: "user",
-            userPost: {
-              create: {
-                postType: "original",
-                oUserPost: {
-                  create: {
-                    user: {
-                      connect: { id: user.id },
-                    },
-
-                    content:
-                      getRandomPostText() === "contentonly" ||
-                      getRandomPostText() === "both"
-                        ? getRandomPostText()
-                        : null,
-                    medias:
-                      getRandomPostText() === "both" ||
-                      getRandomPostText() === "mediasonly"
-                        ? {
-                            createMany: {
-                              data: generatePhoto(
-                                "user",
-                                getRandomPhotoCount()
-                              ),
-                            },
-                          }
-                        : undefined,
+    case "original": {
+      const postContentOption = getRandomPostContentOption();
+      return prisma.feed.create({
+        data: {
+          postType: "user",
+          userPost: {
+            create: {
+              postType: "original",
+              oUserPost: {
+                create: {
+                  user: {
+                    connect: { id: user.id },
                   },
+
+                  content:
+                    postContentOption === "contentonly" ||
+                    postContentOption === "both"
+                      ? getRandomPostText()
+                      : null,
+                  medias:
+                    postContentOption === "both" ||
+                    postContentOption === "mediasonly"
+                      ? {
+                          createMany: {
+                            data: generatePhoto("user", getRandomPhotoCount()),
+                          },
+                        }
+                      : undefined,
                 },
               },
             },
           },
-        });
-      }
+        },
+      });
+    }
 
-      break;
     case "share": {
       const user = await getRandomUser();
       const postSharedType = getRandomSharedPostType() as
@@ -333,7 +510,7 @@ const createUserPost = async () => {
 
                   content:
                     getRandomAddedContentForShareTypes() === "content"
-                      ? getRandomAddedContentForShareTypes()
+                      ? getRandomPostText()
                       : null,
                 },
               },
@@ -349,49 +526,45 @@ const createUserPost = async () => {
 };
 
 const createPagePost = async () => {
-  const user = await getRandomUser();
+  const page = await getRandomPage();
   const postType = getRandomPostType();
   switch (postType) {
-    case "original":
-      {
-        return prisma.feed.create({
-          data: {
-            postType: "page",
-            pagePost: {
-              create: {
-                postType: "original",
-                oPagePost: {
-                  create: {
-                    page: {
-                      connect: { id: user.id },
-                    },
-
-                    content:
-                      getRandomPostText() === "contentonly" ||
-                      getRandomPostText() === "both"
-                        ? getRandomPostText()
-                        : null,
-                    medias:
-                      getRandomPostText() === "both" ||
-                      getRandomPostText() === "mediasonly"
-                        ? {
-                            createMany: {
-                              data: generatePhoto(
-                                "page",
-                                getRandomPhotoCount()
-                              ),
-                            },
-                          }
-                        : undefined,
+    case "original": {
+      const postContentOption = getRandomPostContentOption();
+      return prisma.feed.create({
+        data: {
+          postType: "page",
+          pagePost: {
+            create: {
+              postType: "original",
+              oPagePost: {
+                create: {
+                  page: {
+                    connect: { id: page.id },
                   },
+
+                  content:
+                    postContentOption === "contentonly" ||
+                    postContentOption === "both"
+                      ? getRandomPostText()
+                      : null,
+                  medias:
+                    postContentOption === "both" ||
+                    postContentOption === "mediasonly"
+                      ? {
+                          createMany: {
+                            data: generatePhoto("page", getRandomPhotoCount()),
+                          },
+                        }
+                      : undefined,
                 },
               },
             },
           },
-        });
-      }
+        },
+      });
+    }
 
-      break;
     case "share": {
       const page = await getRandomPage();
       const postSharedType = getRandomSharedPostType() as
@@ -464,7 +637,7 @@ const createPagePost = async () => {
 
                   content:
                     getRandomAddedContentForShareTypes() === "content"
-                      ? getRandomAddedContentForShareTypes()
+                      ? getRandomPostText()
                       : null,
                 },
               },
@@ -484,49 +657,45 @@ const createGroupPost = async () => {
   const group = await getRandomGroup();
   const postType = getRandomPostType();
   switch (postType) {
-    case "original":
-      {
-        return prisma.feed.create({
-          data: {
-            postType: "group",
-            groupPost: {
-              create: {
-                postType: "original",
-                oGroupPost: {
-                  create: {
-                    user: {
-                      connect: { id: user.id },
-                    },
-                    group: {
-                      connect: { id: group.id },
-                    },
-
-                    content:
-                      getRandomPostText() === "contentonly" ||
-                      getRandomPostText() === "both"
-                        ? getRandomPostText()
-                        : null,
-                    medias:
-                      getRandomPostText() === "both" ||
-                      getRandomPostText() === "mediasonly"
-                        ? {
-                            createMany: {
-                              data: generatePhoto(
-                                "group",
-                                getRandomPhotoCount()
-                              ),
-                            },
-                          }
-                        : undefined,
+    case "original": {
+      const postContentOption = getRandomPostContentOption();
+      return prisma.feed.create({
+        data: {
+          postType: "group",
+          groupPost: {
+            create: {
+              postType: "original",
+              oGroupPost: {
+                create: {
+                  user: {
+                    connect: { id: user.id },
                   },
+                  group: {
+                    connect: { id: group.id },
+                  },
+
+                  content:
+                    postContentOption === "contentonly" ||
+                    postContentOption === "both"
+                      ? getRandomPostText()
+                      : null,
+                  medias:
+                    postContentOption === "both" ||
+                    postContentOption === "mediasonly"
+                      ? {
+                          createMany: {
+                            data: generatePhoto("group", getRandomPhotoCount()),
+                          },
+                        }
+                      : undefined,
                 },
               },
             },
           },
-        });
-      }
+        },
+      });
+    }
 
-      break;
     case "share": {
       const sharer = await getRandomSharer();
       const user = await getRandomUser();
@@ -620,7 +789,7 @@ const createGroupPost = async () => {
 
                   content:
                     getRandomAddedContentForShareTypes() === "content"
-                      ? getRandomAddedContentForShareTypes()
+                      ? getRandomPostText()
                       : null,
                 },
               },
@@ -638,15 +807,15 @@ const createGroupPost = async () => {
 export async function _seedFeeds() {
   const feedsCreated = Array.from({ length: 50 }, () => {
     if (getRandomFeedType() === "user") {
-      return createUserPost();
+      createUserPost();
     }
 
     if (getRandomFeedType() === "page") {
-      return createPagePost();
+      createPagePost();
     }
 
     if (getRandomFeedType() === "group") {
-      return createGroupPost();
+      createGroupPost();
     }
   });
 

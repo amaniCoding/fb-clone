@@ -300,49 +300,49 @@ export const reactionTypes = [
 export const pages = [
   {
     name: "Ethiopian Artists",
-    profilePicture: "/users/3.jpg",
+    profilePicture: "/pages/ea.jpg",
   },
 
   {
-    name: "Fast Mereja",
-    profilePicture: "/users/3.jpg",
+    name: "መረጃ mereja",
+    profilePicture: "/pages/mereja.jpg",
   },
   {
     name: "Global News",
-    profilePicture: "/users/3.jpg",
+    profilePicture: "/pages/gn.jpg",
   },
 
   {
     name: "Beauties of Africa",
-    profilePicture: "/users/3.jpg",
+    profilePicture: "/pages/ba.jpg",
   },
   {
     name: "Nobody cares",
-    profilePicture: "/users/3.jpg",
+    profilePicture: "/pages/nb.jpg",
   },
 ];
 
 export const groups = [
   {
     name: "Ai generators",
-    profilePicture: "/users/3.jpg",
+    profilePicture: "/groups/ag.jpg",
   },
 
   {
     name: "Web developers",
-    profilePicture: "/users/3.jpg",
+    profilePicture: "/groups/wd.jpg",
   },
   {
     name: "Gospel for Ethiopia",
-    profilePicture: "/users/3.jpg",
+    profilePicture: "/groups/ge.jpg",
   },
 
   {
     name: "Habesha Mems",
-    profilePicture: "/users/3.jpg",
+    profilePicture: "/groups/hm.jpg",
   },
   {
     name: "እንመካከር",
-    profilePicture: "/users/3.jpg",
+    profilePicture: "/groups/enm.jpg",
   },
 ];

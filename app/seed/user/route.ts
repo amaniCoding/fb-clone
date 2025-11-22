@@ -1,7 +1,7 @@
 import { _seeder } from "./libs";
 
 const seed = async () => {
-  await Promise.all(_seeder());
+  await _seeder();
 };
 export async function GET() {
   try {

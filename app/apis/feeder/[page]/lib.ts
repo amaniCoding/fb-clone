@@ -1046,17 +1046,19 @@ export const getFeeds = async (page: number) => {
             feed.userPost?.oUserPost?.id
           ),
 
-          medias: await Promise.all(
-            feed.userPost?.oUserPost?.medias.map(async (media) => {
-              return {
-                ...media,
-                feedId: feed.id,
-                postId: feed.userPost?.oUserPost?.id,
-                mediaId: media.id,
-                _gReactions: await prepareMeidaGReactions(media.id),
-              };
-            })!
-          ),
+          medias: feed.userPost?.oUserPost?.medias
+            ? await Promise.all(
+                feed.userPost?.oUserPost?.medias.map(async (media) => {
+                  return {
+                    ...media,
+                    feedId: feed.id,
+                    postId: feed.userPost?.oUserPost?.id,
+                    mediaId: media.id,
+                    _gReactions: await prepareMeidaGReactions(media.id),
+                  };
+                })
+              )
+            : undefined,
         },
         // share
         userSharePost: {
@@ -1082,17 +1084,19 @@ export const getFeeds = async (page: number) => {
             feed.pagePost?.oPagePost?.id
           ),
 
-          medias: await Promise.all(
-            feed.pagePost?.oPagePost?.medias.map(async (media) => {
-              return {
-                ...media,
-                feedId: feed.id,
-                postId: feed.pagePost?.oPagePost?.id,
-                mediaId: media.id,
-                _gReactions: await prepareMeidaGReactions(media.id),
-              };
-            })!
-          ),
+          medias: feed.pagePost?.oPagePost?.medias
+            ? await Promise.all(
+                feed.pagePost?.oPagePost?.medias.map(async (media) => {
+                  return {
+                    ...media,
+                    feedId: feed.id,
+                    postId: feed.pagePost?.oPagePost?.id,
+                    mediaId: media.id,
+                    _gReactions: await prepareMeidaGReactions(media.id),
+                  };
+                })
+              )
+            : undefined,
         },
 
         // apge share post
@@ -1120,17 +1124,19 @@ export const getFeeds = async (page: number) => {
             feed.groupPost?.oGroupPost?.id
           ),
 
-          medias: await Promise.all(
-            feed.groupPost?.oGroupPost?.medias.map(async (media) => {
-              return {
-                ...media,
-                feedId: feed.id,
-                postId: feed.groupPost?.oGroupPost?.id,
-                mediaId: media.id,
-                _gReactions: await prepareMeidaGReactions(media.id),
-              };
-            })!
-          ),
+          medias: feed.groupPost?.oGroupPost?.medias
+            ? await Promise.all(
+                feed.groupPost?.oGroupPost?.medias.map(async (media) => {
+                  return {
+                    ...media,
+                    feedId: feed.id,
+                    postId: feed.groupPost?.oGroupPost?.id,
+                    mediaId: media.id,
+                    _gReactions: await prepareMeidaGReactions(media.id),
+                  };
+                })
+              )
+            : undefined,
         },
         // share
         toGroupSharedPost: {
@@ -1157,9 +1163,9 @@ export const getFeeds = async (page: number) => {
 const feeds = await getFeeds(1);
 const feed = feeds.updated[0];
 
-const userPost = feed?.userPost;
-const pagePost = feed?.pagePost;
-const groupPost = feed?.groupPost;
+const userPost = feed.userPost;
+const pagePost = feed.pagePost;
+const groupPost = feed.groupPost;
 
 const oUserpost = feed?.userPost?.oUserPost;
 const userSharePost = feed?.userPost?.userSharePost;

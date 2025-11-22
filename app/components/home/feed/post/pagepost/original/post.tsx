@@ -16,7 +16,7 @@ export default function OPage_Post({ post }: PropsTypes) {
       <PageHeader
         name={post.page?.name}
         profilePicture={post.page?.profilePicture}
-        date={post?.createdAt?.toISOString()}
+        date={post?.createdAt?.toString()}
       />
 
       <Content content={post?.content} />

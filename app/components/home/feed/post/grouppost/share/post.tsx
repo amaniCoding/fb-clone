@@ -19,7 +19,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
       <GroupHeader
         group={post?.oGroupPost?.group}
         memeber={post.oGroupPost?.user}
-        date={post?.createdAt?.toISOString()}
+        date={post?.createdAt?.toString()}
       />
       <Content content={post.content} />
       {post.shareWhat === "user" && (
@@ -27,7 +27,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
           <UserHeader
             firstName={post?.oUserPost?.user?.firstName}
             lastName={post?.oUserPost?.user?.lastName}
-            date={post?.createdAt?.toISOString()}
+            date={post?.createdAt?.toString()}
           />
 
           <Content content={post?.oUserPost?.content} />
@@ -46,7 +46,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
           <PageHeader
             name={post?.oPagePost?.page?.name}
             profilePicture={post?.oPagePost?.page?.profilePicture}
-            date={post?.createdAt?.toISOString()}
+            date={post?.createdAt?.toString()}
           />
 
           <Content content={post?.oPagePost?.content} />
@@ -65,7 +65,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
           <GroupHeader
             group={post?.oGroupPost?.group}
             memeber={post.oGroupPost?.user}
-            date={post?.createdAt?.toISOString()}
+            date={post?.createdAt?.toString()}
           />
 
           <Content content={post?.oGroupPost?.content} />

@@ -1,6 +1,5 @@
 import prisma from "@/app/libs/prisma";
 import { groups } from "../dummy";
-import bcrypt from "bcryptjs/umd/types";
 
 export function _seeder() {
   return groups.map((group) => {
@@ -9,13 +8,8 @@ export function _seeder() {
         name: group.name,
         profilePicture: group.profilePicture,
         superAdmin: {
-          create: {
-            firstName: "Amanuel",
-            lastName: "Ferede",
-            birthDate: new Date(),
-            gender: "male",
-            email: "amanuelfrm@gmail.com",
-            password: bcrypt.hashSync("faker.js", 10),
+          connect: {
+            id: "925f3f0c-b6ab-4192-826f-5bd82e160a4c",
           },
         },
       },
