@@ -877,6 +877,13 @@ export const getFeeds = async (page: number) => {
                 },
               },
 
+              group: {
+                select: {
+                  name: true,
+                  profilePicture: true,
+                },
+              },
+
               // shared posts
 
               oUserPost: {

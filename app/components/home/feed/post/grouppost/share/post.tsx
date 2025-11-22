@@ -16,11 +16,29 @@ type PropsTypes = {
 export default function ToGroupShare_Post({ post }: PropsTypes) {
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
-      <GroupHeader
-        group={post?.oGroupPost?.group}
-        memeber={post.oGroupPost?.user}
-        date={post?.createdAt?.toString()}
-      />
+      {post.sharer === "user" && (
+        <GroupHeader
+          group={post?.group}
+          memeber={post.user}
+          date={post?.createdAt?.toString()}
+        />
+      )}
+
+      {post.sharer === "page" && (
+        <PageHeader
+          name={post?.page?.name}
+          profilePicture={post?.page?.profilePicture}
+          date={post?.createdAt?.toString()}
+        />
+      )}
+
+      {post.sharer === "page" && (
+        <GroupHeader
+          group={post?.oGroupPost?.group}
+          memeber={post.oGroupPost?.user}
+          date={post?.createdAt?.toString()}
+        />
+      )}
       <Content content={post.content} />
       {post.shareWhat === "user" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
@@ -32,12 +50,6 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
 
           <Content content={post?.oUserPost?.content} />
           <Medias medias={post?.oUserPost?.medias} />
-          <Upper
-            commentsCount={post?._count?.comments}
-            reactionsCount={post?._count?.reactions}
-            groupedReactions={post?._gReactions}
-            firstReactions={post?.reactions}
-          />
         </div>
       )}
 
@@ -51,12 +63,6 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
 
           <Content content={post?.oPagePost?.content} />
           <Medias medias={post?.oPagePost?.medias} />
-          <Upper
-            commentsCount={post?._count?.comments}
-            reactionsCount={post?._count?.reactions}
-            groupedReactions={post?._gReactions}
-            firstReactions={post?.reactions}
-          />
         </div>
       )}
 
@@ -70,14 +76,14 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
 
           <Content content={post?.oGroupPost?.content} />
           <Medias medias={post?.oGroupPost?.medias} />
-          <Upper
-            commentsCount={post?._count?.comments}
-            reactionsCount={post?._count?.reactions}
-            groupedReactions={post?._gReactions}
-            firstReactions={post?.reactions}
-          />
         </div>
       )}
+      <Upper
+        commentsCount={post?._count?.comments}
+        reactionsCount={post?._count?.reactions}
+        groupedReactions={post?._gReactions}
+        firstReactions={post?.reactions}
+      />
       <Lower post={post} />
     </div>
   );

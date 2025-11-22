@@ -23,7 +23,8 @@ export default function GroupHeader({
           profilePicture: string | null;
         } | null;
       }
-    | undefined;
+    | undefined
+    | null;
   date: string | undefined;
 }) {
   return (

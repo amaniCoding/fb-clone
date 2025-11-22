@@ -9,8 +9,6 @@ const postContentOption = ["contentonly", "mediasonly", "both"];
 
 const feedTypes = ["user", "page", "group"];
 const userPostTypes = ["original", "share"];
-const pagePostTypes = ["original", "share"];
-const groupPostTypes = ["original", "share"];
 
 const postMediaTypes = ["user", "page", "group"];
 
@@ -805,19 +803,19 @@ const createGroupPost = async () => {
 };
 
 export async function _seedFeeds() {
-  const feedsCreated = Array.from({ length: 50 }, () => {
-    if (getRandomFeedType() === "user") {
-      createUserPost();
-    }
+  return await Promise.all(
+    Array.from({ length: 100 }, () => {
+      if (getRandomFeedType() === "user") {
+        return createUserPost();
+      }
 
-    if (getRandomFeedType() === "page") {
-      createPagePost();
-    }
+      if (getRandomFeedType() === "page") {
+        return createPagePost();
+      }
 
-    if (getRandomFeedType() === "group") {
-      createGroupPost();
-    }
-  });
-
-  return await Promise.all(feedsCreated);
+      if (getRandomFeedType() === "group") {
+        return createGroupPost();
+      }
+    })
+  );
 }
