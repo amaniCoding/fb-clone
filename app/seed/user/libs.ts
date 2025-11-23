@@ -14,6 +14,11 @@ export function _seeder() {
           gender: user.gender as Gender,
           email: user.mobileOrPhoneNumber,
           password: bcrypt.hashSync(user.password, 10),
+          Profile: {
+            create: {
+              profilePicture: user.profilepic,
+            },
+          },
         },
       });
     })
@@ -27,6 +32,11 @@ export function _seeder() {
       gender: "male",
       email: "amanuelfrm@gmail.com",
       password: bcrypt.hashSync("faker.js", 10),
+      Profile: {
+        create: {
+          profilePicture: "/ad/aman.jpg",
+        },
+      },
     },
   });
 

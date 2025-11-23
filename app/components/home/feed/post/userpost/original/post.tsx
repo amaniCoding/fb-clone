@@ -1,5 +1,5 @@
 "use client";
-import Header from "../header";
+import UserHeader from "../header";
 import Content from "../shared/content";
 import Medias from "../shared/Medias";
 import Upper from "../shared/upper";
@@ -13,10 +13,11 @@ type PropsTypes = {
 export default function OUser_Post({ post }: PropsTypes) {
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
-      <Header
+      <UserHeader
         firstName={post?.user?.firstName}
         lastName={post?.user?.lastName}
         date={post?.createdAt?.toString()}
+        profilePicture={post.user?.Profile?.profilePicture}
         refFrom="original"
       />
 

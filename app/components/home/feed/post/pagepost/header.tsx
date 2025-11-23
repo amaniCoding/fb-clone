@@ -35,13 +35,19 @@ export default function PageHeader({
       </div>
 
       <div className="flex items-center space-x-2">
-        {refFrom === "share" ||
-          (refFrom === "original" && (
-            <>
-              <IoIosMore className="w-7 h-7" />
-              <CgClose />
-            </>
-          ))}
+        {refFrom === "original" && (
+          <>
+            <IoIosMore className="w-7 h-7" />
+            <CgClose />
+          </>
+        )}
+
+        {refFrom === "share" && (
+          <>
+            <IoIosMore className="w-7 h-7" />
+            <CgClose />
+          </>
+        )}
       </div>
     </div>
   );

@@ -19,6 +19,7 @@ export default function UserShare_Post({ post }: PropsTypes) {
       <UserHeader
         firstName={post?.user?.firstName}
         lastName={post?.user?.lastName}
+        profilePicture={post.user?.Profile?.profilePicture}
         date={post?.createdAt?.toString()}
         refFrom="share"
       />
@@ -29,6 +30,7 @@ export default function UserShare_Post({ post }: PropsTypes) {
           <UserHeader
             firstName={post?.oUserPost?.user?.firstName}
             lastName={post?.oUserPost?.user?.lastName}
+            profilePicture={post.oUserPost?.user.Profile?.profilePicture}
             date={post?.createdAt?.toString()}
             refFrom="shared"
           />

@@ -417,7 +417,7 @@ model Works_USER {
 model Group {
   id         String @id @default(uuid())
   userId     String
-  superAdmin User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  superAdmin User   @relation(fields: [userId], references: [id])
 
   name           String
   category       String?
@@ -478,7 +478,7 @@ model ToGroupSharePost {
   page         Page?             @relation(fields: [pageId], references: [id])
   user         User?             @relation(fields: [userId], references: [id])
   groupId      String
-  group        Group             @relation(fields: [groupId], references: [id])
+  group        Group             @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   shareWhat    ShareType
   sharer       ToGroupSharerType
   content      String?

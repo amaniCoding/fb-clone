@@ -17,8 +17,8 @@ export default function PageShare_Post({ post }: PropsTypes) {
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       <PageHeader
-        name={post?.oPagePost?.page?.name}
-        profilePicture={post?.oPagePost?.page?.profilePicture}
+        name={post?.page?.name}
+        profilePicture={post?.page?.profilePicture}
         date={post?.createdAt?.toString()}
         refFrom="share"
       />
@@ -28,6 +28,7 @@ export default function PageShare_Post({ post }: PropsTypes) {
           <UserHeader
             firstName={post?.oUserPost?.user?.firstName}
             lastName={post?.oUserPost?.user?.lastName}
+            profilePicture={post.oUserPost?.user.Profile?.profilePicture}
             date={post?.createdAt?.toString()}
             refFrom="shared"
           />

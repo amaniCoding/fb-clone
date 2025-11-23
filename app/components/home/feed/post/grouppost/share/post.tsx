@@ -48,6 +48,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
           <UserHeader
             firstName={post?.oUserPost?.user?.firstName}
             lastName={post?.oUserPost?.user?.lastName}
+            profilePicture={post.oUserPost?.user.Profile?.profilePicture}
             date={post?.createdAt?.toString()}
             refFrom="shared"
           />
