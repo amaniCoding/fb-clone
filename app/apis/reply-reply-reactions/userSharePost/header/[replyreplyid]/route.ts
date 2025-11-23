@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { getReactions } from "./lib";
 
 type RouteType = {
-  commentid: string;
+  replyreplyid: string;
 };
 
 export async function GET(
@@ -10,9 +10,9 @@ export async function GET(
   { params }: { params: Promise<RouteType> }
 ) {
   try {
-    const { commentid } = await params;
+    const { replyreplyid } = await params;
 
-    const { result } = await getReactions(commentid);
+    const { result } = await getReactions(replyreplyid);
 
     const jsonResponse = {
       result,
