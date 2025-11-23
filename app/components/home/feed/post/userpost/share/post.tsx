@@ -70,6 +70,33 @@ export default function UserShare_Post({ post }: PropsTypes) {
 
       {post.shareWhat === "media" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
+          {post.media?.owner === "user" && (
+            <UserHeader
+              firstName={post?.media.userPost?.user.firstName}
+              lastName={post?.media.userPost?.user.firstName}
+              profilePicture={
+                post?.media.userPost?.user.Profile?.profilePicture
+              }
+              date={post?.createdAt?.toString()}
+              refFrom="shared"
+            />
+          )}
+          {post.media?.owner === "page" && (
+            <PageHeader
+              name={post?.media.pagePost?.page.name}
+              profilePicture={post?.media.pagePost?.page.profilePicture}
+              date={post?.createdAt?.toString()}
+              refFrom="shared"
+            />
+          )}
+          {post.media?.owner === "group" && (
+            <GroupHeader
+              group={post?.media.groupPost?.group}
+              memeber={post?.media.groupPost?.user}
+              date={post?.createdAt?.toString()}
+              refFrom="shared"
+            />
+          )}
           <div className={`w-full h-[28rem]`}>
             <div
               className="w-full h-full"

@@ -314,6 +314,7 @@ export const getFeeds = async (page: number) => {
                       id: true,
                       type: true,
                       url: true,
+                      owner: true,
                       createdAt: true,
                       // first media reactors
                     },
@@ -385,6 +386,56 @@ export const getFeeds = async (page: number) => {
                 select: {
                   id: true,
                   url: true,
+                  owner: true,
+                  userPost: {
+                    select: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  pagePost: {
+                    select: {
+                      id: true,
+                      page: {
+                        select: {
+                          name: true,
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                  groupPost: {
+                    select: {
+                      id: true,
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                      group: {
+                        select: {
+                          name: true,
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -576,6 +627,56 @@ export const getFeeds = async (page: number) => {
                 select: {
                   id: true,
                   url: true,
+                  owner: true,
+                  userPost: {
+                    select: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  pagePost: {
+                    select: {
+                      id: true,
+                      page: {
+                        select: {
+                          name: true,
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                  groupPost: {
+                    select: {
+                      id: true,
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                      group: {
+                        select: {
+                          name: true,
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
               reactions: {
@@ -846,6 +947,56 @@ export const getFeeds = async (page: number) => {
                 select: {
                   id: true,
                   url: true,
+                  owner: true,
+                  userPost: {
+                    select: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  pagePost: {
+                    select: {
+                      id: true,
+                      page: {
+                        select: {
+                          name: true,
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                  groupPost: {
+                    select: {
+                      id: true,
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                      group: {
+                        select: {
+                          name: true,
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
               // first reactors
@@ -899,6 +1050,9 @@ export const getFeeds = async (page: number) => {
           },
         },
       },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 

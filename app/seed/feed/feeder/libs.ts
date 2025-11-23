@@ -378,7 +378,10 @@ function generatePhoto(owner: MediaOwnerType, photoCount: number) {
     return {
       url: `/users/${randomPhoto}.jpg`,
       type: "image" as MediaType,
-      owner,
+      ownerType: owner,
+      pageOwner: owner === "page" ? owner : undefined,
+      groupOwner: owner === "group" ? owner : undefined,
+      userOwner: owner === "user" ? owner : undefined,
     };
   });
 }
@@ -802,6 +805,43 @@ const createGroupPost = async () => {
     default:
       break;
   }
+};
+
+export const createUserShareMediaPost = async () => {
+  const rMedia = await getRandomMedia("page");
+  const user = await getRandomUser();
+  return prisma.feed.create({
+    data: {
+      postType: "user",
+      userPost: {
+        create: {
+          postType: "share",
+          userSharePost: {
+            create: {
+              user: {
+                connect: {
+                  id: user.id,
+                },
+              },
+
+              shareWhat: "media",
+
+              media: {
+                connect: {
+                  id: rMedia?.id,
+                },
+              },
+
+              content:
+                getRandomAddedContentForShareTypes() === "content"
+                  ? getRandomPostText()
+                  : null,
+            },
+          },
+        },
+      },
+    },
+  });
 };
 
 export async function _seedFeeds() {
