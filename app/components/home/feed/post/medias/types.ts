@@ -1,5 +1,12 @@
-import { PostMediaType } from "@/app/apis/feeder/[page]/lib";
+import { MediaType } from "@/app/generated/prisma";
 
 export type MediaPropType = {
-  medias: PostMediaType;
+  medias:
+    | {
+        id: string;
+        createdAt: Date;
+        url: string;
+        type: MediaType;
+      }[]
+    | undefined;
 };

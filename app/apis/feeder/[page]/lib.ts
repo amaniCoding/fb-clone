@@ -1194,7 +1194,6 @@ export type OPagePost = typeof oPagepost;
 export type PageSharePost = typeof pageSharePost;
 export type OGroupPost = typeof oGrouppost;
 export type ToGroupSharedPost = typeof toGroupSharedPost;
-export type PostMediaType = typeof oUserpost.medias;
 export type FeedsType = {
   id: string;
   postType: FeedPostType;
