@@ -1,7 +1,6 @@
 import { MediaOwnerType, MediaType } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
-import { dummyTexts, dummyComments, reactionTypes } from "../../dummy";
-import OGroup_Post from "@/app/components/home/feed/post/grouppost/original/post";
+import { dummyTexts } from "../../dummy";
 
 const sharedPostTypes = ["user", "page", "group", "media"];
 
