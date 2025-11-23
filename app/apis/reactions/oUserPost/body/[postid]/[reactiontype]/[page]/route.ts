@@ -4,7 +4,6 @@ import { getReactors } from "./lib";
 
 type RouteType = {
   postid: string;
-  feedid: string;
   reactiontype: string;
   page: string;
 };
@@ -14,11 +13,10 @@ export async function GET(
   { params }: { params: Promise<RouteType> }
 ) {
   try {
-    const { feedid, postid, reactiontype, page } = await params;
+    const { postid, reactiontype, page } = await params;
     const rowsPerPage = 7;
 
     const { count, result } = await getReactors(
-      feedid,
       postid,
       reactiontype as ReactionType,
       parseInt(page),

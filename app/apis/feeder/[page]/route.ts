@@ -3,7 +3,6 @@ import { getFeeds } from "./lib";
 
 type RouteType = {
   page: string;
-  feedid: string;
 };
 
 export async function GET(

@@ -2,21 +2,20 @@ import { ReactionType } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
 
 export const getReactors = async (
-  feedId: string,
   postId: string,
   reactionType: ReactionType,
   page: number,
   rowsPerPage: number
 ) => {
   const skip = (page - 1) * rowsPerPage;
-  const count = prisma.feed.findUnique({
+  const count = prisma.oPagePost.findUnique({
     where: {
-      id: feedId,
+      id: postId,
     },
     select: {
-      userPost: {
+      pagePost: {
         select: {
-          oUserPost: {
+          oPagePost: {
             select: {
               _count: {
                 select: {
@@ -34,15 +33,15 @@ export const getReactors = async (
     },
   });
 
-  const post = prisma.feed.findUnique({
+  const post = prisma.oPagePost.findUnique({
     where: {
-      id: feedId,
+      id: postId,
     },
     select: {
       id: true,
-      userPost: {
+      pagePost: {
         select: {
-          oUserPost: {
+          oPagePost: {
             select: {
               id: true,
               reactions: {
@@ -76,22 +75,18 @@ export const getReactors = async (
   const [_count, _post] = await Promise.all([count, post]);
   // result can be undefined
 
-  const updatedReactors = _post?.userPost?.oUserPost?.reactions.map(
+  const updatedReactors = _post?.pagePost?.oPagePost?.reactions.map(
     (reactor) => {
       return {
         ...reactor,
+        postId: _post.pagePost?.oPagePost?.id,
         feedId: _post.id,
-        postId: _post.userPost?.oUserPost?.id,
-        postType: "oUserPost",
+        postType: "oPagePost",
       };
     }
   );
   return {
     result: updatedReactors,
-    count: _count?.userPost?.oUserPost?._count.reactions,
+    count: _count?.pagePost?.oPagePost?._count.reactions,
   };
 };
-
-const result = await getReactors("feedId", "Postid", "angry", 1, 7);
-const reactors = result.result;
-export type ReactorsType = typeof reactors;
