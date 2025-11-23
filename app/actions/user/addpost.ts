@@ -353,18 +353,6 @@ const postToFeed = async (
               "oUserPost",
               feed.userPost?.oUserPost?.id
             ),
-
-            medias: await Promise.all(
-              feed.userPost?.oUserPost?.medias.map(async (media) => {
-                return {
-                  ...media,
-                  feedId: feed.id,
-                  postId: feed.userPost?.oUserPost?.id,
-                  mediaId: media.id,
-                  _gReactions: await prepareMeidaGReactions(media.id),
-                };
-              })!
-            ),
           },
         },
       } as FeedsType;
