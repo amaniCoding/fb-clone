@@ -21,6 +21,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
           group={post?.group}
           memeber={post.user}
           date={post?.createdAt?.toString()}
+          refFrom="share"
         />
       )}
 
@@ -29,6 +30,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
           name={post?.page?.name}
           profilePicture={post?.page?.profilePicture}
           date={post?.createdAt?.toString()}
+          refFrom="share"
         />
       )}
 
@@ -37,6 +39,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
           group={post?.oGroupPost?.group}
           memeber={post.oGroupPost?.user}
           date={post?.createdAt?.toString()}
+          refFrom="shared"
         />
       )}
       <Content content={post.content} />
@@ -46,6 +49,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
             firstName={post?.oUserPost?.user?.firstName}
             lastName={post?.oUserPost?.user?.lastName}
             date={post?.createdAt?.toString()}
+            refFrom="shared"
           />
 
           <Content content={post?.oUserPost?.content} />
@@ -59,6 +63,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
             name={post?.oPagePost?.page?.name}
             profilePicture={post?.oPagePost?.page?.profilePicture}
             date={post?.createdAt?.toString()}
+            refFrom="shared"
           />
 
           <Content content={post?.oPagePost?.content} />
@@ -72,6 +77,7 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
             group={post?.oGroupPost?.group}
             memeber={post.oGroupPost?.user}
             date={post?.createdAt?.toString()}
+            refFrom="shared"
           />
 
           <Content content={post?.oGroupPost?.content} />

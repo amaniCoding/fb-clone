@@ -17,6 +17,7 @@ export default function OPage_Post({ post }: PropsTypes) {
         name={post.page?.name}
         profilePicture={post.page?.profilePicture}
         date={post?.createdAt?.toString()}
+        refFrom="original"
       />
 
       <Content content={post?.content} />

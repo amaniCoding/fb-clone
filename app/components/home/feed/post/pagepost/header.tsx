@@ -7,10 +7,12 @@ export default function PageHeader({
   name,
   profilePicture,
   date,
+  refFrom,
 }: {
   name: string | undefined;
   profilePicture: string | undefined | null;
   date: string | undefined;
+  refFrom: "share" | "original" | "shared";
 }) {
   return (
     <div className="flex items-center justify-between px-3 pt-3">
@@ -33,8 +35,13 @@ export default function PageHeader({
       </div>
 
       <div className="flex items-center space-x-2">
-        <IoIosMore className="w-7 h-7" />
-        <CgClose />
+        {refFrom === "share" ||
+          (refFrom === "original" && (
+            <>
+              <IoIosMore className="w-7 h-7" />
+              <CgClose />
+            </>
+          ))}
       </div>
     </div>
   );

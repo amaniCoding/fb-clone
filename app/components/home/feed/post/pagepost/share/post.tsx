@@ -20,6 +20,7 @@ export default function PageShare_Post({ post }: PropsTypes) {
         name={post?.oPagePost?.page?.name}
         profilePicture={post?.oPagePost?.page?.profilePicture}
         date={post?.createdAt?.toString()}
+        refFrom="share"
       />
       <Content content={post.content} />
       {post.shareWhat === "user" && (
@@ -28,6 +29,7 @@ export default function PageShare_Post({ post }: PropsTypes) {
             firstName={post?.oUserPost?.user?.firstName}
             lastName={post?.oUserPost?.user?.lastName}
             date={post?.createdAt?.toString()}
+            refFrom="shared"
           />
 
           <Content content={post?.oUserPost?.content} />
@@ -41,6 +43,7 @@ export default function PageShare_Post({ post }: PropsTypes) {
             name={post?.oPagePost?.page?.name}
             profilePicture={post?.oPagePost?.page?.profilePicture}
             date={post?.createdAt?.toString()}
+            refFrom="shared"
           />
 
           <Content content={post?.oPagePost?.content} />
@@ -54,6 +57,7 @@ export default function PageShare_Post({ post }: PropsTypes) {
             group={post?.oGroupPost?.group}
             memeber={post.oGroupPost?.user}
             date={post?.createdAt?.toString()}
+            refFrom="shared"
           />
 
           <Content content={post?.oGroupPost?.content} />

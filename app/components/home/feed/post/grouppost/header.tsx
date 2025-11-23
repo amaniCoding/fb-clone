@@ -6,6 +6,7 @@ import { CgClose } from "react-icons/cg";
 export default function GroupHeader({
   group,
   memeber,
+  refFrom,
   date,
 }: {
   group:
@@ -26,6 +27,7 @@ export default function GroupHeader({
     | undefined
     | null;
   date: string | undefined;
+  refFrom: "share" | "original" | "shared";
 }) {
   return (
     <div className="flex items-center justify-between px-3 pt-3">
@@ -48,8 +50,13 @@ export default function GroupHeader({
       </div>
 
       <div className="flex items-center space-x-2">
-        <IoIosMore className="w-7 h-7" />
-        <CgClose />
+        {refFrom === "share" ||
+          (refFrom === "original" && (
+            <>
+              <IoIosMore className="w-7 h-7" />
+              <CgClose />
+            </>
+          ))}
       </div>
     </div>
   );

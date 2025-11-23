@@ -205,8 +205,8 @@ model UserPost {
   postType        UserPostType
   oUserPostId     String?        @unique
   userSharePostId String?        @unique
-  oUserPost       OUserPost?     @relation(fields: [oUserPostId], references: [id])
-  userSharePost   UserSharePost? @relation(fields: [userSharePostId], references: [id])
+  oUserPost       OUserPost?     @relation(fields: [oUserPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userSharePost   UserSharePost? @relation(fields: [userSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model OUserPost {
@@ -438,8 +438,8 @@ model GroupPost {
   postType           GroupPostType
   oGroupPostId       String?           @unique
   toGroupSharePostId String?           @unique
-  oGroupPost         OGroupPost?       @relation(fields: [oGroupPostId], references: [id])
-  toGroupSharedPost  ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id])
+  oGroupPost         OGroupPost?       @relation(fields: [oGroupPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  toGroupSharedPost  ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model OGroupPost {
@@ -569,8 +569,8 @@ model PagePost {
 
   oPagePostId     String?        @unique
   pageSharePostId String?        @unique
-  oPagePost       OPagePost?     @relation(fields: [oPagePostId], references: [id])
-  pageSharePost   PageSharePost? @relation(fields: [pageSharePostId], references: [id])
+  oPagePost       OPagePost?     @relation(fields: [oPagePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pageSharePost   PageSharePost? @relation(fields: [pageSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model OPagePost {
@@ -769,9 +769,9 @@ model Feed {
   pagePostId  String?      @unique
   groupPostId String?      @unique
 
-  userPost  UserPost?  @relation(fields: [userPostId], references: [id])
-  pagePost  PagePost?  @relation(fields: [pagePostId], references: [id])
-  groupPost GroupPost? @relation(fields: [groupPostId], references: [id])
+  userPost  UserPost?  @relation(fields: [userPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pagePost  PagePost?  @relation(fields: [pagePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  groupPost GroupPost? @relation(fields: [groupPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { UserSharePost } from "@/app/apis/feeder/[page]/lib";
-import Header from "../header";
 import Content from "../shared/content";
 import Medias from "../shared/Medias";
 import Upper from "../shared/upper";
@@ -17,10 +16,11 @@ type PropsTypes = {
 export default function UserShare_Post({ post }: PropsTypes) {
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
-      <Header
+      <UserHeader
         firstName={post?.user?.firstName}
         lastName={post?.user?.lastName}
         date={post?.createdAt?.toString()}
+        refFrom="share"
       />
       <Content content={post.content} />
 
@@ -30,6 +30,7 @@ export default function UserShare_Post({ post }: PropsTypes) {
             firstName={post?.oUserPost?.user?.firstName}
             lastName={post?.oUserPost?.user?.lastName}
             date={post?.createdAt?.toString()}
+            refFrom="shared"
           />
 
           <Content content={post.oUserPost?.content} />
@@ -43,6 +44,7 @@ export default function UserShare_Post({ post }: PropsTypes) {
             name={post?.oPagePost?.page?.name}
             profilePicture={post?.oPagePost?.page?.profilePicture}
             date={post?.createdAt?.toString()}
+            refFrom="shared"
           />
 
           <Content content={post?.oPagePost?.content} />
@@ -56,6 +58,7 @@ export default function UserShare_Post({ post }: PropsTypes) {
             group={post?.oGroupPost?.group}
             memeber={post.oGroupPost?.user}
             date={post?.createdAt?.toString()}
+            refFrom="shared"
           />
 
           <Content content={post?.oGroupPost?.content} />

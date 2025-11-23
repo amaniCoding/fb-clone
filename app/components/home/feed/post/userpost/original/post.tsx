@@ -17,6 +17,7 @@ export default function OUser_Post({ post }: PropsTypes) {
         firstName={post?.user?.firstName}
         lastName={post?.user?.lastName}
         date={post?.createdAt?.toString()}
+        refFrom="original"
       />
 
       <Content content={post?.content} />

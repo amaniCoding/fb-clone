@@ -7,10 +7,12 @@ export default function UserHeader({
   firstName,
   lastName,
   date,
+  refFrom,
 }: {
   firstName: string | undefined;
   lastName: string | undefined;
   date: string | undefined;
+  refFrom: "share" | "original" | "shared";
 }) {
   return (
     <div className="flex items-center justify-between px-3 pt-3">
@@ -33,8 +35,19 @@ export default function UserHeader({
       </div>
 
       <div className="flex items-center space-x-2">
-        <IoIosMore className="w-7 h-7" />
-        <CgClose />
+        {refFrom === "original" && (
+          <>
+            <IoIosMore className="w-7 h-7" />
+            <CgClose />
+          </>
+        )}
+
+        {refFrom === "share" && (
+          <>
+            <IoIosMore className="w-7 h-7" />
+            <CgClose />
+          </>
+        )}
       </div>
     </div>
   );
