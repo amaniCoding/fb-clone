@@ -1171,11 +1171,11 @@ export const getFeeds = async (page: number) => {
 // prepare
 
 const feeds = await getFeeds(1);
-const feed = feeds.updated[0];
+const feed = feeds?.updated[0];
 
-const userPost = feed.userPost;
-const pagePost = feed.pagePost;
-const groupPost = feed.groupPost;
+const userPost = feed?.userPost;
+const pagePost = feed?.pagePost;
+const groupPost = feed?.groupPost;
 
 const oUserpost = feed?.userPost?.oUserPost;
 const userSharePost = feed?.userPost?.userSharePost;
