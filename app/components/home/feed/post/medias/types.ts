@@ -1,8 +1,5 @@
-import {
-  OriginalPostMediaType,
-  rawMediaType,
-} from "@/app/apis/feeder/[page]/lib";
+import { PostMediaType } from "@/app/apis/feeder/[page]/lib";
 
 export type MediaPropType = {
-  medias: OriginalPostMediaType | rawMediaType;
+  medias: PostMediaType;
 };
