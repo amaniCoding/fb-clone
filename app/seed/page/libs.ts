@@ -9,7 +9,7 @@ export function _seeder() {
         profilePicture: page.profilePicture,
         admin: {
           connect: {
-            id: "925f3f0c-b6ab-4192-826f-5bd82e160a4c",
+            id: "b6301af3-34a2-4d63-92fe-f66f1197f925",
           },
         },
       },
