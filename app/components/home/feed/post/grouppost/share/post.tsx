@@ -53,7 +53,6 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
             date={post?.createdAt?.toString()}
             refFrom="shared"
           />
-
           <Content content={post?.oUserPost?.content} />
           <Medias medias={post?.oUserPost?.medias} />
         </div>
@@ -67,7 +66,6 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
             date={post?.createdAt?.toString()}
             refFrom="shared"
           />
-
           <Content content={post?.oPagePost?.content} />
           <Medias medias={post?.oPagePost?.medias} />
         </div>
@@ -81,9 +79,23 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
             date={post?.createdAt?.toString()}
             refFrom="shared"
           />
-
           <Content content={post?.oGroupPost?.content} />
           <Medias medias={post?.oGroupPost?.medias} />
+        </div>
+      )}
+      {post.shareWhat === "media" && (
+        <div className="rounded-xl bg-white mb-4 pb-1.5">
+          <div className={`w-full h-[28rem]`}>
+            <div
+              className="w-full h-full"
+              style={{
+                backgroundImage: "url(" + `${post.media?.url}` + ")",
+                backgroundPosition: "top center",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+              }}
+            ></div>
+          </div>
         </div>
       )}
       <Upper

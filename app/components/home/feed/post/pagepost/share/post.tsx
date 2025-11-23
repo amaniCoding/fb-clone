@@ -66,6 +66,22 @@ export default function PageShare_Post({ post }: PropsTypes) {
           <Medias medias={post?.oGroupPost?.medias} />
         </div>
       )}
+      {post.shareWhat === "media" && (
+        <div className="rounded-xl bg-white mb-4 pb-1.5">
+          xxx
+          <div className={`w-full h-[28rem]`}>
+            <div
+              className="w-full h-full"
+              style={{
+                backgroundImage: "url(" + `${post.media?.url}` + ")",
+                backgroundPosition: "top center",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+              }}
+            ></div>
+          </div>
+        </div>
+      )}
       <Upper
         commentsCount={post?._count?.comments}
         reactionsCount={post?._count?.reactions}

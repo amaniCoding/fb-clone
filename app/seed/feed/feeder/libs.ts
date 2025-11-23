@@ -87,7 +87,7 @@ const getRandomPost = async (forWhat: "user" | "page" | "group") => {
       },
     });
     if (userPosts.length === 0) {
-      const randomPost = getRandomPostText();
+      const postContentOption = getRandomPostContentOption();
       const user = await getRandomUser();
       const newUserPost = await prisma.oUserPost.create({
         data: {
@@ -96,12 +96,11 @@ const getRandomPost = async (forWhat: "user" | "page" | "group") => {
           },
 
           content:
-            randomPost === "contentonly" || randomPost === "both"
+            postContentOption === "contentonly" || postContentOption === "both"
               ? getRandomPostText()
               : null,
           medias:
-            getRandomPostText() === "both" ||
-            getRandomPostText() === "mediasonly"
+            postContentOption === "both" || postContentOption === "mediasonly"
               ? {
                   createMany: {
                     data: generatePhoto("user", getRandomPhotoCount()),
@@ -126,7 +125,7 @@ const getRandomPost = async (forWhat: "user" | "page" | "group") => {
 
     if (pagePosts.length === 0) {
       const page = await getRandomPage();
-      const randomPost = getRandomPostText();
+      const postContentOption = getRandomPostContentOption();
 
       const newPagePost = await prisma.oPagePost.create({
         data: {
@@ -135,11 +134,11 @@ const getRandomPost = async (forWhat: "user" | "page" | "group") => {
           },
 
           content:
-            randomPost === "contentonly" || randomPost === "both"
+            postContentOption === "contentonly" || postContentOption === "both"
               ? getRandomPostText()
               : null,
           medias:
-            randomPost === "both" || randomPost === "mediasonly"
+            postContentOption === "both" || postContentOption === "mediasonly"
               ? {
                   createMany: {
                     data: generatePhoto("page", getRandomPhotoCount()),
@@ -165,7 +164,7 @@ const getRandomPost = async (forWhat: "user" | "page" | "group") => {
     if (groupPosts.length === 0) {
       const user = await getRandomUser();
       const group = await getRandomGroup();
-      const randomPost = getRandomPostText();
+      const postContentOption = getRandomPostContentOption();
 
       const newGroupPost = await prisma.oGroupPost.create({
         data: {
@@ -177,11 +176,11 @@ const getRandomPost = async (forWhat: "user" | "page" | "group") => {
           },
 
           content:
-            randomPost === "contentonly" || randomPost === "both"
+            postContentOption === "contentonly" || postContentOption === "both"
               ? getRandomPostText()
               : null,
           medias:
-            randomPost === "both" || randomPost === "mediasonly"
+            postContentOption === "both" || postContentOption === "mediasonly"
               ? {
                   createMany: {
                     data: generatePhoto("group", getRandomPhotoCount()),
@@ -217,7 +216,7 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
     });
     if (oUserPosts.length === 0) {
       const user = await getRandomUser();
-      const randomPost = getRandomPostText();
+      const postContentOption = getRandomPostContentOption();
 
       const newUserPostMedia = await prisma.oUserPost.create({
         data: {
@@ -226,7 +225,7 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
           },
 
           content:
-            randomPost === "contentonly" || randomPost === "both"
+            postContentOption === "contentonly" || postContentOption === "both"
               ? getRandomPostText()
               : null,
           medias: {
@@ -272,7 +271,7 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
 
     if (oPagePosts.length === 0) {
       const page = await getRandomPage();
-      const randomPost = getRandomPostText();
+      const postContentOption = getRandomPostContentOption();
 
       const newPostPostMedia = await prisma.oPagePost.create({
         data: {
@@ -281,7 +280,7 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
           },
 
           content:
-            randomPost === "contentonly" || randomPost === "both"
+            postContentOption === "contentonly" || postContentOption === "both"
               ? getRandomPostText()
               : null,
           medias: {
@@ -328,7 +327,7 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
     if (OgroupPosts.length === 0) {
       const user = await getRandomUser();
       const group = await getRandomGroup();
-      const randomPost = getRandomPostText();
+      const postContentOption = getRandomPostContentOption();
 
       const newGroupPostMedia = await prisma.oGroupPost.create({
         data: {
@@ -340,7 +339,7 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
           },
 
           content:
-            randomPost === "contentonly" || randomPost === "both"
+            postContentOption === "contentonly" || postContentOption === "both"
               ? getRandomPostText()
               : null,
           medias: {
@@ -400,10 +399,11 @@ const getRandomPhotoCount = () => {
 };
 
 const createUserPost = async () => {
-  const user = await getRandomUser();
   const postType = getRandomPostType();
   switch (postType) {
     case "original": {
+      const user = await getRandomUser();
+
       const postContentOption = getRandomPostContentOption();
       return prisma.feed.create({
         data: {
@@ -654,11 +654,11 @@ const createPagePost = async () => {
 };
 
 const createGroupPost = async () => {
-  const user = await getRandomUser();
-  const group = await getRandomGroup();
   const postType = getRandomPostType();
   switch (postType) {
     case "original": {
+      const user = await getRandomUser();
+      const group = await getRandomGroup();
       const postContentOption = getRandomPostContentOption();
       return prisma.feed.create({
         data: {
