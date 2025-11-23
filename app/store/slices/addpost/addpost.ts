@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SetUploadedMediasToAdd } from "../../types";
-import { PostsUser } from "@/app/components/home/feed/types";
 
 interface UploadedMediaType {
   url: string;
@@ -12,7 +11,6 @@ interface AddPostState {
   content: string;
   hasChoosenPhoto: boolean;
   upLoadedMedias: UploadedMediaType[];
-  post: PostsUser | null;
 }
 
 // Define the initial state using that type
@@ -21,7 +19,6 @@ const initialState: AddPostState = {
   content: "",
   hasChoosenPhoto: false,
   upLoadedMedias: [],
-  post: null,
 };
 
 export const addPostSlice = createSlice({
