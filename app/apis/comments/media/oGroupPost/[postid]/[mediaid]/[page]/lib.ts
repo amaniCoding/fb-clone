@@ -1,4 +1,3 @@
-import { OUserPostRepliesType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
 import { GReaction, Reactor } from "@/app/apis/types";
 import prisma from "@/app/libs/prisma";
 const commentPreparer = {
@@ -97,22 +96,6 @@ export const getComments = async (
       postId: _post.id,
       postType: "oGroupPost",
       _gReactions: await commentPreparer.prepareGReactions(comment.id),
-      _reactions: {
-        header: {
-          loading: false,
-          currentReactionType: undefined,
-          gReactions: [] as GReaction[],
-          error: "",
-        },
-        body: [] as Reactor[],
-      },
-      replies: {
-        loading: false,
-        page: 1,
-        totalPages: 0,
-        totalRows: 0,
-        replies: [] as OUserPostRepliesType,
-      },
     };
   });
   // reuslt can be undefined
