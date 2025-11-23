@@ -220,52 +220,6 @@ export const getFeeds = async (page: number) => {
                   owner: true,
                   createdAt: true,
                   // first media reactors
-                  reactions: {
-                    select: {
-                      user: {
-                        select: {
-                          firstName: true,
-                          lastName: true,
-                          Profile: {
-                            select: {
-                              profilePicture: true,
-                            },
-                          },
-                        },
-                      },
-                    },
-                    orderBy: {
-                      createdAt: "desc",
-                    },
-                    take: 1,
-                  },
-                  // first media commentors
-                  comments: {
-                    select: {
-                      user: {
-                        select: {
-                          firstName: true,
-                          lastName: true,
-                          Profile: {
-                            select: {
-                              profilePicture: true,
-                            },
-                          },
-                        },
-                      },
-                    },
-                    orderBy: {
-                      createdAt: "desc",
-                    },
-                    take: 1,
-                  },
-                  // counts
-                  _count: {
-                    select: {
-                      comments: true,
-                      reactions: true,
-                    },
-                  },
                 },
               },
             },
@@ -462,52 +416,6 @@ export const getFeeds = async (page: number) => {
                   owner: true,
                   createdAt: true,
                   //first media reactors
-                  reactions: {
-                    select: {
-                      user: {
-                        select: {
-                          firstName: true,
-                          lastName: true,
-                          Profile: {
-                            select: {
-                              profilePicture: true,
-                            },
-                          },
-                        },
-                      },
-                    },
-                    orderBy: {
-                      createdAt: "desc",
-                    },
-                    take: 1,
-                  },
-                  //first media commentors
-                  comments: {
-                    select: {
-                      user: {
-                        select: {
-                          firstName: true,
-                          lastName: true,
-                          Profile: {
-                            select: {
-                              profilePicture: true,
-                            },
-                          },
-                        },
-                      },
-                    },
-                    orderBy: {
-                      createdAt: "desc",
-                    },
-                    take: 1,
-                  },
-                  // counts
-                  _count: {
-                    select: {
-                      comments: true,
-                      reactions: true,
-                    },
-                  },
                 },
               },
               reactions: {
@@ -757,52 +665,6 @@ export const getFeeds = async (page: number) => {
                   owner: true,
                   createdAt: true,
                   // first media reactors
-                  reactions: {
-                    select: {
-                      user: {
-                        select: {
-                          firstName: true,
-                          lastName: true,
-                          Profile: {
-                            select: {
-                              profilePicture: true,
-                            },
-                          },
-                        },
-                      },
-                    },
-                    orderBy: {
-                      createdAt: "desc",
-                    },
-                    take: 1,
-                  },
-                  // first media commentors
-                  comments: {
-                    select: {
-                      user: {
-                        select: {
-                          firstName: true,
-                          lastName: true,
-                          Profile: {
-                            select: {
-                              profilePicture: true,
-                            },
-                          },
-                        },
-                      },
-                    },
-                    orderBy: {
-                      createdAt: "desc",
-                    },
-                    take: 1,
-                  },
-                  // counts
-                  _count: {
-                    select: {
-                      comments: true,
-                      reactions: true,
-                    },
-                  },
                 },
               },
               // first reactors
@@ -1055,20 +917,6 @@ export const getFeeds = async (page: number) => {
             "oUserPost",
             feed.userPost?.oUserPost?.id
           ),
-
-          medias: feed.userPost?.oUserPost?.medias
-            ? await Promise.all(
-                feed.userPost?.oUserPost?.medias.map(async (media) => {
-                  return {
-                    ...media,
-                    feedId: feed.id,
-                    postId: feed.userPost?.oUserPost?.id,
-                    mediaId: media.id,
-                    _gReactions: await prepareMeidaGReactions(media.id),
-                  };
-                })
-              )
-            : undefined,
         },
         // share
         userSharePost: {
@@ -1093,20 +941,6 @@ export const getFeeds = async (page: number) => {
             "oPagePost",
             feed.pagePost?.oPagePost?.id
           ),
-
-          medias: feed.pagePost?.oPagePost?.medias
-            ? await Promise.all(
-                feed.pagePost?.oPagePost?.medias.map(async (media) => {
-                  return {
-                    ...media,
-                    feedId: feed.id,
-                    postId: feed.pagePost?.oPagePost?.id,
-                    mediaId: media.id,
-                    _gReactions: await prepareMeidaGReactions(media.id),
-                  };
-                })
-              )
-            : undefined,
         },
 
         // apge share post
@@ -1133,20 +967,6 @@ export const getFeeds = async (page: number) => {
             "oGroupPost",
             feed.groupPost?.oGroupPost?.id
           ),
-
-          medias: feed.groupPost?.oGroupPost?.medias
-            ? await Promise.all(
-                feed.groupPost?.oGroupPost?.medias.map(async (media) => {
-                  return {
-                    ...media,
-                    feedId: feed.id,
-                    postId: feed.groupPost?.oGroupPost?.id,
-                    mediaId: media.id,
-                    _gReactions: await prepareMeidaGReactions(media.id),
-                  };
-                })
-              )
-            : undefined,
         },
         // share
         toGroupSharedPost: {

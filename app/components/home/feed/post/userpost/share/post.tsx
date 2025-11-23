@@ -1,9 +1,9 @@
 "use client";
 
 import { UserSharePost } from "@/app/apis/feeder/[page]/lib";
-import Content from "../shared/content";
-import Medias from "../shared/Medias";
-import Upper from "../shared/upper";
+import Content from "../../shared/content";
+import Medias from "../../shared/Medias";
+import Upper from "../../shared/upper";
 import Lower from "./lower";
 import UserHeader from "../header";
 import PageHeader from "../../pagepost/header";

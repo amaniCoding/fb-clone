@@ -1,13 +1,14 @@
 "use client";
 
 import { ToGroupSharedPost } from "@/app/apis/feeder/[page]/lib";
-import Content from "../shared/content";
-import Medias from "../shared/Medias";
-import Upper from "../shared/upper";
+
 import PageHeader from "../../pagepost/header";
 import UserHeader from "../../userpost/header";
 import GroupHeader from "../header";
 import Lower from "./lower";
+import Medias from "../../shared/Medias";
+import Content from "../../shared/content";
+import Upper from "../../shared/upper";
 
 type PropsTypes = {
   post: ToGroupSharedPost;
@@ -90,6 +91,8 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
         reactionsCount={post?._count?.reactions}
         groupedReactions={post?._gReactions}
         firstReactions={post?.reactions}
+        feedId={post.feedId}
+        postId={post.postId}
       />
       <Lower post={post} />
     </div>

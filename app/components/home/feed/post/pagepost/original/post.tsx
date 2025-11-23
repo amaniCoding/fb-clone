@@ -1,8 +1,9 @@
 "use client";
+import Content from "../../shared/content";
+import Medias from "../../shared/Medias";
+import Upper from "../../shared/upper";
 import PageHeader from "../header";
-import Content from "../shared/content";
-import Medias from "../shared/Medias";
-import Upper from "../shared/upper";
+
 import Lower from "./lower";
 import { OPagePost } from "@/app/apis/feeder/[page]/lib";
 
@@ -27,6 +28,8 @@ export default function OPage_Post({ post }: PropsTypes) {
         reactionsCount={post?._count?.reactions}
         groupedReactions={post?._gReactions}
         firstReactions={post?.reactions}
+        feedId={post.feedId}
+        postId={post.postId}
       />
       <Lower post={post} />
     </div>

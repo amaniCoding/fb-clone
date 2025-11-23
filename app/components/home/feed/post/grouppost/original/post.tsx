@@ -1,8 +1,9 @@
 "use client";
+import Content from "../../shared/content";
+import Medias from "../../shared/Medias";
+import Upper from "../../shared/upper";
 import GroupHeader from "../header";
-import Content from "../shared/content";
-import Medias from "../shared/Medias";
-import Upper from "../shared/upper";
+
 import Lower from "./lower";
 import { OGroupPost } from "@/app/apis/feeder/[page]/lib";
 
@@ -17,6 +18,7 @@ export default function OGroup_Post({ post }: PropsTypes) {
         group={post?.group}
         memeber={post?.user}
         date={post?.createdAt?.toString()}
+        refFrom="original"
       />
 
       <Content content={post?.content} />
@@ -26,6 +28,8 @@ export default function OGroup_Post({ post }: PropsTypes) {
         reactionsCount={post?._count?.reactions}
         groupedReactions={post?._gReactions}
         firstReactions={post?.reactions}
+        feedId={post.feedId}
+        postId={post.postId}
       />
       <Lower post={post} />
     </div>

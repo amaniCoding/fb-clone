@@ -1,8 +1,8 @@
 "use client";
 import UserHeader from "../header";
-import Content from "../shared/content";
-import Medias from "../shared/Medias";
-import Upper from "../shared/upper";
+import Content from "../../shared/content";
+import Medias from "../../shared/Medias";
+import Upper from "../../shared/upper";
 import Lower from "./lower";
 import { OUserPost } from "@/app/apis/feeder/[page]/lib";
 

@@ -1,13 +1,14 @@
 "use client";
 
 import { PageSharePost } from "@/app/apis/feeder/[page]/lib";
-import Content from "../shared/content";
-import Medias from "../shared/Medias";
-import Upper from "../shared/upper";
+
 import Lower from "./lower";
 import PageHeader from "../header";
 import GroupHeader from "../../grouppost/header";
 import UserHeader from "../../userpost/header";
+import Content from "../../shared/content";
+import Medias from "../../shared/Medias";
+import Upper from "../../shared/upper";
 
 type PropsTypes = {
   post: PageSharePost;
@@ -70,6 +71,8 @@ export default function PageShare_Post({ post }: PropsTypes) {
         reactionsCount={post?._count?.reactions}
         groupedReactions={post?._gReactions}
         firstReactions={post?.reactions}
+        feedId={post.feedId}
+        postId={post.postId}
       />
       <Lower post={post} />
     </div>
