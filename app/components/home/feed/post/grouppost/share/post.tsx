@@ -35,14 +35,6 @@ export default function ToGroupShare_Post({ post }: PropsTypes) {
         />
       )}
 
-      {post.sharer === "page" && (
-        <GroupHeader
-          group={post?.oGroupPost?.group}
-          memeber={post.oGroupPost?.user}
-          date={post?.createdAt?.toString()}
-          refFrom="shared"
-        />
-      )}
       <Content content={post.content} />
       {post.shareWhat === "user" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
