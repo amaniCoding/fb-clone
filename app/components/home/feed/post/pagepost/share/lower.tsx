@@ -23,7 +23,7 @@ export default function Lower({ post }: TypeProps) {
         starterUrl: `/comments/${post.postType}/${post.postId}`,
         currentPost: {
           postType: "oUserPost",
-          userSharePost: post,
+          pageSharePost: post,
         },
       })
     );
