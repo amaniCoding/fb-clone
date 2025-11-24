@@ -449,7 +449,7 @@ model OGroupPost {
   groupPost     GroupPost?
   userId        String
   groupId       String
-  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user          User               @relation(fields: [userId], references: [id])
   group         Group              @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   content       String?
   location      String?
@@ -788,12 +788,12 @@ model Comment {
   userSharePostId    String?
   pageSharePostId    String?
   toGroupSharePostId String?
-  userPost           OUserPost?        @relation(fields: [userPostId], references: [id])
-  pagePost           OPagePost?        @relation(fields: [pagePostId], references: [id])
-  groupPost          OGroupPost?       @relation(fields: [groupPostId], references: [id])
-  userSharePost      UserSharePost?    @relation(fields: [userSharePostId], references: [id])
-  pageSharePost      PageSharePost?    @relation(fields: [pageSharePostId], references: [id])
-  toGroupSharePost   ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id])
+  userPost           OUserPost?        @relation(fields: [userPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pagePost           OPagePost?        @relation(fields: [pagePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  groupPost          OGroupPost?       @relation(fields: [groupPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userSharePost      UserSharePost?    @relation(fields: [userSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pageSharePost      PageSharePost?    @relation(fields: [pageSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  toGroupSharePost   ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   mediaUrl           String?
   content            String?
   reactions          CommentReaction[]
@@ -813,12 +813,12 @@ model Reaction {
   userSharePostId    String?
   pageSharePostId    String?
   toGroupSharePostId String?
-  userPost           OUserPost?        @relation(fields: [userPostId], references: [id])
-  pagePost           OPagePost?        @relation(fields: [pagePostId], references: [id])
-  groupPost          OGroupPost?       @relation(fields: [groupPostId], references: [id])
-  userSharePost      UserSharePost?    @relation(fields: [userSharePostId], references: [id])
-  pageSharePost      PageSharePost?    @relation(fields: [pageSharePostId], references: [id])
-  toGroupSharePost   ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id])
+  userPost           OUserPost?        @relation(fields: [userPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pagePost           OPagePost?        @relation(fields: [pagePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  groupPost          OGroupPost?       @relation(fields: [groupPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userSharePost      UserSharePost?    @relation(fields: [userSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pageSharePost      PageSharePost?    @relation(fields: [pageSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  toGroupSharePost   ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   reactionType       ReactionType
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt

@@ -274,7 +274,10 @@ export const _update_all_posts = async () => {
       const comment = getRandomPostComment();
       const reply = getRandomCommentReply();
       const replyReply = getRandomCommentReplReply();
-      const reactionType = getRandomReactionType() as ReactionType;
+      const postReactionType = getRandomReactionType() as ReactionType;
+      const commentReactionType = getRandomReactionType() as ReactionType;
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyReactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
       const replyPostOption = getRandomPostContentOption();
       const replyReplyPostOption = getRandomPostContentOption();
@@ -303,7 +306,7 @@ export const _update_all_posts = async () => {
                       },
                       reactions: {
                         create: {
-                          reactionType,
+                          reactionType: commentReactionType,
                           user: {
                             connect: {
                               id: user.id,
@@ -325,6 +328,16 @@ export const _update_all_posts = async () => {
                               id: user.id,
                             },
                           },
+                          reactions: {
+                            create: {
+                              reactionType: replyReactionType,
+                              user: {
+                                connect: {
+                                  id: user.id,
+                                },
+                              },
+                            },
+                          },
                           replies: {
                             create: {
                               content:
@@ -341,8 +354,28 @@ export const _update_all_posts = async () => {
                                   id: user.id,
                                 },
                               },
+                              reactions: {
+                                create: {
+                                  reactionType: replyReplyReactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
                             },
                           },
+                        },
+                      },
+                    },
+                  },
+                  reactions: {
+                    create: {
+                      reactionType: postReactionType,
+                      user: {
+                        connect: {
+                          id: user.id,
                         },
                       },
                     },
@@ -354,14 +387,15 @@ export const _update_all_posts = async () => {
         },
       });
     }
-
     if (feed.userPost && feed.userPost.userSharePost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reply = getRandomCommentReply();
       const replyReply = getRandomCommentReplReply();
-      const reactionType = getRandomReactionType() as ReactionType;
-
+      const postReactionType = getRandomReactionType() as ReactionType;
+      const commentReactionType = getRandomReactionType() as ReactionType;
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyReactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
       const replyPostOption = getRandomPostContentOption();
       const replyReplyPostOption = getRandomPostContentOption();
@@ -390,7 +424,7 @@ export const _update_all_posts = async () => {
                       },
                       reactions: {
                         create: {
-                          reactionType,
+                          reactionType: commentReactionType,
                           user: {
                             connect: {
                               id: user.id,
@@ -412,6 +446,16 @@ export const _update_all_posts = async () => {
                               id: user.id,
                             },
                           },
+                          reactions: {
+                            create: {
+                              reactionType: replyReactionType,
+                              user: {
+                                connect: {
+                                  id: user.id,
+                                },
+                              },
+                            },
+                          },
                           replies: {
                             create: {
                               content:
@@ -428,8 +472,28 @@ export const _update_all_posts = async () => {
                                   id: user.id,
                                 },
                               },
+                              reactions: {
+                                create: {
+                                  reactionType: replyReplyReactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
                             },
                           },
+                        },
+                      },
+                    },
+                  },
+                  reactions: {
+                    create: {
+                      reactionType: postReactionType,
+                      user: {
+                        connect: {
+                          id: user.id,
                         },
                       },
                     },
@@ -441,13 +505,15 @@ export const _update_all_posts = async () => {
         },
       });
     }
-
     if (feed.pagePost && feed.pagePost.oPagePost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reply = getRandomCommentReply();
       const replyReply = getRandomCommentReplReply();
-      const reactionType = getRandomReactionType() as ReactionType;
+      const postReactionType = getRandomReactionType() as ReactionType;
+      const commentReactionType = getRandomReactionType() as ReactionType;
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyReactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
       const replyPostOption = getRandomPostContentOption();
       const replyReplyPostOption = getRandomPostContentOption();
@@ -469,7 +535,6 @@ export const _update_all_posts = async () => {
                           : null,
                       mediaUrl:
                         commentPostOption === "both" ? generatePhoto() : null,
-
                       user: {
                         connect: {
                           id: user.id,
@@ -477,7 +542,7 @@ export const _update_all_posts = async () => {
                       },
                       reactions: {
                         create: {
-                          reactionType,
+                          reactionType: commentReactionType,
                           user: {
                             connect: {
                               id: user.id,
@@ -494,10 +559,19 @@ export const _update_all_posts = async () => {
                               : null,
                           mediaUrl:
                             replyPostOption === "both" ? generatePhoto() : null,
-
                           user: {
                             connect: {
                               id: user.id,
+                            },
+                          },
+                          reactions: {
+                            create: {
+                              reactionType: replyReactionType,
+                              user: {
+                                connect: {
+                                  id: user.id,
+                                },
+                              },
                             },
                           },
                           replies: {
@@ -511,14 +585,33 @@ export const _update_all_posts = async () => {
                                 replyReplyPostOption === "both"
                                   ? generatePhoto()
                                   : null,
-
                               user: {
                                 connect: {
                                   id: user.id,
                                 },
                               },
+                              reactions: {
+                                create: {
+                                  reactionType: replyReplyReactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
                             },
                           },
+                        },
+                      },
+                    },
+                  },
+                  reactions: {
+                    create: {
+                      reactionType: postReactionType,
+                      user: {
+                        connect: {
+                          id: user.id,
                         },
                       },
                     },
@@ -530,14 +623,15 @@ export const _update_all_posts = async () => {
         },
       });
     }
-
     if (feed.pagePost && feed.pagePost.pageSharePost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reply = getRandomCommentReply();
       const replyReply = getRandomCommentReplReply();
-      const reactionType = getRandomReactionType() as ReactionType;
-
+      const postReactionType = getRandomReactionType() as ReactionType;
+      const commentReactionType = getRandomReactionType() as ReactionType;
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyReactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
       const replyPostOption = getRandomPostContentOption();
       const replyReplyPostOption = getRandomPostContentOption();
@@ -566,7 +660,7 @@ export const _update_all_posts = async () => {
                       },
                       reactions: {
                         create: {
-                          reactionType,
+                          reactionType: commentReactionType,
                           user: {
                             connect: {
                               id: user.id,
@@ -588,7 +682,16 @@ export const _update_all_posts = async () => {
                               id: user.id,
                             },
                           },
-
+                          reactions: {
+                            create: {
+                              reactionType: replyReactionType,
+                              user: {
+                                connect: {
+                                  id: user.id,
+                                },
+                              },
+                            },
+                          },
                           replies: {
                             create: {
                               content:
@@ -605,8 +708,28 @@ export const _update_all_posts = async () => {
                                   id: user.id,
                                 },
                               },
+                              reactions: {
+                                create: {
+                                  reactionType: replyReplyReactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
                             },
                           },
+                        },
+                      },
+                    },
+                  },
+                  reactions: {
+                    create: {
+                      reactionType: postReactionType,
+                      user: {
+                        connect: {
+                          id: user.id,
                         },
                       },
                     },
@@ -618,14 +741,15 @@ export const _update_all_posts = async () => {
         },
       });
     }
-
     if (feed.groupPost && feed.groupPost.oGroupPost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reply = getRandomCommentReply();
       const replyReply = getRandomCommentReplReply();
-      const reactionType = getRandomReactionType() as ReactionType;
-
+      const postReactionType = getRandomReactionType() as ReactionType;
+      const commentReactionType = getRandomReactionType() as ReactionType;
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyReactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
       const replyPostOption = getRandomPostContentOption();
       const replyReplyPostOption = getRandomPostContentOption();
@@ -654,7 +778,7 @@ export const _update_all_posts = async () => {
                       },
                       reactions: {
                         create: {
-                          reactionType,
+                          reactionType: commentReactionType,
                           user: {
                             connect: {
                               id: user.id,
@@ -676,7 +800,16 @@ export const _update_all_posts = async () => {
                               id: user.id,
                             },
                           },
-
+                          reactions: {
+                            create: {
+                              reactionType: replyReactionType,
+                              user: {
+                                connect: {
+                                  id: user.id,
+                                },
+                              },
+                            },
+                          },
                           replies: {
                             create: {
                               content:
@@ -693,8 +826,28 @@ export const _update_all_posts = async () => {
                                   id: user.id,
                                 },
                               },
+                              reactions: {
+                                create: {
+                                  reactionType: replyReplyReactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
                             },
                           },
+                        },
+                      },
+                    },
+                  },
+                  reactions: {
+                    create: {
+                      reactionType: postReactionType,
+                      user: {
+                        connect: {
+                          id: user.id,
                         },
                       },
                     },
@@ -706,13 +859,15 @@ export const _update_all_posts = async () => {
         },
       });
     }
-    if (feed.groupPost && feed.groupPost.toGroupSharePostId) {
+    if (feed.groupPost && feed.groupPost.toGroupSharedPost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reply = getRandomCommentReply();
       const replyReply = getRandomCommentReplReply();
-      const reactionType = getRandomReactionType() as ReactionType;
-
+      const postReactionType = getRandomReactionType() as ReactionType;
+      const commentReactionType = getRandomReactionType() as ReactionType;
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyReactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
       const replyPostOption = getRandomPostContentOption();
       const replyReplyPostOption = getRandomPostContentOption();
@@ -741,7 +896,7 @@ export const _update_all_posts = async () => {
                       },
                       reactions: {
                         create: {
-                          reactionType,
+                          reactionType: commentReactionType,
                           user: {
                             connect: {
                               id: user.id,
@@ -763,6 +918,16 @@ export const _update_all_posts = async () => {
                               id: user.id,
                             },
                           },
+                          reactions: {
+                            create: {
+                              reactionType: replyReactionType,
+                              user: {
+                                connect: {
+                                  id: user.id,
+                                },
+                              },
+                            },
+                          },
                           replies: {
                             create: {
                               content:
@@ -779,8 +944,28 @@ export const _update_all_posts = async () => {
                                   id: user.id,
                                 },
                               },
+                              reactions: {
+                                create: {
+                                  reactionType: replyReplyReactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
                             },
                           },
+                        },
+                      },
+                    },
+                  },
+                  reactions: {
+                    create: {
+                      reactionType: postReactionType,
+                      user: {
+                        connect: {
+                          id: user.id,
                         },
                       },
                     },
@@ -850,7 +1035,10 @@ export const _update_all_medias = async () => {
       const comment = getRandomPostComment();
       const reply = getRandomCommentReply();
       const replyReply = getRandomCommentReplReply();
-      const reactionType = getRandomReactionType() as ReactionType;
+      const mediaReactionType = getRandomReactionType() as ReactionType;
+      const commentReactionType = getRandomReactionType() as ReactionType;
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyReactionType = getRandomReactionType() as ReactionType;
 
       const commentPostOption = getRandomPostContentOption();
       const replyPostOption = getRandomPostContentOption();
@@ -891,7 +1079,7 @@ export const _update_all_medias = async () => {
                                   },
                                   reactions: {
                                     create: {
-                                      reactionType,
+                                      reactionType: commentReactionType,
                                       user: {
                                         connect: {
                                           id: user.id,
@@ -915,6 +1103,16 @@ export const _update_all_medias = async () => {
                                           id: user.id,
                                         },
                                       },
+                                      reactions: {
+                                        create: {
+                                          reactionType: replyReactionType,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
                                       replies: {
                                         create: {
                                           content:
@@ -932,8 +1130,29 @@ export const _update_all_medias = async () => {
                                               id: user.id,
                                             },
                                           },
+                                          reactions: {
+                                            create: {
+                                              reactionType:
+                                                replyReplyReactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
                                         },
                                       },
+                                    },
+                                  },
+                                },
+                              },
+                              reactions: {
+                                create: {
+                                  reactionType: mediaReactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
                                     },
                                   },
                                 },
@@ -951,13 +1170,15 @@ export const _update_all_medias = async () => {
         );
       }
     }
-
     if (feed.pagePost && feed.pagePost.oPagePost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reply = getRandomCommentReply();
       const replyReply = getRandomCommentReplReply();
-      const reactionType = getRandomReactionType() as ReactionType;
+      const mediaReactionType = getRandomReactionType() as ReactionType;
+      const commentReactionType = getRandomReactionType() as ReactionType;
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyReactionType = getRandomReactionType() as ReactionType;
 
       const commentPostOption = getRandomPostContentOption();
       const replyPostOption = getRandomPostContentOption();
@@ -998,7 +1219,7 @@ export const _update_all_medias = async () => {
                                   },
                                   reactions: {
                                     create: {
-                                      reactionType,
+                                      reactionType: commentReactionType,
                                       user: {
                                         connect: {
                                           id: user.id,
@@ -1022,6 +1243,16 @@ export const _update_all_medias = async () => {
                                           id: user.id,
                                         },
                                       },
+                                      reactions: {
+                                        create: {
+                                          reactionType: replyReactionType,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
                                       replies: {
                                         create: {
                                           content:
@@ -1039,8 +1270,29 @@ export const _update_all_medias = async () => {
                                               id: user.id,
                                             },
                                           },
+                                          reactions: {
+                                            create: {
+                                              reactionType:
+                                                replyReplyReactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
                                         },
                                       },
+                                    },
+                                  },
+                                },
+                              },
+                              reactions: {
+                                create: {
+                                  reactionType: mediaReactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
                                     },
                                   },
                                 },
@@ -1058,12 +1310,16 @@ export const _update_all_medias = async () => {
         );
       }
     }
+
     if (feed.groupPost && feed.groupPost.oGroupPost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reply = getRandomCommentReply();
       const replyReply = getRandomCommentReplReply();
-      const reactionType = getRandomReactionType() as ReactionType;
+      const mediaReactionType = getRandomReactionType() as ReactionType;
+      const commentReactionType = getRandomReactionType() as ReactionType;
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyReactionType = getRandomReactionType() as ReactionType;
 
       const commentPostOption = getRandomPostContentOption();
       const replyPostOption = getRandomPostContentOption();
@@ -1104,7 +1360,7 @@ export const _update_all_medias = async () => {
                                   },
                                   reactions: {
                                     create: {
-                                      reactionType,
+                                      reactionType: commentReactionType,
                                       user: {
                                         connect: {
                                           id: user.id,
@@ -1128,6 +1384,16 @@ export const _update_all_medias = async () => {
                                           id: user.id,
                                         },
                                       },
+                                      reactions: {
+                                        create: {
+                                          reactionType: replyReactionType,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
                                       replies: {
                                         create: {
                                           content:
@@ -1145,8 +1411,29 @@ export const _update_all_medias = async () => {
                                               id: user.id,
                                             },
                                           },
+                                          reactions: {
+                                            create: {
+                                              reactionType:
+                                                replyReplyReactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
                                         },
                                       },
+                                    },
+                                  },
+                                },
+                              },
+                              reactions: {
+                                create: {
+                                  reactionType: mediaReactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
                                     },
                                   },
                                 },
@@ -1177,7 +1464,10 @@ export const _make_all_posts_dynamic = async () => {
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
-    const reactionType = getRandomReactionType() as ReactionType;
+    const postReactionType = getRandomReactionType() as ReactionType;
+    const commentReactionType = getRandomReactionType() as ReactionType;
+    const replyReactionType = getRandomReactionType() as ReactionType;
+    const replyReplyReactionType = getRandomReactionType() as ReactionType;
 
     const commentPostOption = getRandomPostContentOption();
     const replyPostOption = getRandomPostContentOption();
@@ -1203,7 +1493,7 @@ export const _make_all_posts_dynamic = async () => {
             },
             reactions: {
               create: {
-                reactionType,
+                reactionType: commentReactionType,
                 user: {
                   connect: {
                     id: user.id,
@@ -1225,6 +1515,17 @@ export const _make_all_posts_dynamic = async () => {
                     id: user.id,
                   },
                 },
+
+                reactions: {
+                  create: {
+                    reactionType: replyReactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
                 replies: {
                   create: {
                     content:
@@ -1240,8 +1541,28 @@ export const _make_all_posts_dynamic = async () => {
                         id: user.id,
                       },
                     },
+                    reactions: {
+                      create: {
+                        reactionType: replyReplyReactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
+                      },
+                    },
                   },
                 },
+              },
+            },
+          },
+        },
+        reactions: {
+          create: {
+            reactionType: postReactionType,
+            user: {
+              connect: {
+                id: user.id,
               },
             },
           },
@@ -1252,16 +1573,18 @@ export const _make_all_posts_dynamic = async () => {
 
   if (rPostType === "usershare") {
     const user = await getRandomUser();
-    const rPost = await getRandomPost("usershare");
+    const rPost = await getRandomPost("user");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
-    const reactionType = getRandomReactionType() as ReactionType;
+    const postReactionType = getRandomReactionType() as ReactionType;
+    const commentReactionType = getRandomReactionType() as ReactionType;
+    const replyReactionType = getRandomReactionType() as ReactionType;
+    const replyReplyReactionType = getRandomReactionType() as ReactionType;
 
     const commentPostOption = getRandomPostContentOption();
     const replyPostOption = getRandomPostContentOption();
     const replyReplyPostOption = getRandomPostContentOption();
-
     return prisma.userSharePost.update({
       where: {
         id: rPost!.id,
@@ -1275,6 +1598,7 @@ export const _make_all_posts_dynamic = async () => {
                 ? comment
                 : null,
             mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+
             user: {
               connect: {
                 id: user.id,
@@ -1282,7 +1606,7 @@ export const _make_all_posts_dynamic = async () => {
             },
             reactions: {
               create: {
-                reactionType,
+                reactionType: commentReactionType,
                 user: {
                   connect: {
                     id: user.id,
@@ -1298,9 +1622,21 @@ export const _make_all_posts_dynamic = async () => {
                     ? reply
                     : null,
                 mediaUrl: replyPostOption === "both" ? generatePhoto() : null,
+
                 user: {
                   connect: {
                     id: user.id,
+                  },
+                },
+
+                reactions: {
+                  create: {
+                    reactionType: replyReactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
                   },
                 },
                 replies: {
@@ -1312,9 +1648,20 @@ export const _make_all_posts_dynamic = async () => {
                         : null,
                     mediaUrl:
                       replyReplyPostOption === "both" ? generatePhoto() : null,
+
                     user: {
                       connect: {
                         id: user.id,
+                      },
+                    },
+                    reactions: {
+                      create: {
+                        reactionType: replyReplyReactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
                       },
                     },
                   },
@@ -1323,22 +1670,33 @@ export const _make_all_posts_dynamic = async () => {
             },
           },
         },
+        reactions: {
+          create: {
+            reactionType: postReactionType,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+          },
+        },
       },
     });
   }
-
   if (rPostType === "page") {
     const user = await getRandomUser();
-    const rPost = await getRandomPost("page");
+    const rPost = await getRandomPost("user");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
-    const reactionType = getRandomReactionType() as ReactionType;
+    const postReactionType = getRandomReactionType() as ReactionType;
+    const commentReactionType = getRandomReactionType() as ReactionType;
+    const replyReactionType = getRandomReactionType() as ReactionType;
+    const replyReplyReactionType = getRandomReactionType() as ReactionType;
 
     const commentPostOption = getRandomPostContentOption();
     const replyPostOption = getRandomPostContentOption();
     const replyReplyPostOption = getRandomPostContentOption();
-
     return prisma.oPagePost.update({
       where: {
         id: rPost!.id,
@@ -1352,6 +1710,7 @@ export const _make_all_posts_dynamic = async () => {
                 ? comment
                 : null,
             mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+
             user: {
               connect: {
                 id: user.id,
@@ -1359,7 +1718,7 @@ export const _make_all_posts_dynamic = async () => {
             },
             reactions: {
               create: {
-                reactionType,
+                reactionType: commentReactionType,
                 user: {
                   connect: {
                     id: user.id,
@@ -1375,9 +1734,21 @@ export const _make_all_posts_dynamic = async () => {
                     ? reply
                     : null,
                 mediaUrl: replyPostOption === "both" ? generatePhoto() : null,
+
                 user: {
                   connect: {
                     id: user.id,
+                  },
+                },
+
+                reactions: {
+                  create: {
+                    reactionType: replyReactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
                   },
                 },
                 replies: {
@@ -1389,9 +1760,20 @@ export const _make_all_posts_dynamic = async () => {
                         : null,
                     mediaUrl:
                       replyReplyPostOption === "both" ? generatePhoto() : null,
+
                     user: {
                       connect: {
                         id: user.id,
+                      },
+                    },
+                    reactions: {
+                      create: {
+                        reactionType: replyReplyReactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
                       },
                     },
                   },
@@ -1400,17 +1782,30 @@ export const _make_all_posts_dynamic = async () => {
             },
           },
         },
+        reactions: {
+          create: {
+            reactionType: postReactionType,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+          },
+        },
       },
     });
   }
-
   if (rPostType === "pageshare") {
     const user = await getRandomUser();
-    const rPost = await getRandomPost("pageshare");
+    const rPost = await getRandomPost("user");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
-    const reactionType = getRandomReactionType() as ReactionType;
+    const postReactionType = getRandomReactionType() as ReactionType;
+    const commentReactionType = getRandomReactionType() as ReactionType;
+    const replyReactionType = getRandomReactionType() as ReactionType;
+    const replyReplyReactionType = getRandomReactionType() as ReactionType;
+
     const commentPostOption = getRandomPostContentOption();
     const replyPostOption = getRandomPostContentOption();
     const replyReplyPostOption = getRandomPostContentOption();
@@ -1427,6 +1822,7 @@ export const _make_all_posts_dynamic = async () => {
                 ? comment
                 : null,
             mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+
             user: {
               connect: {
                 id: user.id,
@@ -1434,7 +1830,7 @@ export const _make_all_posts_dynamic = async () => {
             },
             reactions: {
               create: {
-                reactionType,
+                reactionType: commentReactionType,
                 user: {
                   connect: {
                     id: user.id,
@@ -1450,12 +1846,23 @@ export const _make_all_posts_dynamic = async () => {
                     ? reply
                     : null,
                 mediaUrl: replyPostOption === "both" ? generatePhoto() : null,
+
                 user: {
                   connect: {
                     id: user.id,
                   },
                 },
 
+                reactions: {
+                  create: {
+                    reactionType: replyReactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
                 replies: {
                   create: {
                     content:
@@ -1465,9 +1872,20 @@ export const _make_all_posts_dynamic = async () => {
                         : null,
                     mediaUrl:
                       replyReplyPostOption === "both" ? generatePhoto() : null,
+
                     user: {
                       connect: {
                         id: user.id,
+                      },
+                    },
+                    reactions: {
+                      create: {
+                        reactionType: replyReplyReactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
                       },
                     },
                   },
@@ -1476,22 +1894,33 @@ export const _make_all_posts_dynamic = async () => {
             },
           },
         },
+        reactions: {
+          create: {
+            reactionType: postReactionType,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+          },
+        },
       },
     });
   }
-
   if (rPostType === "group") {
     const user = await getRandomUser();
-    const rPost = await getRandomPost("group");
+    const rPost = await getRandomPost("user");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
-    const reactionType = getRandomReactionType() as ReactionType;
+    const postReactionType = getRandomReactionType() as ReactionType;
+    const commentReactionType = getRandomReactionType() as ReactionType;
+    const replyReactionType = getRandomReactionType() as ReactionType;
+    const replyReplyReactionType = getRandomReactionType() as ReactionType;
 
     const commentPostOption = getRandomPostContentOption();
     const replyPostOption = getRandomPostContentOption();
     const replyReplyPostOption = getRandomPostContentOption();
-
     return prisma.oGroupPost.update({
       where: {
         id: rPost!.id,
@@ -1513,7 +1942,7 @@ export const _make_all_posts_dynamic = async () => {
             },
             reactions: {
               create: {
-                reactionType,
+                reactionType: commentReactionType,
                 user: {
                   connect: {
                     id: user.id,
@@ -1536,6 +1965,16 @@ export const _make_all_posts_dynamic = async () => {
                   },
                 },
 
+                reactions: {
+                  create: {
+                    reactionType: replyReactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
                 replies: {
                   create: {
                     content:
@@ -1551,8 +1990,28 @@ export const _make_all_posts_dynamic = async () => {
                         id: user.id,
                       },
                     },
+                    reactions: {
+                      create: {
+                        reactionType: replyReplyReactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
+                      },
+                    },
                   },
                 },
+              },
+            },
+          },
+        },
+        reactions: {
+          create: {
+            reactionType: postReactionType,
+            user: {
+              connect: {
+                id: user.id,
               },
             },
           },
@@ -1560,14 +2019,16 @@ export const _make_all_posts_dynamic = async () => {
       },
     });
   }
-
   if (rPostType === "groupshare") {
     const user = await getRandomUser();
-    const rPost = await getRandomPost("groupshare");
+    const rPost = await getRandomPost("user");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
-    const reactionType = getRandomReactionType() as ReactionType;
+    const postReactionType = getRandomReactionType() as ReactionType;
+    const commentReactionType = getRandomReactionType() as ReactionType;
+    const replyReactionType = getRandomReactionType() as ReactionType;
+    const replyReplyReactionType = getRandomReactionType() as ReactionType;
 
     const commentPostOption = getRandomPostContentOption();
     const replyPostOption = getRandomPostContentOption();
@@ -1593,7 +2054,7 @@ export const _make_all_posts_dynamic = async () => {
             },
             reactions: {
               create: {
-                reactionType,
+                reactionType: commentReactionType,
                 user: {
                   connect: {
                     id: user.id,
@@ -1615,6 +2076,17 @@ export const _make_all_posts_dynamic = async () => {
                     id: user.id,
                   },
                 },
+
+                reactions: {
+                  create: {
+                    reactionType: replyReactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
                 replies: {
                   create: {
                     content:
@@ -1630,8 +2102,28 @@ export const _make_all_posts_dynamic = async () => {
                         id: user.id,
                       },
                     },
+                    reactions: {
+                      create: {
+                        reactionType: replyReplyReactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
+                      },
+                    },
                   },
                 },
+              },
+            },
+          },
+        },
+        reactions: {
+          create: {
+            reactionType: postReactionType,
+            user: {
+              connect: {
+                id: user.id,
               },
             },
           },
@@ -1651,8 +2143,10 @@ export const _make_all_medias_dynamic = async () => {
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
-    const reactionType = getRandomReactionType() as ReactionType;
-
+    const mediaReactionType = getRandomReactionType() as ReactionType;
+    const commentReactionType = getRandomReactionType() as ReactionType;
+    const replyReactionType = getRandomReactionType() as ReactionType;
+    const replyReplyReactionType = getRandomReactionType() as ReactionType;
     const commentPostOption = getRandomPostContentOption();
     const replyPostOption = getRandomPostContentOption();
     const replyReplyPostOption = getRandomPostContentOption();
@@ -1685,7 +2179,7 @@ export const _make_all_medias_dynamic = async () => {
                   },
                   reactions: {
                     create: {
-                      reactionType,
+                      reactionType: commentReactionType,
                       user: {
                         connect: {
                           id: user.id,
@@ -1708,6 +2202,16 @@ export const _make_all_medias_dynamic = async () => {
                           id: user.id,
                         },
                       },
+                      reactions: {
+                        create: {
+                          reactionType: replyReactionType,
+                          user: {
+                            connect: {
+                              id: user.id,
+                            },
+                          },
+                        },
+                      },
                       replies: {
                         create: {
                           content:
@@ -1725,8 +2229,28 @@ export const _make_all_medias_dynamic = async () => {
                               id: user.id,
                             },
                           },
+                          reactions: {
+                            create: {
+                              reactionType: replyReplyReactionType,
+                              user: {
+                                connect: {
+                                  id: user.id,
+                                },
+                              },
+                            },
+                          },
                         },
                       },
+                    },
+                  },
+                },
+              },
+              reactions: {
+                create: {
+                  reactionType: mediaReactionType,
+                  user: {
+                    connect: {
+                      id: user.id,
                     },
                   },
                 },
@@ -1737,19 +2261,21 @@ export const _make_all_medias_dynamic = async () => {
       },
     });
   }
-
   if (rPostType === "page") {
     const user = await getRandomUser();
-    const rMedia = await getRandomMedia("page");
-    const rPost = await getRandomPost("page");
+    const rMedia = await getRandomMedia("user");
+    const rPost = await getRandomPost("user");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
-    const reactionType = getRandomReactionType() as ReactionType;
-
+    const mediaReactionType = getRandomReactionType() as ReactionType;
+    const commentReactionType = getRandomReactionType() as ReactionType;
+    const replyReactionType = getRandomReactionType() as ReactionType;
+    const replyReplyReactionType = getRandomReactionType() as ReactionType;
     const commentPostOption = getRandomPostContentOption();
     const replyPostOption = getRandomPostContentOption();
     const replyReplyPostOption = getRandomPostContentOption();
+
     return prisma.oPagePost.update({
       where: {
         id: rPost!.id,
@@ -1770,6 +2296,7 @@ export const _make_all_medias_dynamic = async () => {
                       : null,
                   mediaUrl:
                     commentPostOption === "both" ? generatePhoto() : null,
+
                   user: {
                     connect: {
                       id: user.id,
@@ -1777,7 +2304,7 @@ export const _make_all_medias_dynamic = async () => {
                   },
                   reactions: {
                     create: {
-                      reactionType,
+                      reactionType: commentReactionType,
                       user: {
                         connect: {
                           id: user.id,
@@ -1794,9 +2321,20 @@ export const _make_all_medias_dynamic = async () => {
                           : null,
                       mediaUrl:
                         replyPostOption === "both" ? generatePhoto() : null,
+
                       user: {
                         connect: {
                           id: user.id,
+                        },
+                      },
+                      reactions: {
+                        create: {
+                          reactionType: replyReactionType,
+                          user: {
+                            connect: {
+                              id: user.id,
+                            },
+                          },
                         },
                       },
                       replies: {
@@ -1810,13 +2348,34 @@ export const _make_all_medias_dynamic = async () => {
                             replyReplyPostOption === "both"
                               ? generatePhoto()
                               : null,
+
                           user: {
                             connect: {
                               id: user.id,
                             },
                           },
+                          reactions: {
+                            create: {
+                              reactionType: replyReplyReactionType,
+                              user: {
+                                connect: {
+                                  id: user.id,
+                                },
+                              },
+                            },
+                          },
                         },
                       },
+                    },
+                  },
+                },
+              },
+              reactions: {
+                create: {
+                  reactionType: mediaReactionType,
+                  user: {
+                    connect: {
+                      id: user.id,
                     },
                   },
                 },
@@ -1830,15 +2389,19 @@ export const _make_all_medias_dynamic = async () => {
 
   if (rPostType === "group") {
     const user = await getRandomUser();
-    const rMedia = await getRandomMedia("group");
-    const rPost = await getRandomPost("group");
+    const rMedia = await getRandomMedia("user");
+    const rPost = await getRandomPost("user");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
-    const reactionType = getRandomReactionType() as ReactionType;
+    const mediaReactionType = getRandomReactionType() as ReactionType;
+    const commentReactionType = getRandomReactionType() as ReactionType;
+    const replyReactionType = getRandomReactionType() as ReactionType;
+    const replyReplyReactionType = getRandomReactionType() as ReactionType;
     const commentPostOption = getRandomPostContentOption();
     const replyPostOption = getRandomPostContentOption();
     const replyReplyPostOption = getRandomPostContentOption();
+
     return prisma.oGroupPost.update({
       where: {
         id: rPost!.id,
@@ -1859,6 +2422,7 @@ export const _make_all_medias_dynamic = async () => {
                       : null,
                   mediaUrl:
                     commentPostOption === "both" ? generatePhoto() : null,
+
                   user: {
                     connect: {
                       id: user.id,
@@ -1866,7 +2430,7 @@ export const _make_all_medias_dynamic = async () => {
                   },
                   reactions: {
                     create: {
-                      reactionType,
+                      reactionType: commentReactionType,
                       user: {
                         connect: {
                           id: user.id,
@@ -1883,9 +2447,20 @@ export const _make_all_medias_dynamic = async () => {
                           : null,
                       mediaUrl:
                         replyPostOption === "both" ? generatePhoto() : null,
+
                       user: {
                         connect: {
                           id: user.id,
+                        },
+                      },
+                      reactions: {
+                        create: {
+                          reactionType: replyReactionType,
+                          user: {
+                            connect: {
+                              id: user.id,
+                            },
+                          },
                         },
                       },
                       replies: {
@@ -1899,13 +2474,34 @@ export const _make_all_medias_dynamic = async () => {
                             replyReplyPostOption === "both"
                               ? generatePhoto()
                               : null,
+
                           user: {
                             connect: {
                               id: user.id,
                             },
                           },
+                          reactions: {
+                            create: {
+                              reactionType: replyReplyReactionType,
+                              user: {
+                                connect: {
+                                  id: user.id,
+                                },
+                              },
+                            },
+                          },
                         },
                       },
+                    },
+                  },
+                },
+              },
+              reactions: {
+                create: {
+                  reactionType: mediaReactionType,
+                  user: {
+                    connect: {
+                      id: user.id,
                     },
                   },
                 },
