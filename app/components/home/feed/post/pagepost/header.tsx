@@ -15,7 +15,11 @@ export default function PageHeader({
   refFrom: "share" | "original" | "shared";
 }) {
   return (
-    <div className="flex items-center justify-between px-3 pt-3">
+    <div
+      className={`flex items-center justify-between px-3 ${
+        refFrom === "shared" ? "pt-0" : "pt-3"
+      } ${refFrom === "shared" ? "pb-3" : "pb-0"}`}
+    >
       <div className="flex items-center space-x-3">
         {profilePicture ? (
           <Image

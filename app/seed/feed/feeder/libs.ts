@@ -378,10 +378,7 @@ function generatePhoto(owner: MediaOwnerType, photoCount: number) {
     return {
       url: `/users/${randomPhoto}.jpg`,
       type: "image" as MediaType,
-      ownerType: owner,
-      pageOwner: owner === "page" ? owner : undefined,
-      groupOwner: owner === "group" ? owner : undefined,
-      userOwner: owner === "user" ? owner : undefined,
+      owner,
     };
   });
 }

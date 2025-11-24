@@ -69,7 +69,7 @@ export default function UserShare_Post({ post }: PropsTypes) {
       )}
 
       {post.shareWhat === "media" && (
-        <div className="rounded-xl bg-white mb-4 pb-1.5">
+        <div className="rounded-xl bg-white mb-1 pb-1.5">
           {post.media?.owner === "user" && (
             <UserHeader
               firstName={post?.media.userPost?.user.firstName}
