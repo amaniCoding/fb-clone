@@ -1,4 +1,4 @@
-import { _seedAll, _update_all_posts } from "./lib";
+import { _update_all_posts } from "./lib";
 
 export async function GET() {
   try {

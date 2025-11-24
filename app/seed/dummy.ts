@@ -46,6 +46,43 @@ export const dummyComments = [
   "Sir, you will undoubtedly end up in a drunkard's grave, dead of hepatic cirrhosis,' it informed me virtuously as it returned my ID card. I glared as I pushed the glass across the table.",
 ];
 
+export const dummyReplies = [
+  " But that point was decided fo..",
+  "She was aware that things could go wrong. y.",
+  "She put the pen to ",
+  "Dragons don't exist they said. But now that there was a dragon staring directly into his eyes, he questioned everything that he had been told.",
+  "She didn't her meltdown without saying a word.",
+  "Then came the night of the first falling star.",
+  "He walked down the steps ",
+  "A long black shadow slid across the pavement near their ",
+  " He never imagined he'd find ere he sat with a blank screen in front of him. That blank screen taunting him day after day had started to play with his mind. He didn't understand why he couldn't even type a single word, just one to begin the process and build from there. And yet, he already knew that the eight hours he was prepared to sit in front of his computer today would end with the screen remaining blank.",
+  "The words  to play with his mind.",
+  "It was a question of which of the two she preferred.  There was room for five more stars but they would be difficult ones to earn.",
+  "He heard the crack echo in the late afternoon about . The only issue was that he had forgotten where he lived.",
+  "Sir.",
+];
+
+export const dummyReplyReplies = [
+  " But that point was decided for him a moment later by the animal itself, who, with a sudden twist, jabbed its horns so hard into his lowest ribs that he gave a grunt of anger and disgust.",
+  "She glanced up into the sky to watch the clouds taking shape.",
+  "She  day. She had quiet confidence as she  no idea just how wrong everything would go that day.",
+  "She put the pen to ",
+  "Drago different. Instead of trying to placate her and her unreasonable demands, he just stared at her and watched her meltdown without saying a word.",
+  "Then came ",
+  "He walked  the secrets in the briefcase must be ",
+  "The leather jacked showed the scars of being his favorite for years.",
+  "Was it sure.",
+  "A long black shadow slid across the pavement near t",
+  "'So, what do you think?' he asked nervously.",
+  " He never imagined he' ",
+  "It was a On the one hand, the choice seemed simple.",
+  "Twenty-five There was room for five more stars but they would be difficult ones to earn.",
+  "He heard the crack echo. His heart started racing and he bolted into a full sprint.",
+  "She was aware that things..",
+  "Benny was tired. Not the normal ",
+  "Sir, you will undoubtedly dead of hepatic cirrhosis,' .",
+];
+
 export const users = [
   {
     userid: 2,
