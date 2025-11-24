@@ -361,7 +361,7 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
       const rIndex = getRandomNumber(OgroupPosts.length, 0);
       const post = OgroupPosts[rIndex];
       const rMIndex = getRandomNumber(post.medias.length, 0);
-      return post.medias[rIndex];
+      return post.medias[rMIndex];
     }
   }
 };

@@ -44,14 +44,14 @@ const getRandomPost = async (
     return pagePosts[rIndex];
   }
   if (forWhat === "pageshare") {
-    const pagePosts = await prisma.oGroupPost.findMany({
+    const pageSharePosts = await prisma.pageSharePost.findMany({
       select: {
         id: true,
       },
     });
 
-    const rIndex = getRandomNumber(pagePosts.length, 0);
-    return pagePosts[rIndex];
+    const rIndex = getRandomNumber(pageSharePosts.length, 0);
+    return pageSharePosts[rIndex];
   }
 
   if (forWhat === "group") {
@@ -148,7 +148,7 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
     const rIndex = getRandomNumber(OgroupPosts.length, 0);
     const post = OgroupPosts[rIndex];
     const rMIndex = getRandomNumber(post.medias.length, 0);
-    return post.medias[rIndex];
+    return post.medias[rMIndex];
   }
 };
 const postType = [
@@ -1573,7 +1573,7 @@ export const _make_all_posts_dynamic = async () => {
 
   if (rPostType === "usershare") {
     const user = await getRandomUser();
-    const rPost = await getRandomPost("user");
+    const rPost = await getRandomPost("usershare");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
@@ -1685,7 +1685,7 @@ export const _make_all_posts_dynamic = async () => {
   }
   if (rPostType === "page") {
     const user = await getRandomUser();
-    const rPost = await getRandomPost("user");
+    const rPost = await getRandomPost("page");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
@@ -1797,7 +1797,7 @@ export const _make_all_posts_dynamic = async () => {
   }
   if (rPostType === "pageshare") {
     const user = await getRandomUser();
-    const rPost = await getRandomPost("user");
+    const rPost = await getRandomPost("pageshare");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
@@ -1909,7 +1909,7 @@ export const _make_all_posts_dynamic = async () => {
   }
   if (rPostType === "group") {
     const user = await getRandomUser();
-    const rPost = await getRandomPost("user");
+    const rPost = await getRandomPost("group");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
@@ -2021,7 +2021,7 @@ export const _make_all_posts_dynamic = async () => {
   }
   if (rPostType === "groupshare") {
     const user = await getRandomUser();
-    const rPost = await getRandomPost("user");
+    const rPost = await getRandomPost("groupshare");
     const comment = getRandomPostComment();
     const reply = getRandomCommentReply();
     const replyReply = getRandomCommentReplReply();
