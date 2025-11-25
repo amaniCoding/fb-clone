@@ -22,7 +22,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
       showCommentModal({
         isOpen: true,
         id: `${post.feedId}${post.postId}`,
-        starterUrl: `/comments/${post.postType}/${post.postId}`,
+        starterUrl: `/apis/comments/${post.postType}/${post.postId}`,
         currentPost: {
           postType: "oUserPost",
           oUserPost: post,

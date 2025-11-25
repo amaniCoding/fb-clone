@@ -97,6 +97,7 @@ export const commentModalSlice = createSlice({
       state.isOpen = action.payload.isOpen;
 
       state.id = action.payload.id;
+      state.starterUrl = action.payload.starterUrl;
 
       if (action.payload.currentPost) {
         state.currentPost.postType = action.payload.currentPost.postType;
@@ -129,7 +130,7 @@ export const commentModalSlice = createSlice({
         return cs.id === action.payload.id;
       });
 
-      if (isShown) {
+      if (!isShown) {
         state.commentsShown.push({
           id: action.payload.id,
           loading: false,
@@ -164,6 +165,8 @@ export const commentModalSlice = createSlice({
           ...currentShownComment!.comments,
           ...action.payload.result.comments,
         ];
+        currentShownComment!.totalPages = action.payload.result.totalPages;
+        currentShownComment!.totalRows = action.payload.result.totalRows;
       }
     },
     fetchingCommentsFaild: (state, action: PayloadAction<string>) => {

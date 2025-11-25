@@ -7,11 +7,16 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Comments() {
-  const { loading, comments, error } = useFetchComments();
+  const { refId, loading, comments, error, page, totalPages, totalRows } =
+    useFetchComments();
   const lastCommentElementRef = useCommentsLastNodeRef();
 
   return (
     <div className="overflow-y-auto socrollabar h-auto relative">
+      <p>page {page}</p>
+      <p>totalPages {totalPages}</p>
+      <p>totalRows {totalRows}</p>
+      <p>refId {refId}</p>
       <div className="px-6 py-2 ">
         {comments!.map((co, index) => {
           const newRxn = co._gReactions
@@ -27,15 +32,17 @@ export default function Comments() {
               }
             >
               <Link href={"/#"} className="flex-none">
-                <Image
-                  unoptimized
-                  alt={`${co.user.firstName.substring(0, 2)}`}
-                  src={`/users/${index + 1}.jpg`}
-                  width={0}
-                  height={0}
-                  sizes="100vh"
-                  className="w-8 h-8 object-cover rounded-full"
-                />
+                {co.user.Profile?.profilePicture ? (
+                  <Image
+                    unoptimized
+                    alt={`${co.user.firstName.substring(0, 2)}`}
+                    src={co.user.Profile?.profilePicture}
+                    width={0}
+                    height={0}
+                    sizes="100vh"
+                    className="w-8 h-8 object-cover rounded-full"
+                  />
+                ) : null}
               </Link>
 
               <div className="flex flex-col space-y-1">
@@ -54,11 +61,11 @@ export default function Comments() {
                   <div className="flex items-center space-x-1">
                     {co._count.reactions}
                     <div className="flex items-center -space-x-1">
-                      {co._gReactions?.map((rxn, index) => (
+                      {newRxn_x.map((rxn, index) => (
                         <Image
                           key={index}
                           alt=""
-                          src={`/reactions/wow.png`}
+                          src={rxn.reactionType}
                           width={0}
                           height={0}
                           sizes="100vh"
