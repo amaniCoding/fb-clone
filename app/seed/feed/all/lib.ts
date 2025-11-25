@@ -266,6 +266,9 @@ export const _update_all_posts = async () => {
         },
       },
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   const UPDATE = feeds.map(async (feed) => {
