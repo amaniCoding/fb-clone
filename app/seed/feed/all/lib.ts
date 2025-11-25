@@ -7,6 +7,7 @@ import {
   dummyReplyReplies,
   reactionTypes,
 } from "../../dummy";
+import { id } from "zod/v4/locales";
 const postContentOption = ["contentonly", "mediasonly", "both"];
 
 const getRandomPost = async (
@@ -284,103 +285,101 @@ export const _update_all_posts = async () => {
       const commentPostOption = getRandomPostContentOption();
       const replyPostOption = getRandomPostContentOption();
       const replyReplyPostOption = getRandomPostContentOption();
-      return prisma.feed.update({
+      const comments = await prisma.feed.findUnique({
         where: {
           id: feed.id,
         },
-        data: {
+        include: {
           userPost: {
-            update: {
+            include: {
               oUserPost: {
-                update: {
+                select: {
                   comments: {
-                    create: {
-                      content:
-                        commentPostOption === "contentonly" ||
-                        commentPostOption === "both"
-                          ? comment
-                          : null,
-                      mediaUrl:
-                        commentPostOption === "both" ? generatePhoto() : null,
-                      user: {
-                        connect: {
-                          id: user.id,
-                        },
-                      },
-                      reactions: {
-                        create: {
-                          reactionType: commentReactionType,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                        },
-                      },
+                    select: {
                       replies: {
-                        create: {
-                          content:
-                            replyPostOption === "contentonly" ||
-                            replyPostOption === "both"
-                              ? reply
-                              : null,
-                          mediaUrl:
-                            replyPostOption === "both" ? generatePhoto() : null,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                          reactions: {
-                            create: {
-                              reactionType: replyReactionType,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                            },
-                          },
-                          replies: {
-                            create: {
-                              content:
-                                replyReplyPostOption === "contentonly" ||
-                                replyReplyPostOption === "both"
-                                  ? replyReply
-                                  : null,
-                              mediaUrl:
-                                replyReplyPostOption === "both"
-                                  ? generatePhoto()
-                                  : null,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                              reactions: {
-                                create: {
-                                  reactionType: replyReplyReactionType,
-                                  user: {
-                                    connect: {
-                                      id: user.id,
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
+                        select: {
+                          id: true,
                         },
                       },
+                      id: true,
                     },
                   },
-                  reactions: {
-                    create: {
-                      reactionType: postReactionType,
-                      user: {
-                        connect: {
-                          id: user.id,
+                },
+              },
+              userSharePost: {
+                select: {
+                  comments: {
+                    select: {
+                      replies: {
+                        select: {
+                          id: true,
                         },
                       },
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          pagePost: {
+            include: {
+              oPagePost: {
+                select: {
+                  comments: {
+                    select: {
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                      id: true,
+                    },
+                  },
+                },
+              },
+              pageSharePost: {
+                select: {
+                  comments: {
+                    select: {
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          groupPost: {
+            include: {
+              oGroupPost: {
+                select: {
+                  comments: {
+                    select: {
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                      id: true,
+                    },
+                  },
+                },
+              },
+              toGroupSharedPost: {
+                select: {
+                  comments: {
+                    select: {
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                      id: true,
                     },
                   },
                 },
@@ -389,6 +388,139 @@ export const _update_all_posts = async () => {
           },
         },
       });
+
+      if (comments?.userPost?.oUserPost?.comments.length! >= 100) {
+        comments?.userPost?.oUserPost?.comments.map((co) => {
+          const replies = comments?.userPost?.oUserPost?.comments.find(
+            (_co) => co.id === _co.id
+          );
+          if (replies?.replies.length! >= 100) {
+            replies?.replies.map((rep) => {
+              return prisma.feed.update({
+                where: {
+                  id: feed.id,
+                },
+                data: {
+                  userPost: {
+                    update: {
+                      oUserPost: {
+                        update: {
+                          comments: {
+                            update: {
+                              where: {
+                                id: co.id,
+                              },
+                              data: {
+                                content:
+                                  commentPostOption === "contentonly" ||
+                                  commentPostOption === "both"
+                                    ? comment
+                                    : null,
+                                mediaUrl:
+                                  commentPostOption === "both"
+                                    ? generatePhoto()
+                                    : null,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                                reactions: {
+                                  create: {
+                                    reactionType: commentReactionType,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
+                                },
+                                replies: {
+                                  update: {
+                                    where: {
+                                      id: rep.id,
+                                    },
+                                    data: {
+                                      content:
+                                        replyPostOption === "contentonly" ||
+                                        replyPostOption === "both"
+                                          ? reply
+                                          : null,
+                                      mediaUrl:
+                                        replyPostOption === "both"
+                                          ? generatePhoto()
+                                          : null,
+                                      user: {
+                                        connect: {
+                                          id: user.id,
+                                        },
+                                      },
+                                      reactions: {
+                                        create: {
+                                          reactionType: replyReactionType,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                      replies: {
+                                        create: {
+                                          content:
+                                            replyReplyPostOption ===
+                                              "contentonly" ||
+                                            replyReplyPostOption === "both"
+                                              ? replyReply
+                                              : null,
+                                          mediaUrl:
+                                            replyReplyPostOption === "both"
+                                              ? generatePhoto()
+                                              : null,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                          reactions: {
+                                            create: {
+                                              reactionType:
+                                                replyReplyReactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                          reactions: {
+                            create: {
+                              reactionType: postReactionType,
+                              user: {
+                                connect: {
+                                  id: user.id,
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            });
+          }
+        });
+      }
     }
     if (feed.userPost && feed.userPost.userSharePost) {
       const user = await getRandomUser();
