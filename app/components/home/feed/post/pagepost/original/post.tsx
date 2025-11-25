@@ -9,9 +9,10 @@ import { OPagePost } from "@/app/apis/feeder/[page]/lib";
 
 type PropsTypes = {
   post: OPagePost;
+  refFrom: "modal" | "post";
 };
 
-export default function OPage_Post({ post }: PropsTypes) {
+export default function OPage_Post({ refFrom, post }: PropsTypes) {
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       <PageHeader
@@ -31,7 +32,7 @@ export default function OPage_Post({ post }: PropsTypes) {
         feedId={post.feedId}
         postId={post.postId}
       />
-      <Lower post={post} />
+      <Lower post={post} refFrom={refFrom} />
     </div>
   );
 }

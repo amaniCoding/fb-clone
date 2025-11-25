@@ -8,10 +8,12 @@ type PropsTypes = {
 export default function PagePost({ post }: PropsTypes) {
   return (
     <>
-      {post?.postType === "original" && <OPage_Post post={post.oPagePost} />}
+      {post?.postType === "original" && (
+        <OPage_Post refFrom="post" post={post.oPagePost} />
+      )}
 
       {post?.postType === "share" && (
-        <PageShare_Post post={post.pageSharePost} />
+        <PageShare_Post refFrom="post" post={post.pageSharePost} />
       )}
     </>
   );

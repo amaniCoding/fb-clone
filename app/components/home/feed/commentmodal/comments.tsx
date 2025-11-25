@@ -72,7 +72,7 @@ export default function Comments() {
             </div>
           );
         })}
-        {loading && <CommentsSkeleton />}
+        {loading === true && <CommentsSkeleton />}
         {error && <p>Error loading comments</p>}
       </div>
     </div>

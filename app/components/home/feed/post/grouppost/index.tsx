@@ -8,10 +8,12 @@ type PropsTypes = {
 export default function GroupPost({ post }: PropsTypes) {
   return (
     <>
-      {post?.postType === "original" && <OGroup_Post post={post.oGroupPost} />}
+      {post?.postType === "original" && (
+        <OGroup_Post refFrom="post" post={post.oGroupPost} />
+      )}
 
       {post?.postType === "share" && (
-        <ToGroupShare_Post post={post.toGroupSharedPost} />
+        <ToGroupShare_Post refFrom="post" post={post.toGroupSharedPost} />
       )}
     </>
   );

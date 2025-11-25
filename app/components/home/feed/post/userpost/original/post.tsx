@@ -8,9 +8,10 @@ import { OUserPost } from "@/app/apis/feeder/[page]/lib";
 
 type PropsTypes = {
   post: OUserPost;
+  refFrom: "modal" | "post";
 };
 
-export default function OUser_Post({ post }: PropsTypes) {
+export default function OUser_Post({ refFrom, post }: PropsTypes) {
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       <UserHeader
@@ -31,7 +32,7 @@ export default function OUser_Post({ post }: PropsTypes) {
         postId={post.postId}
         feedId={post.feedId}
       />
-      <Lower post={post} />
+      <Lower post={post} refFrom={refFrom} />
     </div>
   );
 }

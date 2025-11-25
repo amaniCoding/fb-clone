@@ -8,10 +8,12 @@ type PropsTypes = {
 export default function UserPost({ post }: PropsTypes) {
   return (
     <>
-      {post?.postType === "original" && <OUser_Post post={post.oUserPost} />}
+      {post?.postType === "original" && (
+        <OUser_Post refFrom="post" post={post.oUserPost} />
+      )}
 
       {post?.postType === "share" && (
-        <UserShare_Post post={post.userSharePost} />
+        <UserShare_Post refFrom="post" post={post.userSharePost} />
       )}
     </>
   );

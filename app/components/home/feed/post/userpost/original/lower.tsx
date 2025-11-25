@@ -10,8 +10,9 @@ import ReactionBox from "../../reactionbox";
 
 type TypeProps = {
   post: OUserPost;
+  refFrom: "modal" | "post";
 };
-export default function Lower({ post }: TypeProps) {
+export default function Lower({ refFrom, post }: TypeProps) {
   const dispatch = useAppDispatch();
   const [toShowReactionBox, setToShowReactionBox] = useState<boolean>(false);
   const timeOutId = useRef<NodeJS.Timeout>(null);
@@ -20,7 +21,7 @@ export default function Lower({ post }: TypeProps) {
     dispatch(
       showCommentModal({
         isOpen: true,
-        id: post.postId,
+        id: `${post.feedId}${post.postId}`,
         starterUrl: `/comments/${post.postType}/${post.postId}`,
         currentPost: {
           postType: "oUserPost",
@@ -75,7 +76,7 @@ export default function Lower({ post }: TypeProps) {
       </div>
       <div
         className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100"
-        onClick={_showCommentModal}
+        onClick={refFrom === "post" ? _showCommentModal : () => {}}
       >
         <div className="flex items-center px-3 py-1.5 space-x-1 ">
           <Image

@@ -7,7 +7,6 @@ import {
 } from "@/app/store/slices/modal/comment";
 import axios from "axios";
 import { useEffect } from "react";
-import { useAppropriatePost } from "./appropriatepost";
 
 export const useFetchComments = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +24,14 @@ export const useFetchComments = () => {
     (state) => state.commentModal.currentPost
   );
 
-  const fullUrl = `${starterUrl}/${currentRef?.page}`;
+  const page = currentRef ? currentRef!.page : 1;
+  const loading = currentRef ? currentRef?.loading : false;
+  const error = currentRef ? currentRef.error : undefined;
+  const comments = currentRef ? currentRef.comments : [];
+  const totalPages = currentRef ? currentRef.totalPages : 0;
+  const totalRows = currentRef ? currentRef.totalRows : 0;
+
+  const fullUrl = `${starterUrl!}/${page!}`;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -42,6 +48,7 @@ export const useFetchComments = () => {
         );
       } catch (error) {
         dispatch(fetchingCommentsFaild("Error in fetching comments"));
+        dispatch(fetchingComments(true));
       }
     };
     fetchComments();
@@ -49,14 +56,8 @@ export const useFetchComments = () => {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [page]);
 
-  const loading = currentRef?.loading;
-  const page = currentRef?.page;
-  const error = currentRef?.error;
-  const comments = currentRef?.comments;
-  const totalPages = currentRef?.totalPages;
-  const totalRows = currentRef?.totalRows;
   return {
     loading,
     page,
