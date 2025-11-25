@@ -7,17 +7,18 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Comments() {
-  const { refId, loading, comments, error, page, totalPages, totalRows } =
-    useFetchComments();
-  const lastCommentElementRef = useCommentsLastNodeRef();
+  const { loading, comments, error, page, totalPages } = useFetchComments();
+  const hasMore = page! <= totalPages!;
+  const lastCommentElementRef = useCommentsLastNodeRef(
+    hasMore,
+    loading!,
+    page!
+  );
 
   return (
     <div className="overflow-y-auto socrollabar h-auto relative">
-      <p>page {page}</p>
-      <p>totalPages {totalPages}</p>
-      <p>totalRows {totalRows}</p>
-      <p>refId {refId}</p>
       <div className="px-6 py-2 ">
+        <p> {page}</p>
         {comments!.map((co, index) => {
           const newRxn = co._gReactions
             ? [...co._gReactions].sort((a, b) => b.count - a.count)
@@ -26,11 +27,12 @@ export default function Comments() {
           return (
             <div
               className="flex flex-row mb-3 space-x-3 pb-2"
-              key={co.id}
+              key={index}
               ref={
                 comments!.length === index + 1 ? lastCommentElementRef : null
               }
             >
+              <p> {co.reactions.length}</p>
               <Link href={"/#"} className="flex-none">
                 {co.user.Profile?.profilePicture ? (
                   <Image
@@ -59,7 +61,7 @@ export default function Comments() {
                     <p>Reply</p>
                   </div>
                   <div className="flex items-center space-x-1">
-                    {co._count.reactions}
+                    {co.reactions.length}
                     <div className="flex items-center -space-x-1">
                       {newRxn_x.map((rxn, index) => (
                         <Image
@@ -79,8 +81,8 @@ export default function Comments() {
             </div>
           );
         })}
-        {loading === true && <CommentsSkeleton />}
-        {error && <p>Error loading comments</p>}
+        {loading ? loading === true && <CommentsSkeleton /> : null}
+        {error && error !== "" && <p>Error loading comments</p>}
       </div>
     </div>
   );

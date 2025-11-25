@@ -7,7 +7,6 @@ import {
 } from "@/app/store/slices/modal/comment";
 import axios from "axios";
 import { useEffect } from "react";
-import { fa } from "zod/v4/locales";
 
 export const useFetchComments = () => {
   const dispatch = useAppDispatch();
@@ -24,12 +23,7 @@ export const useFetchComments = () => {
     return cs.id === refId;
   });
 
-  let page = currentRef ? currentRef!.page : 1;
-  let loading = currentRef ? currentRef?.loading : false;
-  let error = currentRef ? currentRef.error : undefined;
-  let comments = currentRef ? currentRef.comments : [];
-  let totalPages = currentRef ? currentRef.totalPages : 0;
-  let totalRows = currentRef ? currentRef.totalRows : 0;
+  const page = currentRef ? currentRef!.page : 1;
 
   const fullUrl = `${starterUrl!}/${page!}`;
 
@@ -49,7 +43,6 @@ export const useFetchComments = () => {
         dispatch(fetchingComments(false));
       } catch (error) {
         dispatch(fetchingCommentsFaild("Error in fetching comments"));
-        dispatch(fetchingComments(false));
       }
     };
     fetchComments();
@@ -57,14 +50,13 @@ export const useFetchComments = () => {
     return () => {
       controller.abort();
     };
-  }, [page]);
+  }, [dispatch, page!]);
 
-  page = currentRef ? currentRef!.page : 1;
-  loading = currentRef?.loading ? currentRef?.loading : false;
-  error = currentRef ? currentRef.error : undefined;
-  comments = currentRef ? currentRef.comments : [];
-  totalPages = currentRef ? currentRef.totalPages : 0;
-  totalRows = currentRef ? currentRef.totalRows : 0;
+  const loading = currentRef!.loading;
+  const error = currentRef!.error;
+  const comments = currentRef!.comments;
+  const totalPages = currentRef!.totalPages;
+  const totalRows = currentRef!.totalRows;
 
   return {
     loading,
@@ -75,5 +67,6 @@ export const useFetchComments = () => {
     totalRows,
     currentPostData,
     refId,
+    starterUrl,
   };
 };

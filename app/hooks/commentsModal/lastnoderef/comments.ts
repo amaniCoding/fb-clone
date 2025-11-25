@@ -1,15 +1,12 @@
 import { useCallback, useRef } from "react";
-import { useFetchComments } from "../comments";
 import { useAppDispatch } from "@/app/store/hooks";
-import {
-  updateCommentsPage,
-  updateRepliesPage,
-} from "@/app/store/slices/modal/comment";
+import { updateCommentsPage } from "@/app/store/slices/modal/comment";
 
-export const useCommentsLastNodeRef = () => {
-  const { loading, page, totalPages } = useFetchComments();
-  const hasMore = page! <= totalPages!;
-
+export const useCommentsLastNodeRef = (
+  hasMore: boolean,
+  loading: boolean,
+  page: number
+) => {
   const observer = useRef<IntersectionObserver>(null);
   const dispatch = useAppDispatch();
   const lastCommentNodeRef = useCallback(
@@ -19,7 +16,8 @@ export const useCommentsLastNodeRef = () => {
 
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-          const newPage = page! + 1;
+          const newPage = page + 1;
+          console.log(newPage);
           dispatch(updateCommentsPage(newPage));
         }
       });

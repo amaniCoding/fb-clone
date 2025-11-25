@@ -133,7 +133,7 @@ export const commentModalSlice = createSlice({
       if (!isShown) {
         state.commentsShown.push({
           id: action.payload.id,
-          loading: false,
+          loading: true,
           page: 1, // for the first time,
           error: undefined,
           totalPages: 0,

@@ -84,7 +84,7 @@ export const getComments = async (
             orderBy: {
               createdAt: "desc",
             },
-            take: 1,
+            take: 10,
           },
           // first commentors
           replies: {
@@ -104,7 +104,7 @@ export const getComments = async (
             orderBy: {
               createdAt: "desc",
             },
-            take: 1,
+            take: 10,
           },
           // counts
           _count: {
