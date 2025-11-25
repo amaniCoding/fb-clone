@@ -1071,7 +1071,7 @@ export const getFeeds = async (page: number) => {
       },
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
   });
 

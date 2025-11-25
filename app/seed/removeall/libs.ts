@@ -1,7 +1,4 @@
 import prisma from "@/app/libs/prisma";
-import { users } from "../dummy";
-import { Gender } from "@/app/generated/prisma";
-import bcrypt from "bcryptjs";
 
 export async function _remove() {
   const r1 = prisma.oUserPost.deleteMany({});
