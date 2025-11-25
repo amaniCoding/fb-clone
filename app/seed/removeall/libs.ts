@@ -10,5 +10,6 @@ export async function _remove() {
   const r4 = prisma.pageSharePost.deleteMany({});
   const r5 = prisma.oGroupPost.deleteMany({});
   const r6 = prisma.toGroupSharePost.deleteMany({});
-  return await Promise.all([r1, r2, r3, r4, r5, r6]);
+  const r7 = prisma.comment.deleteMany({});
+  return await Promise.all([r1, r2, r3, r4, r5, r6, r7]);
 }

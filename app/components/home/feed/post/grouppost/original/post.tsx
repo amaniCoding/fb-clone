@@ -20,7 +20,6 @@ export default function OGroup_Post({ post }: PropsTypes) {
         date={post?.createdAt?.toString()}
         refFrom="original"
       />
-
       <Content content={post?.content} />
       <Medias medias={post?.medias} />
       <Upper

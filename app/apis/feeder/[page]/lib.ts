@@ -87,6 +87,25 @@ const prepareGReactions = async (
           };
         });
       }
+
+      case "oGroupPost": {
+        const r = await prisma.reaction.groupBy({
+          by: ["reactionType"],
+          _count: {
+            reactionType: true,
+          },
+          where: {
+            groupPostId: id,
+          },
+        });
+
+        return r.map((rxn) => {
+          return {
+            reactionType: rxn.reactionType,
+            count: rxn._count.reactionType,
+          };
+        });
+      }
       case "toGroupSharedPost":
         {
           const r = await prisma.reaction.groupBy({
