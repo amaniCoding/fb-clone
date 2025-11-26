@@ -113,11 +113,15 @@ export const getComments = async (
             },
           },
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       },
     },
   });
 
   const [_count, _post] = await Promise.all([count, post]);
+
   // greactions can be undefined
   const updatedComments = _post?.comments.map(async (comment) => {
     return {
