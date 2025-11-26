@@ -221,7 +221,7 @@ const getRandomCommentReplReply = () => {
   return dummyReplyReplies[rIndex];
 };
 
-export const _update_all_posts = async () => {
+export const _add_comment_and_reactions = async () => {
   const feeds = await prisma.feed.findMany({
     include: {
       userPost: {
@@ -271,115 +271,45 @@ export const _update_all_posts = async () => {
       createdAt: "desc",
     },
   });
-
   const UPDATE = feeds.map(async (feed) => {
     if (feed.userPost && feed.userPost.oUserPost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
-      const reply = getRandomCommentReply();
-      const replyReply = getRandomCommentReplReply();
-      const postReactionType = getRandomReactionType() as ReactionType;
-      const commentReactionType = getRandomReactionType() as ReactionType;
-      const replyReactionType = getRandomReactionType() as ReactionType;
-      const replyReplyReactionType = getRandomReactionType() as ReactionType;
+      const reactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
-      const replyPostOption = getRandomPostContentOption();
-      const replyReplyPostOption = getRandomPostContentOption();
-      const comments = await prisma.feed.findUnique({
+      return prisma.feed.update({
         where: {
           id: feed.id,
         },
-        include: {
+        data: {
           userPost: {
-            include: {
+            update: {
               oUserPost: {
-                select: {
+                update: {
                   comments: {
-                    select: {
-                      replies: {
-                        select: {
-                          id: true,
+                    create: {
+                      content:
+                        commentPostOption === "contentonly" ||
+                        commentPostOption === "both"
+                          ? comment
+                          : null,
+                      mediaUrl:
+                        commentPostOption === "both" ? generatePhoto() : null,
+                      user: {
+                        connect: {
+                          id: user.id,
                         },
                       },
-                      id: true,
                     },
                   },
-                },
-              },
-              userSharePost: {
-                select: {
-                  comments: {
-                    select: {
-                      replies: {
-                        select: {
-                          id: true,
+                  reactions: {
+                    create: {
+                      reactionType: reactionType,
+                      user: {
+                        connect: {
+                          id: user.id,
                         },
                       },
-                      id: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          pagePost: {
-            include: {
-              oPagePost: {
-                select: {
-                  comments: {
-                    select: {
-                      replies: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                      id: true,
-                    },
-                  },
-                },
-              },
-              pageSharePost: {
-                select: {
-                  comments: {
-                    select: {
-                      replies: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                      id: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          groupPost: {
-            include: {
-              oGroupPost: {
-                select: {
-                  comments: {
-                    select: {
-                      replies: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                      id: true,
-                    },
-                  },
-                },
-              },
-              toGroupSharedPost: {
-                select: {
-                  comments: {
-                    select: {
-                      replies: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                      id: true,
                     },
                   },
                 },
@@ -388,152 +318,12 @@ export const _update_all_posts = async () => {
           },
         },
       });
-
-      if (comments?.userPost?.oUserPost?.comments.length! >= 100) {
-        comments?.userPost?.oUserPost?.comments.map((co) => {
-          const replies = comments?.userPost?.oUserPost?.comments.find(
-            (_co) => co.id === _co.id
-          );
-          if (replies?.replies.length! >= 100) {
-            replies?.replies.map((rep) => {
-              return prisma.feed.update({
-                where: {
-                  id: feed.id,
-                },
-                data: {
-                  userPost: {
-                    update: {
-                      oUserPost: {
-                        update: {
-                          comments: {
-                            update: {
-                              where: {
-                                id: co.id,
-                              },
-                              data: {
-                                content:
-                                  commentPostOption === "contentonly" ||
-                                  commentPostOption === "both"
-                                    ? comment
-                                    : null,
-                                mediaUrl:
-                                  commentPostOption === "both"
-                                    ? generatePhoto()
-                                    : null,
-                                user: {
-                                  connect: {
-                                    id: user.id,
-                                  },
-                                },
-                                reactions: {
-                                  create: {
-                                    reactionType: commentReactionType,
-                                    user: {
-                                      connect: {
-                                        id: user.id,
-                                      },
-                                    },
-                                  },
-                                },
-                                replies: {
-                                  update: {
-                                    where: {
-                                      id: rep.id,
-                                    },
-                                    data: {
-                                      content:
-                                        replyPostOption === "contentonly" ||
-                                        replyPostOption === "both"
-                                          ? reply
-                                          : null,
-                                      mediaUrl:
-                                        replyPostOption === "both"
-                                          ? generatePhoto()
-                                          : null,
-                                      user: {
-                                        connect: {
-                                          id: user.id,
-                                        },
-                                      },
-                                      reactions: {
-                                        create: {
-                                          reactionType: replyReactionType,
-                                          user: {
-                                            connect: {
-                                              id: user.id,
-                                            },
-                                          },
-                                        },
-                                      },
-                                      replies: {
-                                        create: {
-                                          content:
-                                            replyReplyPostOption ===
-                                              "contentonly" ||
-                                            replyReplyPostOption === "both"
-                                              ? replyReply
-                                              : null,
-                                          mediaUrl:
-                                            replyReplyPostOption === "both"
-                                              ? generatePhoto()
-                                              : null,
-                                          user: {
-                                            connect: {
-                                              id: user.id,
-                                            },
-                                          },
-                                          reactions: {
-                                            create: {
-                                              reactionType:
-                                                replyReplyReactionType,
-                                              user: {
-                                                connect: {
-                                                  id: user.id,
-                                                },
-                                              },
-                                            },
-                                          },
-                                        },
-                                      },
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                          reactions: {
-                            create: {
-                              reactionType: postReactionType,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              });
-            });
-          }
-        });
-      }
     }
     if (feed.userPost && feed.userPost.userSharePost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
-      const reply = getRandomCommentReply();
-      const replyReply = getRandomCommentReplReply();
-      const postReactionType = getRandomReactionType() as ReactionType;
-      const commentReactionType = getRandomReactionType() as ReactionType;
-      const replyReactionType = getRandomReactionType() as ReactionType;
-      const replyReplyReactionType = getRandomReactionType() as ReactionType;
+      const reactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
-      const replyPostOption = getRandomPostContentOption();
-      const replyReplyPostOption = getRandomPostContentOption();
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -557,75 +347,11 @@ export const _update_all_posts = async () => {
                           id: user.id,
                         },
                       },
-                      reactions: {
-                        create: {
-                          reactionType: commentReactionType,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                        },
-                      },
-                      replies: {
-                        create: {
-                          content:
-                            replyPostOption === "contentonly" ||
-                            replyPostOption === "both"
-                              ? reply
-                              : null,
-                          mediaUrl:
-                            replyPostOption === "both" ? generatePhoto() : null,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                          reactions: {
-                            create: {
-                              reactionType: replyReactionType,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                            },
-                          },
-                          replies: {
-                            create: {
-                              content:
-                                replyReplyPostOption === "contentonly" ||
-                                replyReplyPostOption === "both"
-                                  ? replyReply
-                                  : null,
-                              mediaUrl:
-                                replyReplyPostOption === "both"
-                                  ? generatePhoto()
-                                  : null,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                              reactions: {
-                                create: {
-                                  reactionType: replyReplyReactionType,
-                                  user: {
-                                    connect: {
-                                      id: user.id,
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
                     },
                   },
                   reactions: {
                     create: {
-                      reactionType: postReactionType,
+                      reactionType: reactionType,
                       user: {
                         connect: {
                           id: user.id,
@@ -643,15 +369,8 @@ export const _update_all_posts = async () => {
     if (feed.pagePost && feed.pagePost.oPagePost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
-      const reply = getRandomCommentReply();
-      const replyReply = getRandomCommentReplReply();
-      const postReactionType = getRandomReactionType() as ReactionType;
-      const commentReactionType = getRandomReactionType() as ReactionType;
-      const replyReactionType = getRandomReactionType() as ReactionType;
-      const replyReplyReactionType = getRandomReactionType() as ReactionType;
+      const reactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
-      const replyPostOption = getRandomPostContentOption();
-      const replyReplyPostOption = getRandomPostContentOption();
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -675,75 +394,11 @@ export const _update_all_posts = async () => {
                           id: user.id,
                         },
                       },
-                      reactions: {
-                        create: {
-                          reactionType: commentReactionType,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                        },
-                      },
-                      replies: {
-                        create: {
-                          content:
-                            replyPostOption === "contentonly" ||
-                            replyPostOption === "both"
-                              ? reply
-                              : null,
-                          mediaUrl:
-                            replyPostOption === "both" ? generatePhoto() : null,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                          reactions: {
-                            create: {
-                              reactionType: replyReactionType,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                            },
-                          },
-                          replies: {
-                            create: {
-                              content:
-                                replyReplyPostOption === "contentonly" ||
-                                replyReplyPostOption === "both"
-                                  ? replyReply
-                                  : null,
-                              mediaUrl:
-                                replyReplyPostOption === "both"
-                                  ? generatePhoto()
-                                  : null,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                              reactions: {
-                                create: {
-                                  reactionType: replyReplyReactionType,
-                                  user: {
-                                    connect: {
-                                      id: user.id,
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
                     },
                   },
                   reactions: {
                     create: {
-                      reactionType: postReactionType,
+                      reactionType: reactionType,
                       user: {
                         connect: {
                           id: user.id,
@@ -761,15 +416,8 @@ export const _update_all_posts = async () => {
     if (feed.pagePost && feed.pagePost.pageSharePost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
-      const reply = getRandomCommentReply();
-      const replyReply = getRandomCommentReplReply();
-      const postReactionType = getRandomReactionType() as ReactionType;
-      const commentReactionType = getRandomReactionType() as ReactionType;
-      const replyReactionType = getRandomReactionType() as ReactionType;
-      const replyReplyReactionType = getRandomReactionType() as ReactionType;
+      const reactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
-      const replyPostOption = getRandomPostContentOption();
-      const replyReplyPostOption = getRandomPostContentOption();
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -793,75 +441,11 @@ export const _update_all_posts = async () => {
                           id: user.id,
                         },
                       },
-                      reactions: {
-                        create: {
-                          reactionType: commentReactionType,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                        },
-                      },
-                      replies: {
-                        create: {
-                          content:
-                            replyPostOption === "contentonly" ||
-                            replyPostOption === "both"
-                              ? reply
-                              : null,
-                          mediaUrl:
-                            replyPostOption === "both" ? generatePhoto() : null,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                          reactions: {
-                            create: {
-                              reactionType: replyReactionType,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                            },
-                          },
-                          replies: {
-                            create: {
-                              content:
-                                replyReplyPostOption === "contentonly" ||
-                                replyReplyPostOption === "both"
-                                  ? replyReply
-                                  : null,
-                              mediaUrl:
-                                replyReplyPostOption === "both"
-                                  ? generatePhoto()
-                                  : null,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                              reactions: {
-                                create: {
-                                  reactionType: replyReplyReactionType,
-                                  user: {
-                                    connect: {
-                                      id: user.id,
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
                     },
                   },
                   reactions: {
                     create: {
-                      reactionType: postReactionType,
+                      reactionType: reactionType,
                       user: {
                         connect: {
                           id: user.id,
@@ -879,15 +463,8 @@ export const _update_all_posts = async () => {
     if (feed.groupPost && feed.groupPost.oGroupPost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
-      const reply = getRandomCommentReply();
-      const replyReply = getRandomCommentReplReply();
-      const postReactionType = getRandomReactionType() as ReactionType;
-      const commentReactionType = getRandomReactionType() as ReactionType;
-      const replyReactionType = getRandomReactionType() as ReactionType;
-      const replyReplyReactionType = getRandomReactionType() as ReactionType;
+      const reactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
-      const replyPostOption = getRandomPostContentOption();
-      const replyReplyPostOption = getRandomPostContentOption();
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -911,75 +488,11 @@ export const _update_all_posts = async () => {
                           id: user.id,
                         },
                       },
-                      reactions: {
-                        create: {
-                          reactionType: commentReactionType,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                        },
-                      },
-                      replies: {
-                        create: {
-                          content:
-                            replyPostOption === "contentonly" ||
-                            replyPostOption === "both"
-                              ? reply
-                              : null,
-                          mediaUrl:
-                            replyPostOption === "both" ? generatePhoto() : null,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                          reactions: {
-                            create: {
-                              reactionType: replyReactionType,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                            },
-                          },
-                          replies: {
-                            create: {
-                              content:
-                                replyReplyPostOption === "contentonly" ||
-                                replyReplyPostOption === "both"
-                                  ? replyReply
-                                  : null,
-                              mediaUrl:
-                                replyReplyPostOption === "both"
-                                  ? generatePhoto()
-                                  : null,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                              reactions: {
-                                create: {
-                                  reactionType: replyReplyReactionType,
-                                  user: {
-                                    connect: {
-                                      id: user.id,
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
                     },
                   },
                   reactions: {
                     create: {
-                      reactionType: postReactionType,
+                      reactionType: reactionType,
                       user: {
                         connect: {
                           id: user.id,
@@ -997,15 +510,8 @@ export const _update_all_posts = async () => {
     if (feed.groupPost && feed.groupPost.toGroupSharedPost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
-      const reply = getRandomCommentReply();
-      const replyReply = getRandomCommentReplReply();
-      const postReactionType = getRandomReactionType() as ReactionType;
-      const commentReactionType = getRandomReactionType() as ReactionType;
-      const replyReactionType = getRandomReactionType() as ReactionType;
-      const replyReplyReactionType = getRandomReactionType() as ReactionType;
+      const reactionType = getRandomReactionType() as ReactionType;
       const commentPostOption = getRandomPostContentOption();
-      const replyPostOption = getRandomPostContentOption();
-      const replyReplyPostOption = getRandomPostContentOption();
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -1029,75 +535,11 @@ export const _update_all_posts = async () => {
                           id: user.id,
                         },
                       },
-                      reactions: {
-                        create: {
-                          reactionType: commentReactionType,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                        },
-                      },
-                      replies: {
-                        create: {
-                          content:
-                            replyPostOption === "contentonly" ||
-                            replyPostOption === "both"
-                              ? reply
-                              : null,
-                          mediaUrl:
-                            replyPostOption === "both" ? generatePhoto() : null,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                          reactions: {
-                            create: {
-                              reactionType: replyReactionType,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                            },
-                          },
-                          replies: {
-                            create: {
-                              content:
-                                replyReplyPostOption === "contentonly" ||
-                                replyReplyPostOption === "both"
-                                  ? replyReply
-                                  : null,
-                              mediaUrl:
-                                replyReplyPostOption === "both"
-                                  ? generatePhoto()
-                                  : null,
-                              user: {
-                                connect: {
-                                  id: user.id,
-                                },
-                              },
-                              reactions: {
-                                create: {
-                                  reactionType: replyReplyReactionType,
-                                  user: {
-                                    connect: {
-                                      id: user.id,
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
                     },
                   },
                   reactions: {
                     create: {
-                      reactionType: postReactionType,
+                      reactionType: reactionType,
                       user: {
                         connect: {
                           id: user.id,
@@ -1113,10 +555,1584 @@ export const _update_all_posts = async () => {
       });
     }
   });
+  return await Promise.all(UPDATE);
+};
+
+export const _add_comment_replies_and_reactions = async () => {
+  const feeds = await prisma.feed.findMany({
+    include: {
+      userPost: {
+        include: {
+          oUserPost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+          userSharePost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      pagePost: {
+        include: {
+          oPagePost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+          pageSharePost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      groupPost: {
+        include: {
+          oGroupPost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+          toGroupSharedPost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  const UPDATE = feeds.map(async (feed) => {
+    if (feed.userPost && feed.userPost.oUserPost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReply();
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.userPost.oUserPost.comments.map((co) => {
+          return prisma.feed.update({
+            where: {
+              id: feed.id,
+            },
+            data: {
+              userPost: {
+                update: {
+                  oUserPost: {
+                    update: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            reactions: {
+                              create: {
+                                reactionType: reactionType,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                            replies: {
+                              create: {
+                                content:
+                                  replyPostOption === "contentonly" ||
+                                  replyPostOption === "both"
+                                    ? reply
+                                    : null,
+                                mediaUrl:
+                                  replyPostOption === "both"
+                                    ? generatePhoto()
+                                    : null,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        })
+      );
+    }
+    if (feed.userPost && feed.userPost.userSharePost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReply();
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.userPost.userSharePost.comments.map((co) => {
+          return prisma.feed.update({
+            where: {
+              id: feed.id,
+            },
+            data: {
+              userPost: {
+                update: {
+                  userSharePost: {
+                    update: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            reactions: {
+                              create: {
+                                reactionType: reactionType,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                            replies: {
+                              create: {
+                                content:
+                                  replyPostOption === "contentonly" ||
+                                  replyPostOption === "both"
+                                    ? reply
+                                    : null,
+                                mediaUrl:
+                                  replyPostOption === "both"
+                                    ? generatePhoto()
+                                    : null,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        })
+      );
+    }
+    if (feed.pagePost && feed.pagePost.oPagePost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReply();
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.pagePost.oPagePost.comments.map((co) => {
+          return prisma.feed.update({
+            where: {
+              id: feed.id,
+            },
+            data: {
+              pagePost: {
+                update: {
+                  oPagePost: {
+                    update: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            reactions: {
+                              create: {
+                                reactionType: reactionType,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                            replies: {
+                              create: {
+                                content:
+                                  replyPostOption === "contentonly" ||
+                                  replyPostOption === "both"
+                                    ? reply
+                                    : null,
+                                mediaUrl:
+                                  replyPostOption === "both"
+                                    ? generatePhoto()
+                                    : null,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        })
+      );
+    }
+    if (feed.pagePost && feed.pagePost.pageSharePost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReply();
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.pagePost.pageSharePost.comments.map((co) => {
+          return prisma.feed.update({
+            where: {
+              id: feed.id,
+            },
+            data: {
+              pagePost: {
+                update: {
+                  pageSharePost: {
+                    update: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            reactions: {
+                              create: {
+                                reactionType: reactionType,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                            replies: {
+                              create: {
+                                content:
+                                  replyPostOption === "contentonly" ||
+                                  replyPostOption === "both"
+                                    ? reply
+                                    : null,
+                                mediaUrl:
+                                  replyPostOption === "both"
+                                    ? generatePhoto()
+                                    : null,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        })
+      );
+    }
+    if (feed.groupPost && feed.groupPost.oGroupPost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReply();
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.groupPost.oGroupPost.comments.map((co) => {
+          return prisma.feed.update({
+            where: {
+              id: feed.id,
+            },
+            data: {
+              groupPost: {
+                update: {
+                  oGroupPost: {
+                    update: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            reactions: {
+                              create: {
+                                reactionType: reactionType,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                            replies: {
+                              create: {
+                                content:
+                                  replyPostOption === "contentonly" ||
+                                  replyPostOption === "both"
+                                    ? reply
+                                    : null,
+                                mediaUrl:
+                                  replyPostOption === "both"
+                                    ? generatePhoto()
+                                    : null,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        })
+      );
+    }
+
+    if (feed.groupPost && feed.groupPost.toGroupSharedPost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReply();
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.groupPost.toGroupSharedPost.comments.map((co) => {
+          return prisma.feed.update({
+            where: {
+              id: feed.id,
+            },
+            data: {
+              groupPost: {
+                update: {
+                  toGroupSharedPost: {
+                    update: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            reactions: {
+                              create: {
+                                reactionType: reactionType,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                            replies: {
+                              create: {
+                                content:
+                                  replyPostOption === "contentonly" ||
+                                  replyPostOption === "both"
+                                    ? reply
+                                    : null,
+                                mediaUrl:
+                                  replyPostOption === "both"
+                                    ? generatePhoto()
+                                    : null,
+                                user: {
+                                  connect: {
+                                    id: user.id,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        })
+      );
+    }
+  });
 
   return await Promise.all(UPDATE);
 };
-export const _update_all_medias = async () => {
+
+export const _add_reply_replies_and_reactions = async () => {
+  const feeds = await prisma.feed.findMany({
+    include: {
+      userPost: {
+        include: {
+          oUserPost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          userSharePost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      pagePost: {
+        include: {
+          oPagePost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          pageSharePost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      groupPost: {
+        include: {
+          oGroupPost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          toGroupSharedPost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  const UPDATE = feeds.map(async (feed) => {
+    if (feed.userPost && feed.userPost.oUserPost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReplReply();
+      const reactionTye = getRandomReactionType() as ReactionType;
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.userPost.oUserPost.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.feed.update({
+                where: {
+                  id: feed.id,
+                },
+                data: {
+                  userPost: {
+                    update: {
+                      oUserPost: {
+                        update: {
+                          comments: {
+                            update: {
+                              where: {
+                                id: co.id,
+                              },
+                              data: {
+                                replies: {
+                                  update: {
+                                    where: {
+                                      id: rep.id,
+                                    },
+                                    data: {
+                                      reactions: {
+                                        create: {
+                                          reactionType: reactionTye,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                      replies: {
+                                        create: {
+                                          content:
+                                            replyPostOption === "contentonly" ||
+                                            replyPostOption === "both"
+                                              ? reply
+                                              : null,
+                                          mediaUrl:
+                                            replyPostOption === "both"
+                                              ? generatePhoto()
+                                              : null,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+    if (feed.userPost && feed.userPost.userSharePost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReplReply();
+      const reactionTye = getRandomReactionType() as ReactionType;
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.userPost.userSharePost.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.feed.update({
+                where: {
+                  id: feed.id,
+                },
+                data: {
+                  userPost: {
+                    update: {
+                      userSharePost: {
+                        update: {
+                          comments: {
+                            update: {
+                              where: {
+                                id: co.id,
+                              },
+                              data: {
+                                replies: {
+                                  update: {
+                                    where: {
+                                      id: rep.id,
+                                    },
+                                    data: {
+                                      reactions: {
+                                        create: {
+                                          reactionType: reactionTye,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                      replies: {
+                                        create: {
+                                          content:
+                                            replyPostOption === "contentonly" ||
+                                            replyPostOption === "both"
+                                              ? reply
+                                              : null,
+                                          mediaUrl:
+                                            replyPostOption === "both"
+                                              ? generatePhoto()
+                                              : null,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+    if (feed.pagePost && feed.pagePost.oPagePost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReplReply();
+      const reactionTye = getRandomReactionType() as ReactionType;
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.pagePost.oPagePost.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.feed.update({
+                where: {
+                  id: feed.id,
+                },
+                data: {
+                  pagePost: {
+                    update: {
+                      oPagePost: {
+                        update: {
+                          comments: {
+                            update: {
+                              where: {
+                                id: co.id,
+                              },
+                              data: {
+                                replies: {
+                                  update: {
+                                    where: {
+                                      id: rep.id,
+                                    },
+                                    data: {
+                                      reactions: {
+                                        create: {
+                                          reactionType: reactionTye,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                      replies: {
+                                        create: {
+                                          content:
+                                            replyPostOption === "contentonly" ||
+                                            replyPostOption === "both"
+                                              ? reply
+                                              : null,
+                                          mediaUrl:
+                                            replyPostOption === "both"
+                                              ? generatePhoto()
+                                              : null,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+    if (feed.pagePost && feed.pagePost.pageSharePost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReplReply();
+      const reactionTye = getRandomReactionType() as ReactionType;
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.pagePost.pageSharePost.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.feed.update({
+                where: {
+                  id: feed.id,
+                },
+                data: {
+                  pagePost: {
+                    update: {
+                      pageSharePost: {
+                        update: {
+                          comments: {
+                            update: {
+                              where: {
+                                id: co.id,
+                              },
+                              data: {
+                                replies: {
+                                  update: {
+                                    where: {
+                                      id: rep.id,
+                                    },
+                                    data: {
+                                      reactions: {
+                                        create: {
+                                          reactionType: reactionTye,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                      replies: {
+                                        create: {
+                                          content:
+                                            replyPostOption === "contentonly" ||
+                                            replyPostOption === "both"
+                                              ? reply
+                                              : null,
+                                          mediaUrl:
+                                            replyPostOption === "both"
+                                              ? generatePhoto()
+                                              : null,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+    if (feed.groupPost && feed.groupPost.oGroupPost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReplReply();
+      const reactionTye = getRandomReactionType() as ReactionType;
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.groupPost.oGroupPost.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.feed.update({
+                where: {
+                  id: feed.id,
+                },
+                data: {
+                  groupPost: {
+                    update: {
+                      oGroupPost: {
+                        update: {
+                          comments: {
+                            update: {
+                              where: {
+                                id: co.id,
+                              },
+                              data: {
+                                replies: {
+                                  update: {
+                                    where: {
+                                      id: rep.id,
+                                    },
+                                    data: {
+                                      reactions: {
+                                        create: {
+                                          reactionType: reactionTye,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                      replies: {
+                                        create: {
+                                          content:
+                                            replyPostOption === "contentonly" ||
+                                            replyPostOption === "both"
+                                              ? reply
+                                              : null,
+                                          mediaUrl:
+                                            replyPostOption === "both"
+                                              ? generatePhoto()
+                                              : null,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+    if (feed.groupPost && feed.groupPost.toGroupSharedPost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReplReply();
+      const reactionTye = getRandomReactionType() as ReactionType;
+      const replyPostOption = getRandomPostContentOption();
+
+      return Promise.all(
+        feed.groupPost.toGroupSharedPost.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.feed.update({
+                where: {
+                  id: feed.id,
+                },
+                data: {
+                  groupPost: {
+                    update: {
+                      toGroupSharedPost: {
+                        update: {
+                          comments: {
+                            update: {
+                              where: {
+                                id: co.id,
+                              },
+                              data: {
+                                replies: {
+                                  update: {
+                                    where: {
+                                      id: rep.id,
+                                    },
+                                    data: {
+                                      reactions: {
+                                        create: {
+                                          reactionType: reactionTye,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                      replies: {
+                                        create: {
+                                          content:
+                                            replyPostOption === "contentonly" ||
+                                            replyPostOption === "both"
+                                              ? reply
+                                              : null,
+                                          mediaUrl:
+                                            replyPostOption === "both"
+                                              ? generatePhoto()
+                                              : null,
+                                          user: {
+                                            connect: {
+                                              id: user.id,
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+  });
+
+  return await Promise.all(UPDATE);
+};
+
+export const _add_replyreply_reactions = async () => {
+  const feeds = await prisma.feed.findMany({
+    include: {
+      userPost: {
+        include: {
+          oUserPost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          userSharePost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      pagePost: {
+        include: {
+          oPagePost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          pageSharePost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      groupPost: {
+        include: {
+          oGroupPost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          toGroupSharedPost: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  const UPDATE = feeds.map(async (feed) => {
+    if (feed.userPost && feed.userPost.oUserPost) {
+      const user = await getRandomUser();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      feed.userPost.oUserPost.comments.map((co) => {
+        co.replies.map((rep) => {
+          rep.replies.map((_rep) => {
+            return prisma.feed.update({
+              where: {
+                id: feed.id,
+              },
+              data: {
+                userPost: {
+                  update: {
+                    oUserPost: {
+                      update: {
+                        comments: {
+                          update: {
+                            where: {
+                              id: co.id,
+                            },
+                            data: {
+                              replies: {
+                                update: {
+                                  where: {
+                                    id: rep.id,
+                                  },
+                                  data: {
+                                    replies: {
+                                      update: {
+                                        where: {
+                                          id: _rep.id,
+                                        },
+                                        data: {
+                                          reactions: {
+                                            create: {
+                                              reactionType: reactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            });
+          });
+        });
+      });
+    }
+    if (feed.userPost && feed.userPost.userSharePost) {
+      const user = await getRandomUser();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      feed.userPost.userSharePost.comments.map((co) => {
+        co.replies.map((rep) => {
+          rep.replies.map((_rep) => {
+            return prisma.feed.update({
+              where: {
+                id: feed.id,
+              },
+              data: {
+                userPost: {
+                  update: {
+                    userSharePost: {
+                      update: {
+                        comments: {
+                          update: {
+                            where: {
+                              id: co.id,
+                            },
+                            data: {
+                              replies: {
+                                update: {
+                                  where: {
+                                    id: rep.id,
+                                  },
+                                  data: {
+                                    replies: {
+                                      update: {
+                                        where: {
+                                          id: _rep.id,
+                                        },
+                                        data: {
+                                          reactions: {
+                                            create: {
+                                              reactionType: reactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            });
+          });
+        });
+      });
+    }
+    if (feed.pagePost && feed.pagePost.oPagePost) {
+      const user = await getRandomUser();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      feed.pagePost.oPagePost.comments.map((co) => {
+        co.replies.map((rep) => {
+          rep.replies.map((_rep) => {
+            return prisma.feed.update({
+              where: {
+                id: feed.id,
+              },
+              data: {
+                pagePost: {
+                  update: {
+                    oPagePost: {
+                      update: {
+                        comments: {
+                          update: {
+                            where: {
+                              id: co.id,
+                            },
+                            data: {
+                              replies: {
+                                update: {
+                                  where: {
+                                    id: rep.id,
+                                  },
+                                  data: {
+                                    replies: {
+                                      update: {
+                                        where: {
+                                          id: _rep.id,
+                                        },
+                                        data: {
+                                          reactions: {
+                                            create: {
+                                              reactionType: reactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            });
+          });
+        });
+      });
+    }
+    if (feed.pagePost && feed.pagePost.pageSharePost) {
+      const user = await getRandomUser();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      feed.pagePost.pageSharePost.comments.map((co) => {
+        co.replies.map((rep) => {
+          rep.replies.map((_rep) => {
+            return prisma.feed.update({
+              where: {
+                id: feed.id,
+              },
+              data: {
+                pagePost: {
+                  update: {
+                    pageSharePost: {
+                      update: {
+                        comments: {
+                          update: {
+                            where: {
+                              id: co.id,
+                            },
+                            data: {
+                              replies: {
+                                update: {
+                                  where: {
+                                    id: rep.id,
+                                  },
+                                  data: {
+                                    replies: {
+                                      update: {
+                                        where: {
+                                          id: _rep.id,
+                                        },
+                                        data: {
+                                          reactions: {
+                                            create: {
+                                              reactionType: reactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            });
+          });
+        });
+      });
+    }
+    if (feed.groupPost && feed.groupPost.oGroupPost) {
+      const user = await getRandomUser();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      feed.groupPost.oGroupPost.comments.map((co) => {
+        co.replies.map((rep) => {
+          rep.replies.map((_rep) => {
+            return prisma.feed.update({
+              where: {
+                id: feed.id,
+              },
+              data: {
+                groupPost: {
+                  update: {
+                    oGroupPost: {
+                      update: {
+                        comments: {
+                          update: {
+                            where: {
+                              id: co.id,
+                            },
+                            data: {
+                              replies: {
+                                update: {
+                                  where: {
+                                    id: rep.id,
+                                  },
+                                  data: {
+                                    replies: {
+                                      update: {
+                                        where: {
+                                          id: _rep.id,
+                                        },
+                                        data: {
+                                          reactions: {
+                                            create: {
+                                              reactionType: reactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            });
+          });
+        });
+      });
+    }
+
+    if (feed.groupPost && feed.groupPost.toGroupSharedPost) {
+      const user = await getRandomUser();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      feed.groupPost.toGroupSharedPost.comments.map((co) => {
+        co.replies.map((rep) => {
+          rep.replies.map((_rep) => {
+            return prisma.feed.update({
+              where: {
+                id: feed.id,
+              },
+              data: {
+                groupPost: {
+                  update: {
+                    toGroupSharedPost: {
+                      update: {
+                        comments: {
+                          update: {
+                            where: {
+                              id: co.id,
+                            },
+                            data: {
+                              replies: {
+                                update: {
+                                  where: {
+                                    id: rep.id,
+                                  },
+                                  data: {
+                                    replies: {
+                                      update: {
+                                        where: {
+                                          id: _rep.id,
+                                        },
+                                        data: {
+                                          reactions: {
+                                            create: {
+                                              reactionType: reactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            });
+          });
+        });
+      });
+    }
+  });
+
+  return await Promise.all(UPDATE);
+};
+
+export const _add_media_comment_and_reactions = async () => {
   const feeds = await prisma.feed.findMany({
     include: {
       userPost: {
@@ -1168,16 +2184,11 @@ export const _update_all_medias = async () => {
     if (feed.userPost && feed.userPost.oUserPost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
-      const reply = getRandomCommentReply();
-      const replyReply = getRandomCommentReplReply();
-      const mediaReactionType = getRandomReactionType() as ReactionType;
-      const commentReactionType = getRandomReactionType() as ReactionType;
-      const replyReactionType = getRandomReactionType() as ReactionType;
-      const replyReplyReactionType = getRandomReactionType() as ReactionType;
+
+      const reactionType = getRandomReactionType() as ReactionType;
 
       const commentPostOption = getRandomPostContentOption();
-      const replyPostOption = getRandomPostContentOption();
-      const replyReplyPostOption = getRandomPostContentOption();
+
       if (oUPostMedias) {
         return Promise.all(
           oUPostMedias.map((media) => {
@@ -1212,79 +2223,11 @@ export const _update_all_medias = async () => {
                                       id: user.id,
                                     },
                                   },
-                                  reactions: {
-                                    create: {
-                                      reactionType: commentReactionType,
-                                      user: {
-                                        connect: {
-                                          id: user.id,
-                                        },
-                                      },
-                                    },
-                                  },
-                                  replies: {
-                                    create: {
-                                      content:
-                                        replyPostOption === "contentonly" ||
-                                        replyPostOption === "both"
-                                          ? reply
-                                          : null,
-                                      mediaUrl:
-                                        replyPostOption === "both"
-                                          ? generatePhoto()
-                                          : null,
-                                      user: {
-                                        connect: {
-                                          id: user.id,
-                                        },
-                                      },
-                                      reactions: {
-                                        create: {
-                                          reactionType: replyReactionType,
-                                          user: {
-                                            connect: {
-                                              id: user.id,
-                                            },
-                                          },
-                                        },
-                                      },
-                                      replies: {
-                                        create: {
-                                          content:
-                                            replyReplyPostOption ===
-                                              "contentonly" ||
-                                            replyReplyPostOption === "both"
-                                              ? replyReply
-                                              : null,
-                                          mediaUrl:
-                                            replyReplyPostOption === "both"
-                                              ? generatePhoto()
-                                              : null,
-                                          user: {
-                                            connect: {
-                                              id: user.id,
-                                            },
-                                          },
-                                          reactions: {
-                                            create: {
-                                              reactionType:
-                                                replyReplyReactionType,
-                                              user: {
-                                                connect: {
-                                                  id: user.id,
-                                                },
-                                              },
-                                            },
-                                          },
-                                        },
-                                      },
-                                    },
-                                  },
                                 },
                               },
                               reactions: {
                                 create: {
-                                  reactionType: mediaReactionType,
+                                  reactionType: reactionType,
                                   user: {
                                     connect: {
                                       id: user.id,
@@ -1308,16 +2251,11 @@ export const _update_all_medias = async () => {
     if (feed.pagePost && feed.pagePost.oPagePost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
-      const reply = getRandomCommentReply();
-      const replyReply = getRandomCommentReplReply();
-      const mediaReactionType = getRandomReactionType() as ReactionType;
-      const commentReactionType = getRandomReactionType() as ReactionType;
-      const replyReactionType = getRandomReactionType() as ReactionType;
-      const replyReplyReactionType = getRandomReactionType() as ReactionType;
+
+      const reactionType = getRandomReactionType() as ReactionType;
 
       const commentPostOption = getRandomPostContentOption();
-      const replyPostOption = getRandomPostContentOption();
-      const replyReplyPostOption = getRandomPostContentOption();
+
       if (oPPostMedias) {
         return Promise.all(
           oPPostMedias.map((media) => {
@@ -1352,79 +2290,11 @@ export const _update_all_medias = async () => {
                                       id: user.id,
                                     },
                                   },
-                                  reactions: {
-                                    create: {
-                                      reactionType: commentReactionType,
-                                      user: {
-                                        connect: {
-                                          id: user.id,
-                                        },
-                                      },
-                                    },
-                                  },
-                                  replies: {
-                                    create: {
-                                      content:
-                                        replyPostOption === "contentonly" ||
-                                        replyPostOption === "both"
-                                          ? reply
-                                          : null,
-                                      mediaUrl:
-                                        replyPostOption === "both"
-                                          ? generatePhoto()
-                                          : null,
-                                      user: {
-                                        connect: {
-                                          id: user.id,
-                                        },
-                                      },
-                                      reactions: {
-                                        create: {
-                                          reactionType: replyReactionType,
-                                          user: {
-                                            connect: {
-                                              id: user.id,
-                                            },
-                                          },
-                                        },
-                                      },
-                                      replies: {
-                                        create: {
-                                          content:
-                                            replyReplyPostOption ===
-                                              "contentonly" ||
-                                            replyReplyPostOption === "both"
-                                              ? replyReply
-                                              : null,
-                                          mediaUrl:
-                                            replyReplyPostOption === "both"
-                                              ? generatePhoto()
-                                              : null,
-                                          user: {
-                                            connect: {
-                                              id: user.id,
-                                            },
-                                          },
-                                          reactions: {
-                                            create: {
-                                              reactionType:
-                                                replyReplyReactionType,
-                                              user: {
-                                                connect: {
-                                                  id: user.id,
-                                                },
-                                              },
-                                            },
-                                          },
-                                        },
-                                      },
-                                    },
-                                  },
                                 },
                               },
                               reactions: {
                                 create: {
-                                  reactionType: mediaReactionType,
+                                  reactionType: reactionType,
                                   user: {
                                     connect: {
                                       id: user.id,
@@ -1449,16 +2319,11 @@ export const _update_all_medias = async () => {
     if (feed.groupPost && feed.groupPost.oGroupPost) {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
-      const reply = getRandomCommentReply();
-      const replyReply = getRandomCommentReplReply();
-      const mediaReactionType = getRandomReactionType() as ReactionType;
-      const commentReactionType = getRandomReactionType() as ReactionType;
-      const replyReactionType = getRandomReactionType() as ReactionType;
-      const replyReplyReactionType = getRandomReactionType() as ReactionType;
+
+      const reactionType = getRandomReactionType() as ReactionType;
 
       const commentPostOption = getRandomPostContentOption();
-      const replyPostOption = getRandomPostContentOption();
-      const replyReplyPostOption = getRandomPostContentOption();
+
       if (oGPostMedias) {
         return Promise.all(
           oGPostMedias.map((media) => {
@@ -1493,79 +2358,11 @@ export const _update_all_medias = async () => {
                                       id: user.id,
                                     },
                                   },
-                                  reactions: {
-                                    create: {
-                                      reactionType: commentReactionType,
-                                      user: {
-                                        connect: {
-                                          id: user.id,
-                                        },
-                                      },
-                                    },
-                                  },
-                                  replies: {
-                                    create: {
-                                      content:
-                                        replyPostOption === "contentonly" ||
-                                        replyPostOption === "both"
-                                          ? reply
-                                          : null,
-                                      mediaUrl:
-                                        replyPostOption === "both"
-                                          ? generatePhoto()
-                                          : null,
-                                      user: {
-                                        connect: {
-                                          id: user.id,
-                                        },
-                                      },
-                                      reactions: {
-                                        create: {
-                                          reactionType: replyReactionType,
-                                          user: {
-                                            connect: {
-                                              id: user.id,
-                                            },
-                                          },
-                                        },
-                                      },
-                                      replies: {
-                                        create: {
-                                          content:
-                                            replyReplyPostOption ===
-                                              "contentonly" ||
-                                            replyReplyPostOption === "both"
-                                              ? replyReply
-                                              : null,
-                                          mediaUrl:
-                                            replyReplyPostOption === "both"
-                                              ? generatePhoto()
-                                              : null,
-                                          user: {
-                                            connect: {
-                                              id: user.id,
-                                            },
-                                          },
-                                          reactions: {
-                                            create: {
-                                              reactionType:
-                                                replyReplyReactionType,
-                                              user: {
-                                                connect: {
-                                                  id: user.id,
-                                                },
-                                              },
-                                            },
-                                          },
-                                        },
-                                      },
-                                    },
-                                  },
                                 },
                               },
                               reactions: {
                                 create: {
-                                  reactionType: mediaReactionType,
+                                  reactionType: reactionType,
                                   user: {
                                     connect: {
                                       id: user.id,
@@ -1590,95 +2387,1121 @@ export const _update_all_medias = async () => {
   return Promise.all(UPDATE);
 };
 
-export const _make_all_posts_dynamic = async () => {
+export const _add_media_comment_replies_and_reactions = async () => {
+  const feeds = await prisma.feed.findMany({
+    include: {
+      userPost: {
+        include: {
+          oUserPost: {
+            select: {
+              medias: {
+                select: {
+                  id: true,
+                  comments: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      pagePost: {
+        include: {
+          oPagePost: {
+            include: {
+              medias: {
+                select: {
+                  id: true,
+                  comments: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      groupPost: {
+        include: {
+          oGroupPost: {
+            include: {
+              medias: {
+                select: {
+                  id: true,
+                  comments: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  const UPDATE = feeds.map(async (feed) => {
+    const oUPostMedias = feed.userPost?.oUserPost?.medias;
+    const oPPostMedias = feed.pagePost?.oPagePost?.medias;
+    const oGPostMedias = feed.groupPost?.oGroupPost?.medias;
+
+    if (feed.userPost && feed.userPost.oUserPost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReply();
+      const reactionType = getRandomReactionType() as ReactionType;
+      const replyPostOption = getRandomPostContentOption();
+      if (oUPostMedias) {
+        return Promise.all(
+          oUPostMedias.map((media) => {
+            return Promise.all(
+              media.comments.map((co) => {
+                return prisma.feed.update({
+                  where: {
+                    id: feed.id,
+                  },
+                  data: {
+                    userPost: {
+                      update: {
+                        oUserPost: {
+                          update: {
+                            medias: {
+                              update: {
+                                where: {
+                                  id: media.id,
+                                },
+                                data: {
+                                  comments: {
+                                    update: {
+                                      where: {
+                                        id: co.id,
+                                      },
+                                      data: {
+                                        reactions: {
+                                          create: {
+                                            reactionType: reactionType,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                        replies: {
+                                          create: {
+                                            content:
+                                              replyPostOption ===
+                                                "contentonly" ||
+                                              replyPostOption === "both"
+                                                ? reply
+                                                : null,
+                                            mediaUrl:
+                                              replyPostOption === "both"
+                                                ? generatePhoto()
+                                                : null,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                });
+              })
+            );
+          })
+        );
+      }
+    }
+    if (feed.pagePost && feed.pagePost.oPagePost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReply();
+      const reactionType = getRandomReactionType() as ReactionType;
+      const replyPostOption = getRandomPostContentOption();
+      if (oPPostMedias) {
+        return Promise.all(
+          oPPostMedias.map((media) => {
+            return Promise.all(
+              media.comments.map((co) => {
+                return prisma.feed.update({
+                  where: {
+                    id: feed.id,
+                  },
+                  data: {
+                    pagePost: {
+                      update: {
+                        oPagePost: {
+                          update: {
+                            medias: {
+                              update: {
+                                where: {
+                                  id: media.id,
+                                },
+                                data: {
+                                  comments: {
+                                    update: {
+                                      where: {
+                                        id: co.id,
+                                      },
+                                      data: {
+                                        reactions: {
+                                          create: {
+                                            reactionType: reactionType,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                        replies: {
+                                          create: {
+                                            content:
+                                              replyPostOption ===
+                                                "contentonly" ||
+                                              replyPostOption === "both"
+                                                ? reply
+                                                : null,
+                                            mediaUrl:
+                                              replyPostOption === "both"
+                                                ? generatePhoto()
+                                                : null,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                });
+              })
+            );
+          })
+        );
+      }
+    }
+
+    if (feed.groupPost && feed.groupPost.oGroupPost) {
+      const user = await getRandomUser();
+      const reply = getRandomCommentReply();
+      const reactionType = getRandomReactionType() as ReactionType;
+      const replyPostOption = getRandomPostContentOption();
+      if (oGPostMedias) {
+        return Promise.all(
+          oGPostMedias.map((media) => {
+            return Promise.all(
+              media.comments.map((co) => {
+                return prisma.feed.update({
+                  where: {
+                    id: feed.id,
+                  },
+                  data: {
+                    groupPost: {
+                      update: {
+                        oGroupPost: {
+                          update: {
+                            medias: {
+                              update: {
+                                where: {
+                                  id: media.id,
+                                },
+                                data: {
+                                  comments: {
+                                    update: {
+                                      where: {
+                                        id: co.id,
+                                      },
+                                      data: {
+                                        reactions: {
+                                          create: {
+                                            reactionType: reactionType,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                        replies: {
+                                          create: {
+                                            content:
+                                              replyPostOption ===
+                                                "contentonly" ||
+                                              replyPostOption === "both"
+                                                ? reply
+                                                : null,
+                                            mediaUrl:
+                                              replyPostOption === "both"
+                                                ? generatePhoto()
+                                                : null,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                });
+              })
+            );
+          })
+        );
+      }
+    }
+  });
+  return Promise.all(UPDATE);
+};
+
+export const _add_media_replyReply_reactions = async () => {
+  const feeds = await prisma.feed.findMany({
+    include: {
+      userPost: {
+        include: {
+          oUserPost: {
+            select: {
+              medias: {
+                select: {
+                  id: true,
+                  comments: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                          replies: {
+                            select: {
+                              id: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      pagePost: {
+        include: {
+          oPagePost: {
+            include: {
+              medias: {
+                select: {
+                  id: true,
+                  comments: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                          replies: {
+                            select: {
+                              id: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      groupPost: {
+        include: {
+          oGroupPost: {
+            include: {
+              medias: {
+                select: {
+                  id: true,
+                  comments: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                          replies: {
+                            select: {
+                              id: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  const UPDATE = feeds.map(async (feed) => {
+    const oUPostMedias = feed.userPost?.oUserPost?.medias;
+    const oPPostMedias = feed.pagePost?.oPagePost?.medias;
+    const oGPostMedias = feed.groupPost?.oGroupPost?.medias;
+
+    if (feed.userPost && feed.userPost.oUserPost) {
+      const user = await getRandomUser();
+      const reactionType = getRandomReactionType() as ReactionType;
+      if (oPPostMedias) {
+        return Promise.all(
+          oPPostMedias.map((media) => {
+            return Promise.all(
+              media.comments.map((co) => {
+                return Promise.all(
+                  co.replies.map((rep) => {
+                    return Promise.all(
+                      rep.replies.map((_rep) => {
+                        return prisma.feed.update({
+                          where: {
+                            id: feed.id,
+                          },
+                          data: {
+                            userPost: {
+                              update: {
+                                oUserPost: {
+                                  update: {
+                                    medias: {
+                                      update: {
+                                        where: {
+                                          id: media.id,
+                                        },
+                                        data: {
+                                          comments: {
+                                            update: {
+                                              where: {
+                                                id: co.id,
+                                              },
+                                              data: {
+                                                replies: {
+                                                  update: {
+                                                    where: {
+                                                      id: rep.id,
+                                                    },
+                                                    data: {
+                                                      replies: {
+                                                        update: {
+                                                          where: {
+                                                            id: _rep.id,
+                                                          },
+                                                          data: {
+                                                            reactions: {
+                                                              create: {
+                                                                reactionType:
+                                                                  reactionType,
+                                                                user: {
+                                                                  connect: {
+                                                                    id: user.id,
+                                                                  },
+                                                                },
+                                                              },
+                                                            },
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        });
+                      })
+                    );
+                  })
+                );
+              })
+            );
+          })
+        );
+      }
+    }
+
+    if (feed.pagePost && feed.pagePost.oPagePost) {
+      const user = await getRandomUser();
+      const reactionType = getRandomReactionType() as ReactionType;
+      if (oGPostMedias) {
+        return Promise.all(
+          oGPostMedias.map((media) => {
+            return Promise.all(
+              media.comments.map((co) => {
+                return Promise.all(
+                  co.replies.map((rep) => {
+                    return Promise.all(
+                      rep.replies.map((_rep) => {
+                        return prisma.feed.update({
+                          where: {
+                            id: feed.id,
+                          },
+                          data: {
+                            pagePost: {
+                              update: {
+                                oPagePost: {
+                                  update: {
+                                    medias: {
+                                      update: {
+                                        where: {
+                                          id: media.id,
+                                        },
+                                        data: {
+                                          comments: {
+                                            update: {
+                                              where: {
+                                                id: co.id,
+                                              },
+                                              data: {
+                                                replies: {
+                                                  update: {
+                                                    where: {
+                                                      id: rep.id,
+                                                    },
+                                                    data: {
+                                                      replies: {
+                                                        update: {
+                                                          where: {
+                                                            id: _rep.id,
+                                                          },
+                                                          data: {
+                                                            reactions: {
+                                                              create: {
+                                                                reactionType:
+                                                                  reactionType,
+                                                                user: {
+                                                                  connect: {
+                                                                    id: user.id,
+                                                                  },
+                                                                },
+                                                              },
+                                                            },
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        });
+                      })
+                    );
+                  })
+                );
+              })
+            );
+          })
+        );
+      }
+    }
+
+    if (feed.groupPost && feed.groupPost.oGroupPost) {
+      const user = await getRandomUser();
+      const reactionType = getRandomReactionType() as ReactionType;
+      if (oUPostMedias) {
+        return Promise.all(
+          oUPostMedias.map((media) => {
+            return Promise.all(
+              media.comments.map((co) => {
+                return Promise.all(
+                  co.replies.map((rep) => {
+                    return Promise.all(
+                      rep.replies.map((_rep) => {
+                        return prisma.feed.update({
+                          where: {
+                            id: feed.id,
+                          },
+                          data: {
+                            groupPost: {
+                              update: {
+                                oGroupPost: {
+                                  update: {
+                                    medias: {
+                                      update: {
+                                        where: {
+                                          id: media.id,
+                                        },
+                                        data: {
+                                          comments: {
+                                            update: {
+                                              where: {
+                                                id: co.id,
+                                              },
+                                              data: {
+                                                replies: {
+                                                  update: {
+                                                    where: {
+                                                      id: rep.id,
+                                                    },
+                                                    data: {
+                                                      replies: {
+                                                        update: {
+                                                          where: {
+                                                            id: _rep.id,
+                                                          },
+                                                          data: {
+                                                            reactions: {
+                                                              create: {
+                                                                reactionType:
+                                                                  reactionType,
+                                                                user: {
+                                                                  connect: {
+                                                                    id: user.id,
+                                                                  },
+                                                                },
+                                                              },
+                                                            },
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        });
+                      })
+                    );
+                  })
+                );
+              })
+            );
+          })
+        );
+      }
+    }
+  });
+  return Promise.all(UPDATE);
+};
+
+export const _add_media_replyreplies_and_reactions = async () => {
+  const feeds = await prisma.feed.findMany({
+    include: {
+      userPost: {
+        include: {
+          oUserPost: {
+            select: {
+              medias: {
+                select: {
+                  id: true,
+                  comments: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      pagePost: {
+        include: {
+          oPagePost: {
+            include: {
+              medias: {
+                select: {
+                  id: true,
+                  comments: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      groupPost: {
+        include: {
+          oGroupPost: {
+            include: {
+              medias: {
+                select: {
+                  id: true,
+                  comments: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  const UPDATE = feeds.map(async (feed) => {
+    const oUPostMedias = feed.userPost?.oUserPost?.medias;
+    const oPPostMedias = feed.pagePost?.oPagePost?.medias;
+    const oGPostMedias = feed.groupPost?.oGroupPost?.medias;
+
+    if (feed.userPost && feed.userPost.oUserPost) {
+      const user = await getRandomUser();
+      const replyReply = getRandomCommentReplReply();
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyPostOption = getRandomPostContentOption();
+      if (oUPostMedias) {
+        return Promise.all(
+          oUPostMedias.map((media) => {
+            media.comments.map((co) => {
+              co.replies.map((rep) => {
+                return prisma.feed.update({
+                  where: {
+                    id: feed.id,
+                  },
+                  data: {
+                    userPost: {
+                      update: {
+                        oUserPost: {
+                          update: {
+                            medias: {
+                              update: {
+                                where: {
+                                  id: media.id,
+                                },
+                                data: {
+                                  comments: {
+                                    update: {
+                                      where: {
+                                        id: co.id,
+                                      },
+                                      data: {
+                                        replies: {
+                                          update: {
+                                            where: {
+                                              id: rep.id,
+                                            },
+                                            data: {
+                                              reactions: {
+                                                create: {
+                                                  reactionType:
+                                                    replyReactionType,
+                                                  user: {
+                                                    connect: {
+                                                      id: user.id,
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                              replies: {
+                                                create: {
+                                                  content:
+                                                    replyReplyPostOption ===
+                                                      "contentonly" ||
+                                                    replyReplyPostOption ===
+                                                      "both"
+                                                      ? replyReply
+                                                      : null,
+                                                  mediaUrl:
+                                                    replyReplyPostOption ===
+                                                    "both"
+                                                      ? generatePhoto()
+                                                      : null,
+                                                  user: {
+                                                    connect: {
+                                                      id: user.id,
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                });
+              });
+            });
+          })
+        );
+      }
+    }
+
+    if (feed.pagePost && feed.pagePost.oPagePost) {
+      const user = await getRandomUser();
+      const replyReply = getRandomCommentReplReply();
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyPostOption = getRandomPostContentOption();
+      if (oPPostMedias) {
+        return Promise.all(
+          oPPostMedias.map((media) => {
+            media.comments.map((co) => {
+              co.replies.map((rep) => {
+                return prisma.feed.update({
+                  where: {
+                    id: feed.id,
+                  },
+                  data: {
+                    pagePost: {
+                      update: {
+                        oPagePost: {
+                          update: {
+                            medias: {
+                              update: {
+                                where: {
+                                  id: media.id,
+                                },
+                                data: {
+                                  comments: {
+                                    update: {
+                                      where: {
+                                        id: co.id,
+                                      },
+                                      data: {
+                                        replies: {
+                                          update: {
+                                            where: {
+                                              id: rep.id,
+                                            },
+                                            data: {
+                                              reactions: {
+                                                create: {
+                                                  reactionType:
+                                                    replyReactionType,
+                                                  user: {
+                                                    connect: {
+                                                      id: user.id,
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                              replies: {
+                                                create: {
+                                                  content:
+                                                    replyReplyPostOption ===
+                                                      "contentonly" ||
+                                                    replyReplyPostOption ===
+                                                      "both"
+                                                      ? replyReply
+                                                      : null,
+                                                  mediaUrl:
+                                                    replyReplyPostOption ===
+                                                    "both"
+                                                      ? generatePhoto()
+                                                      : null,
+                                                  user: {
+                                                    connect: {
+                                                      id: user.id,
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                });
+              });
+            });
+          })
+        );
+      }
+    }
+
+    if (feed.groupPost && feed.groupPost.oGroupPost) {
+      const user = await getRandomUser();
+      const replyReply = getRandomCommentReplReply();
+      const replyReactionType = getRandomReactionType() as ReactionType;
+      const replyReplyPostOption = getRandomPostContentOption();
+      if (oGPostMedias) {
+        return Promise.all(
+          oGPostMedias.map((media) => {
+            media.comments.map((co) => {
+              co.replies.map((rep) => {
+                return prisma.feed.update({
+                  where: {
+                    id: feed.id,
+                  },
+                  data: {
+                    groupPost: {
+                      update: {
+                        oGroupPost: {
+                          update: {
+                            medias: {
+                              update: {
+                                where: {
+                                  id: media.id,
+                                },
+                                data: {
+                                  comments: {
+                                    update: {
+                                      where: {
+                                        id: co.id,
+                                      },
+                                      data: {
+                                        replies: {
+                                          update: {
+                                            where: {
+                                              id: rep.id,
+                                            },
+                                            data: {
+                                              reactions: {
+                                                create: {
+                                                  reactionType:
+                                                    replyReactionType,
+                                                  user: {
+                                                    connect: {
+                                                      id: user.id,
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                              replies: {
+                                                create: {
+                                                  content:
+                                                    replyReplyPostOption ===
+                                                      "contentonly" ||
+                                                    replyReplyPostOption ===
+                                                      "both"
+                                                      ? replyReply
+                                                      : null,
+                                                  mediaUrl:
+                                                    replyReplyPostOption ===
+                                                    "both"
+                                                      ? generatePhoto()
+                                                      : null,
+                                                  user: {
+                                                    connect: {
+                                                      id: user.id,
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                });
+              });
+            });
+          })
+        );
+      }
+    }
+  });
+  return Promise.all(UPDATE);
+};
+
+export const _make_all_post_abit_dynamic = async (
+  forWhat: "post" | "comment" | "reply" | "replyreply"
+) => {
   const rPostType = getRandomPostType();
 
   if (rPostType === "user") {
-    const user = await getRandomUser();
-    const rPost = await getRandomPost("user");
-    const comment = getRandomPostComment();
-    const reply = getRandomCommentReply();
-    const replyReply = getRandomCommentReplReply();
-    const postReactionType = getRandomReactionType() as ReactionType;
-    const commentReactionType = getRandomReactionType() as ReactionType;
-    const replyReactionType = getRandomReactionType() as ReactionType;
-    const replyReplyReactionType = getRandomReactionType() as ReactionType;
+    if (forWhat === "post") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const comment = getRandomPostComment();
 
-    const commentPostOption = getRandomPostContentOption();
-    const replyPostOption = getRandomPostContentOption();
-    const replyReplyPostOption = getRandomPostContentOption();
-    return prisma.oUserPost.update({
-      where: {
-        id: rPost!.id,
-      },
-      data: {
-        comments: {
-          create: {
-            content:
-              commentPostOption === "contentonly" ||
-              commentPostOption === "both"
-                ? comment
-                : null,
-            mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+      const reactionType = getRandomReactionType() as ReactionType;
 
-            user: {
-              connect: {
-                id: user.id,
-              },
-            },
-            reactions: {
-              create: {
-                reactionType: commentReactionType,
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+      const commentPostOption = getRandomPostContentOption();
+
+      return prisma.oUserPost.update({
+        where: {
+          id: rPost!.id,
+        },
+        data: {
+          comments: {
+            create: {
+              content:
+                commentPostOption === "contentonly" ||
+                commentPostOption === "both"
+                  ? comment
+                  : null,
+              mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+
+              user: {
+                connect: {
+                  id: user.id,
                 },
               },
             },
-            replies: {
-              create: {
-                content:
-                  replyPostOption === "contentonly" ||
-                  replyPostOption === "both"
-                    ? reply
-                    : null,
-                mediaUrl: replyPostOption === "both" ? generatePhoto() : null,
-
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+          },
+          reactions: {
+            create: {
+              reactionType: reactionType,
+              user: {
+                connect: {
+                  id: user.id,
                 },
+              },
+            },
+          },
+        },
+      });
+    }
 
-                reactions: {
-                  create: {
-                    reactionType: replyReactionType,
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+    if (forWhat === "comment") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.oUserPost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          comments: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return prisma.oUserPost.update({
+            where: {
+              id: rPost!.id,
+            },
+            data: {
+              comments: {
+                update: {
+                  where: {
+                    id: co.id,
                   },
-                },
-                replies: {
-                  create: {
-                    content:
-                      replyReplyPostOption === "contentonly" ||
-                      replyReplyPostOption === "both"
-                        ? replyReply
-                        : null,
-                    mediaUrl:
-                      replyReplyPostOption === "both" ? generatePhoto() : null,
-
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+                  data: {
                     reactions: {
                       create: {
-                        reactionType: replyReplyReactionType,
+                        reactionType: reactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
+                      },
+                    },
+                    replies: {
+                      create: {
+                        content:
+                          replyPostOption === "contentonly" ||
+                          replyPostOption === "both"
+                            ? reply
+                            : null,
+                        mediaUrl:
+                          replyPostOption === "both" ? generatePhoto() : null,
+
                         user: {
                           connect: {
                             id: user.id,
@@ -1690,108 +3513,292 @@ export const _make_all_posts_dynamic = async () => {
                 },
               },
             },
-          },
+          });
+        })
+      );
+    }
+
+    if (forWhat === "reply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.oUserPost.findUnique({
+        where: {
+          id: rPost!.id,
         },
-        reactions: {
-          create: {
-            reactionType: postReactionType,
-            user: {
-              connect: {
-                id: user.id,
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.oUserPost.update({
+                where: {
+                  id: post?.id,
+                },
+                data: {
+                  comments: {
+                    update: {
+                      where: {
+                        id: co.id,
+                      },
+                      data: {
+                        replies: {
+                          update: {
+                            where: {
+                              id: rep.id,
+                            },
+                            data: {
+                              reactions: {
+                                create: {
+                                  reactionType: reactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                              replies: {
+                                create: {
+                                  content:
+                                    replyPostOption === "contentonly" ||
+                                    replyPostOption === "both"
+                                      ? reply
+                                      : null,
+                                  mediaUrl:
+                                    replyPostOption === "both"
+                                      ? generatePhoto()
+                                      : null,
+
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+
+    if (forWhat === "replyreply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const post = await prisma.oUserPost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return Promise.all(
+                rep.replies.map((_rep) => {
+                  return prisma.oUserPost.update({
+                    where: {
+                      id: post?.id,
+                    },
+                    data: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            replies: {
+                              update: {
+                                where: {
+                                  id: rep.id,
+                                },
+                                data: {
+                                  replies: {
+                                    update: {
+                                      where: {
+                                        id: _rep.id,
+                                      },
+                                      data: {
+                                        reactions: {
+                                          create: {
+                                            reactionType: reactionType,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  });
+                })
+              );
+            })
+          );
+        })
+      );
+    }
   }
 
   if (rPostType === "usershare") {
-    const user = await getRandomUser();
-    const rPost = await getRandomPost("usershare");
-    const comment = getRandomPostComment();
-    const reply = getRandomCommentReply();
-    const replyReply = getRandomCommentReplReply();
-    const postReactionType = getRandomReactionType() as ReactionType;
-    const commentReactionType = getRandomReactionType() as ReactionType;
-    const replyReactionType = getRandomReactionType() as ReactionType;
-    const replyReplyReactionType = getRandomReactionType() as ReactionType;
+    if (forWhat === "post") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("usershare");
+      const comment = getRandomPostComment();
 
-    const commentPostOption = getRandomPostContentOption();
-    const replyPostOption = getRandomPostContentOption();
-    const replyReplyPostOption = getRandomPostContentOption();
-    return prisma.userSharePost.update({
-      where: {
-        id: rPost!.id,
-      },
-      data: {
-        comments: {
-          create: {
-            content:
-              commentPostOption === "contentonly" ||
-              commentPostOption === "both"
-                ? comment
-                : null,
-            mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+      const reactionType = getRandomReactionType() as ReactionType;
 
-            user: {
-              connect: {
-                id: user.id,
-              },
-            },
-            reactions: {
-              create: {
-                reactionType: commentReactionType,
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+      const commentPostOption = getRandomPostContentOption();
+
+      return prisma.userSharePost.update({
+        where: {
+          id: rPost!.id,
+        },
+        data: {
+          comments: {
+            create: {
+              content:
+                commentPostOption === "contentonly" ||
+                commentPostOption === "both"
+                  ? comment
+                  : null,
+              mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+
+              user: {
+                connect: {
+                  id: user.id,
                 },
               },
             },
-            replies: {
-              create: {
-                content:
-                  replyPostOption === "contentonly" ||
-                  replyPostOption === "both"
-                    ? reply
-                    : null,
-                mediaUrl: replyPostOption === "both" ? generatePhoto() : null,
-
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+          },
+          reactions: {
+            create: {
+              reactionType: reactionType,
+              user: {
+                connect: {
+                  id: user.id,
                 },
+              },
+            },
+          },
+        },
+      });
+    }
 
-                reactions: {
-                  create: {
-                    reactionType: replyReactionType,
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+    if (forWhat === "comment") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.userSharePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          comments: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return prisma.userSharePost.update({
+            where: {
+              id: rPost!.id,
+            },
+            data: {
+              comments: {
+                update: {
+                  where: {
+                    id: co.id,
                   },
-                },
-                replies: {
-                  create: {
-                    content:
-                      replyReplyPostOption === "contentonly" ||
-                      replyReplyPostOption === "both"
-                        ? replyReply
-                        : null,
-                    mediaUrl:
-                      replyReplyPostOption === "both" ? generatePhoto() : null,
-
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+                  data: {
                     reactions: {
                       create: {
-                        reactionType: replyReplyReactionType,
+                        reactionType: reactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
+                      },
+                    },
+                    replies: {
+                      create: {
+                        content:
+                          replyPostOption === "contentonly" ||
+                          replyPostOption === "both"
+                            ? reply
+                            : null,
+                        mediaUrl:
+                          replyPostOption === "both" ? generatePhoto() : null,
+
                         user: {
                           connect: {
                             id: user.id,
@@ -1803,107 +3810,291 @@ export const _make_all_posts_dynamic = async () => {
                 },
               },
             },
-          },
+          });
+        })
+      );
+    }
+
+    if (forWhat === "reply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.userSharePost.findUnique({
+        where: {
+          id: rPost!.id,
         },
-        reactions: {
-          create: {
-            reactionType: postReactionType,
-            user: {
-              connect: {
-                id: user.id,
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.userSharePost.update({
+                where: {
+                  id: post?.id,
+                },
+                data: {
+                  comments: {
+                    update: {
+                      where: {
+                        id: co.id,
+                      },
+                      data: {
+                        replies: {
+                          update: {
+                            where: {
+                              id: rep.id,
+                            },
+                            data: {
+                              reactions: {
+                                create: {
+                                  reactionType: reactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                              replies: {
+                                create: {
+                                  content:
+                                    replyPostOption === "contentonly" ||
+                                    replyPostOption === "both"
+                                      ? reply
+                                      : null,
+                                  mediaUrl:
+                                    replyPostOption === "both"
+                                      ? generatePhoto()
+                                      : null,
+
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+
+    if (forWhat === "replyreply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const post = await prisma.userSharePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return Promise.all(
+                rep.replies.map((_rep) => {
+                  return prisma.userSharePost.update({
+                    where: {
+                      id: post?.id,
+                    },
+                    data: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            replies: {
+                              update: {
+                                where: {
+                                  id: rep.id,
+                                },
+                                data: {
+                                  replies: {
+                                    update: {
+                                      where: {
+                                        id: _rep.id,
+                                      },
+                                      data: {
+                                        reactions: {
+                                          create: {
+                                            reactionType: reactionType,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  });
+                })
+              );
+            })
+          );
+        })
+      );
+    }
   }
   if (rPostType === "page") {
-    const user = await getRandomUser();
-    const rPost = await getRandomPost("page");
-    const comment = getRandomPostComment();
-    const reply = getRandomCommentReply();
-    const replyReply = getRandomCommentReplReply();
-    const postReactionType = getRandomReactionType() as ReactionType;
-    const commentReactionType = getRandomReactionType() as ReactionType;
-    const replyReactionType = getRandomReactionType() as ReactionType;
-    const replyReplyReactionType = getRandomReactionType() as ReactionType;
+    if (forWhat === "post") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("page");
+      const comment = getRandomPostComment();
 
-    const commentPostOption = getRandomPostContentOption();
-    const replyPostOption = getRandomPostContentOption();
-    const replyReplyPostOption = getRandomPostContentOption();
-    return prisma.oPagePost.update({
-      where: {
-        id: rPost!.id,
-      },
-      data: {
-        comments: {
-          create: {
-            content:
-              commentPostOption === "contentonly" ||
-              commentPostOption === "both"
-                ? comment
-                : null,
-            mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+      const reactionType = getRandomReactionType() as ReactionType;
 
-            user: {
-              connect: {
-                id: user.id,
-              },
-            },
-            reactions: {
-              create: {
-                reactionType: commentReactionType,
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+      const commentPostOption = getRandomPostContentOption();
+
+      return prisma.oPagePost.update({
+        where: {
+          id: rPost!.id,
+        },
+        data: {
+          comments: {
+            create: {
+              content:
+                commentPostOption === "contentonly" ||
+                commentPostOption === "both"
+                  ? comment
+                  : null,
+              mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+
+              user: {
+                connect: {
+                  id: user.id,
                 },
               },
             },
-            replies: {
-              create: {
-                content:
-                  replyPostOption === "contentonly" ||
-                  replyPostOption === "both"
-                    ? reply
-                    : null,
-                mediaUrl: replyPostOption === "both" ? generatePhoto() : null,
-
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+          },
+          reactions: {
+            create: {
+              reactionType: reactionType,
+              user: {
+                connect: {
+                  id: user.id,
                 },
+              },
+            },
+          },
+        },
+      });
+    }
 
-                reactions: {
-                  create: {
-                    reactionType: replyReactionType,
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+    if (forWhat === "comment") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.oPagePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          comments: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return prisma.oPagePost.update({
+            where: {
+              id: rPost!.id,
+            },
+            data: {
+              comments: {
+                update: {
+                  where: {
+                    id: co.id,
                   },
-                },
-                replies: {
-                  create: {
-                    content:
-                      replyReplyPostOption === "contentonly" ||
-                      replyReplyPostOption === "both"
-                        ? replyReply
-                        : null,
-                    mediaUrl:
-                      replyReplyPostOption === "both" ? generatePhoto() : null,
-
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+                  data: {
                     reactions: {
                       create: {
-                        reactionType: replyReplyReactionType,
+                        reactionType: reactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
+                      },
+                    },
+                    replies: {
+                      create: {
+                        content:
+                          replyPostOption === "contentonly" ||
+                          replyPostOption === "both"
+                            ? reply
+                            : null,
+                        mediaUrl:
+                          replyPostOption === "both" ? generatePhoto() : null,
+
                         user: {
                           connect: {
                             id: user.id,
@@ -1915,107 +4106,291 @@ export const _make_all_posts_dynamic = async () => {
                 },
               },
             },
-          },
+          });
+        })
+      );
+    }
+
+    if (forWhat === "reply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.oPagePost.findUnique({
+        where: {
+          id: rPost!.id,
         },
-        reactions: {
-          create: {
-            reactionType: postReactionType,
-            user: {
-              connect: {
-                id: user.id,
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.oPagePost.update({
+                where: {
+                  id: post?.id,
+                },
+                data: {
+                  comments: {
+                    update: {
+                      where: {
+                        id: co.id,
+                      },
+                      data: {
+                        replies: {
+                          update: {
+                            where: {
+                              id: rep.id,
+                            },
+                            data: {
+                              reactions: {
+                                create: {
+                                  reactionType: reactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                              replies: {
+                                create: {
+                                  content:
+                                    replyPostOption === "contentonly" ||
+                                    replyPostOption === "both"
+                                      ? reply
+                                      : null,
+                                  mediaUrl:
+                                    replyPostOption === "both"
+                                      ? generatePhoto()
+                                      : null,
+
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+
+    if (forWhat === "replyreply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const post = await prisma.oPagePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return Promise.all(
+                rep.replies.map((_rep) => {
+                  return prisma.oPagePost.update({
+                    where: {
+                      id: post?.id,
+                    },
+                    data: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            replies: {
+                              update: {
+                                where: {
+                                  id: rep.id,
+                                },
+                                data: {
+                                  replies: {
+                                    update: {
+                                      where: {
+                                        id: _rep.id,
+                                      },
+                                      data: {
+                                        reactions: {
+                                          create: {
+                                            reactionType: reactionType,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  });
+                })
+              );
+            })
+          );
+        })
+      );
+    }
   }
   if (rPostType === "pageshare") {
-    const user = await getRandomUser();
-    const rPost = await getRandomPost("pageshare");
-    const comment = getRandomPostComment();
-    const reply = getRandomCommentReply();
-    const replyReply = getRandomCommentReplReply();
-    const postReactionType = getRandomReactionType() as ReactionType;
-    const commentReactionType = getRandomReactionType() as ReactionType;
-    const replyReactionType = getRandomReactionType() as ReactionType;
-    const replyReplyReactionType = getRandomReactionType() as ReactionType;
+    if (forWhat === "post") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("pageshare");
+      const comment = getRandomPostComment();
 
-    const commentPostOption = getRandomPostContentOption();
-    const replyPostOption = getRandomPostContentOption();
-    const replyReplyPostOption = getRandomPostContentOption();
-    return prisma.pageSharePost.update({
-      where: {
-        id: rPost!.id,
-      },
-      data: {
-        comments: {
-          create: {
-            content:
-              commentPostOption === "contentonly" ||
-              commentPostOption === "both"
-                ? comment
-                : null,
-            mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+      const reactionType = getRandomReactionType() as ReactionType;
 
-            user: {
-              connect: {
-                id: user.id,
-              },
-            },
-            reactions: {
-              create: {
-                reactionType: commentReactionType,
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+      const commentPostOption = getRandomPostContentOption();
+
+      return prisma.pageSharePost.update({
+        where: {
+          id: rPost!.id,
+        },
+        data: {
+          comments: {
+            create: {
+              content:
+                commentPostOption === "contentonly" ||
+                commentPostOption === "both"
+                  ? comment
+                  : null,
+              mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+
+              user: {
+                connect: {
+                  id: user.id,
                 },
               },
             },
-            replies: {
-              create: {
-                content:
-                  replyPostOption === "contentonly" ||
-                  replyPostOption === "both"
-                    ? reply
-                    : null,
-                mediaUrl: replyPostOption === "both" ? generatePhoto() : null,
-
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+          },
+          reactions: {
+            create: {
+              reactionType: reactionType,
+              user: {
+                connect: {
+                  id: user.id,
                 },
+              },
+            },
+          },
+        },
+      });
+    }
 
-                reactions: {
-                  create: {
-                    reactionType: replyReactionType,
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+    if (forWhat === "comment") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.pageSharePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          comments: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return prisma.pageSharePost.update({
+            where: {
+              id: rPost!.id,
+            },
+            data: {
+              comments: {
+                update: {
+                  where: {
+                    id: co.id,
                   },
-                },
-                replies: {
-                  create: {
-                    content:
-                      replyReplyPostOption === "contentonly" ||
-                      replyReplyPostOption === "both"
-                        ? replyReply
-                        : null,
-                    mediaUrl:
-                      replyReplyPostOption === "both" ? generatePhoto() : null,
-
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+                  data: {
                     reactions: {
                       create: {
-                        reactionType: replyReplyReactionType,
+                        reactionType: reactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
+                      },
+                    },
+                    replies: {
+                      create: {
+                        content:
+                          replyPostOption === "contentonly" ||
+                          replyPostOption === "both"
+                            ? reply
+                            : null,
+                        mediaUrl:
+                          replyPostOption === "both" ? generatePhoto() : null,
+
                         user: {
                           connect: {
                             id: user.id,
@@ -2027,107 +4402,291 @@ export const _make_all_posts_dynamic = async () => {
                 },
               },
             },
-          },
+          });
+        })
+      );
+    }
+
+    if (forWhat === "reply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.pageSharePost.findUnique({
+        where: {
+          id: rPost!.id,
         },
-        reactions: {
-          create: {
-            reactionType: postReactionType,
-            user: {
-              connect: {
-                id: user.id,
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.pageSharePost.update({
+                where: {
+                  id: post?.id,
+                },
+                data: {
+                  comments: {
+                    update: {
+                      where: {
+                        id: co.id,
+                      },
+                      data: {
+                        replies: {
+                          update: {
+                            where: {
+                              id: rep.id,
+                            },
+                            data: {
+                              reactions: {
+                                create: {
+                                  reactionType: reactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                              replies: {
+                                create: {
+                                  content:
+                                    replyPostOption === "contentonly" ||
+                                    replyPostOption === "both"
+                                      ? reply
+                                      : null,
+                                  mediaUrl:
+                                    replyPostOption === "both"
+                                      ? generatePhoto()
+                                      : null,
+
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+
+    if (forWhat === "replyreply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const post = await prisma.pageSharePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return Promise.all(
+                rep.replies.map((_rep) => {
+                  return prisma.pageSharePost.update({
+                    where: {
+                      id: post?.id,
+                    },
+                    data: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            replies: {
+                              update: {
+                                where: {
+                                  id: rep.id,
+                                },
+                                data: {
+                                  replies: {
+                                    update: {
+                                      where: {
+                                        id: _rep.id,
+                                      },
+                                      data: {
+                                        reactions: {
+                                          create: {
+                                            reactionType: reactionType,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  });
+                })
+              );
+            })
+          );
+        })
+      );
+    }
   }
   if (rPostType === "group") {
-    const user = await getRandomUser();
-    const rPost = await getRandomPost("group");
-    const comment = getRandomPostComment();
-    const reply = getRandomCommentReply();
-    const replyReply = getRandomCommentReplReply();
-    const postReactionType = getRandomReactionType() as ReactionType;
-    const commentReactionType = getRandomReactionType() as ReactionType;
-    const replyReactionType = getRandomReactionType() as ReactionType;
-    const replyReplyReactionType = getRandomReactionType() as ReactionType;
+    if (forWhat === "post") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("group");
+      const comment = getRandomPostComment();
 
-    const commentPostOption = getRandomPostContentOption();
-    const replyPostOption = getRandomPostContentOption();
-    const replyReplyPostOption = getRandomPostContentOption();
-    return prisma.oGroupPost.update({
-      where: {
-        id: rPost!.id,
-      },
-      data: {
-        comments: {
-          create: {
-            content:
-              commentPostOption === "contentonly" ||
-              commentPostOption === "both"
-                ? comment
-                : null,
-            mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+      const reactionType = getRandomReactionType() as ReactionType;
 
-            user: {
-              connect: {
-                id: user.id,
-              },
-            },
-            reactions: {
-              create: {
-                reactionType: commentReactionType,
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+      const commentPostOption = getRandomPostContentOption();
+
+      return prisma.oGroupPost.update({
+        where: {
+          id: rPost!.id,
+        },
+        data: {
+          comments: {
+            create: {
+              content:
+                commentPostOption === "contentonly" ||
+                commentPostOption === "both"
+                  ? comment
+                  : null,
+              mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+
+              user: {
+                connect: {
+                  id: user.id,
                 },
               },
             },
-            replies: {
-              create: {
-                content:
-                  replyPostOption === "contentonly" ||
-                  replyPostOption === "both"
-                    ? reply
-                    : null,
-                mediaUrl: replyPostOption === "both" ? generatePhoto() : null,
-
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+          },
+          reactions: {
+            create: {
+              reactionType: reactionType,
+              user: {
+                connect: {
+                  id: user.id,
                 },
+              },
+            },
+          },
+        },
+      });
+    }
 
-                reactions: {
-                  create: {
-                    reactionType: replyReactionType,
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+    if (forWhat === "comment") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.oGroupPost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          comments: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return prisma.oGroupPost.update({
+            where: {
+              id: rPost!.id,
+            },
+            data: {
+              comments: {
+                update: {
+                  where: {
+                    id: co.id,
                   },
-                },
-                replies: {
-                  create: {
-                    content:
-                      replyReplyPostOption === "contentonly" ||
-                      replyReplyPostOption === "both"
-                        ? replyReply
-                        : null,
-                    mediaUrl:
-                      replyReplyPostOption === "both" ? generatePhoto() : null,
-
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+                  data: {
                     reactions: {
                       create: {
-                        reactionType: replyReplyReactionType,
+                        reactionType: reactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
+                      },
+                    },
+                    replies: {
+                      create: {
+                        content:
+                          replyPostOption === "contentonly" ||
+                          replyPostOption === "both"
+                            ? reply
+                            : null,
+                        mediaUrl:
+                          replyPostOption === "both" ? generatePhoto() : null,
+
                         user: {
                           connect: {
                             id: user.id,
@@ -2139,107 +4698,291 @@ export const _make_all_posts_dynamic = async () => {
                 },
               },
             },
-          },
+          });
+        })
+      );
+    }
+
+    if (forWhat === "reply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.oGroupPost.findUnique({
+        where: {
+          id: rPost!.id,
         },
-        reactions: {
-          create: {
-            reactionType: postReactionType,
-            user: {
-              connect: {
-                id: user.id,
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.oGroupPost.update({
+                where: {
+                  id: post?.id,
+                },
+                data: {
+                  comments: {
+                    update: {
+                      where: {
+                        id: co.id,
+                      },
+                      data: {
+                        replies: {
+                          update: {
+                            where: {
+                              id: rep.id,
+                            },
+                            data: {
+                              reactions: {
+                                create: {
+                                  reactionType: reactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                              replies: {
+                                create: {
+                                  content:
+                                    replyPostOption === "contentonly" ||
+                                    replyPostOption === "both"
+                                      ? reply
+                                      : null,
+                                  mediaUrl:
+                                    replyPostOption === "both"
+                                      ? generatePhoto()
+                                      : null,
+
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+
+    if (forWhat === "replyreply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const post = await prisma.oGroupPost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return Promise.all(
+                rep.replies.map((_rep) => {
+                  return prisma.oGroupPost.update({
+                    where: {
+                      id: post?.id,
+                    },
+                    data: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            replies: {
+                              update: {
+                                where: {
+                                  id: rep.id,
+                                },
+                                data: {
+                                  replies: {
+                                    update: {
+                                      where: {
+                                        id: _rep.id,
+                                      },
+                                      data: {
+                                        reactions: {
+                                          create: {
+                                            reactionType: reactionType,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  });
+                })
+              );
+            })
+          );
+        })
+      );
+    }
   }
   if (rPostType === "groupshare") {
-    const user = await getRandomUser();
-    const rPost = await getRandomPost("groupshare");
-    const comment = getRandomPostComment();
-    const reply = getRandomCommentReply();
-    const replyReply = getRandomCommentReplReply();
-    const postReactionType = getRandomReactionType() as ReactionType;
-    const commentReactionType = getRandomReactionType() as ReactionType;
-    const replyReactionType = getRandomReactionType() as ReactionType;
-    const replyReplyReactionType = getRandomReactionType() as ReactionType;
+    if (forWhat === "post") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("groupshare");
+      const comment = getRandomPostComment();
 
-    const commentPostOption = getRandomPostContentOption();
-    const replyPostOption = getRandomPostContentOption();
-    const replyReplyPostOption = getRandomPostContentOption();
-    return prisma.toGroupSharePost.update({
-      where: {
-        id: rPost!.id,
-      },
-      data: {
-        comments: {
-          create: {
-            content:
-              commentPostOption === "contentonly" ||
-              commentPostOption === "both"
-                ? comment
-                : null,
-            mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+      const reactionType = getRandomReactionType() as ReactionType;
 
-            user: {
-              connect: {
-                id: user.id,
-              },
-            },
-            reactions: {
-              create: {
-                reactionType: commentReactionType,
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+      const commentPostOption = getRandomPostContentOption();
+
+      return prisma.toGroupSharePost.update({
+        where: {
+          id: rPost!.id,
+        },
+        data: {
+          comments: {
+            create: {
+              content:
+                commentPostOption === "contentonly" ||
+                commentPostOption === "both"
+                  ? comment
+                  : null,
+              mediaUrl: commentPostOption === "both" ? generatePhoto() : null,
+
+              user: {
+                connect: {
+                  id: user.id,
                 },
               },
             },
-            replies: {
-              create: {
-                content:
-                  replyPostOption === "contentonly" ||
-                  replyPostOption === "both"
-                    ? reply
-                    : null,
-                mediaUrl: replyPostOption === "both" ? generatePhoto() : null,
-
-                user: {
-                  connect: {
-                    id: user.id,
-                  },
+          },
+          reactions: {
+            create: {
+              reactionType: reactionType,
+              user: {
+                connect: {
+                  id: user.id,
                 },
+              },
+            },
+          },
+        },
+      });
+    }
 
-                reactions: {
-                  create: {
-                    reactionType: replyReactionType,
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+    if (forWhat === "comment") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.toGroupSharePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          comments: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return prisma.toGroupSharePost.update({
+            where: {
+              id: rPost!.id,
+            },
+            data: {
+              comments: {
+                update: {
+                  where: {
+                    id: co.id,
                   },
-                },
-                replies: {
-                  create: {
-                    content:
-                      replyReplyPostOption === "contentonly" ||
-                      replyReplyPostOption === "both"
-                        ? replyReply
-                        : null,
-                    mediaUrl:
-                      replyReplyPostOption === "both" ? generatePhoto() : null,
-
-                    user: {
-                      connect: {
-                        id: user.id,
-                      },
-                    },
+                  data: {
                     reactions: {
                       create: {
-                        reactionType: replyReplyReactionType,
+                        reactionType: reactionType,
+                        user: {
+                          connect: {
+                            id: user.id,
+                          },
+                        },
+                      },
+                    },
+                    replies: {
+                      create: {
+                        content:
+                          replyPostOption === "contentonly" ||
+                          replyPostOption === "both"
+                            ? reply
+                            : null,
+                        mediaUrl:
+                          replyPostOption === "both" ? generatePhoto() : null,
+
                         user: {
                           connect: {
                             id: user.id,
@@ -2251,125 +4994,329 @@ export const _make_all_posts_dynamic = async () => {
                 },
               },
             },
-          },
+          });
+        })
+      );
+    }
+
+    if (forWhat === "reply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+      const reply = getRandomPostComment();
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const replyPostOption = getRandomPostContentOption();
+
+      const post = await prisma.toGroupSharePost.findUnique({
+        where: {
+          id: rPost!.id,
         },
-        reactions: {
-          create: {
-            reactionType: postReactionType,
-            user: {
-              connect: {
-                id: user.id,
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return prisma.toGroupSharePost.update({
+                where: {
+                  id: post?.id,
+                },
+                data: {
+                  comments: {
+                    update: {
+                      where: {
+                        id: co.id,
+                      },
+                      data: {
+                        replies: {
+                          update: {
+                            where: {
+                              id: rep.id,
+                            },
+                            data: {
+                              reactions: {
+                                create: {
+                                  reactionType: reactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                              replies: {
+                                create: {
+                                  content:
+                                    replyPostOption === "contentonly" ||
+                                    replyPostOption === "both"
+                                      ? reply
+                                      : null,
+                                  mediaUrl:
+                                    replyPostOption === "both"
+                                      ? generatePhoto()
+                                      : null,
+
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      );
+    }
+
+    if (forWhat === "replyreply") {
+      const user = await getRandomUser();
+      const rPost = await getRandomPost("user");
+
+      const reactionType = getRandomReactionType() as ReactionType;
+
+      const post = await prisma.toGroupSharePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          comments: {
+            select: {
+              id: true,
+              replies: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return Promise.all(
+        post!.comments.map((co) => {
+          return Promise.all(
+            co.replies.map((rep) => {
+              return Promise.all(
+                rep.replies.map((_rep) => {
+                  return prisma.toGroupSharePost.update({
+                    where: {
+                      id: post?.id,
+                    },
+                    data: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            replies: {
+                              update: {
+                                where: {
+                                  id: rep.id,
+                                },
+                                data: {
+                                  replies: {
+                                    update: {
+                                      where: {
+                                        id: _rep.id,
+                                      },
+                                      data: {
+                                        reactions: {
+                                          create: {
+                                            reactionType: reactionType,
+                                            user: {
+                                              connect: {
+                                                id: user.id,
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  });
+                })
+              );
+            })
+          );
+        })
+      );
+    }
   }
 };
 
-export const _make_all_medias_dynamic = async () => {
+export const _make_all_medias_dynamic = async (
+  forWhat: "media" | "comment" | "reply" | "replyreply"
+) => {
   const rPostType = getRandomPostForMediaType();
 
   if (rPostType === "user") {
-    const user = await getRandomUser();
-    const rMedia = await getRandomMedia("user");
-    const rPost = await getRandomPost("user");
-    const comment = getRandomPostComment();
-    const reply = getRandomCommentReply();
-    const replyReply = getRandomCommentReplReply();
-    const mediaReactionType = getRandomReactionType() as ReactionType;
-    const commentReactionType = getRandomReactionType() as ReactionType;
-    const replyReactionType = getRandomReactionType() as ReactionType;
-    const replyReplyReactionType = getRandomReactionType() as ReactionType;
-    const commentPostOption = getRandomPostContentOption();
-    const replyPostOption = getRandomPostContentOption();
-    const replyReplyPostOption = getRandomPostContentOption();
+    if (forWhat === "media") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("user");
+      const rPost = await getRandomPost("user");
+      const comment = getRandomPostComment();
+      const reactionType = getRandomReactionType() as ReactionType;
 
-    return prisma.oUserPost.update({
-      where: {
-        id: rPost!.id,
-      },
-      data: {
-        medias: {
-          update: {
-            where: {
-              id: rMedia?.id,
+      const commentPostOption = getRandomPostContentOption();
+
+      return prisma.oUserPost.update({
+        where: {
+          id: rPost!.id,
+        },
+        data: {
+          medias: {
+            update: {
+              where: {
+                id: rMedia?.id,
+              },
+              data: {
+                comments: {
+                  create: {
+                    content:
+                      commentPostOption === "contentonly" ||
+                      commentPostOption === "both"
+                        ? comment
+                        : null,
+                    mediaUrl:
+                      commentPostOption === "both" ? generatePhoto() : null,
+
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
+                reactions: {
+                  create: {
+                    reactionType: reactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
+              },
             },
-            data: {
+          },
+        },
+      });
+    }
+
+    if (forWhat === "comment") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("user");
+      const rPost = await getRandomPost("user");
+      const reactionType = getRandomReactionType() as ReactionType;
+      const reply = getRandomCommentReply();
+      const replyPostOption = getRandomPostContentOption();
+      const media = await prisma.oUserPost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          medias: {
+            select: {
+              id: true,
               comments: {
-                create: {
-                  content:
-                    commentPostOption === "contentonly" ||
-                    commentPostOption === "both"
-                      ? comment
-                      : null,
-                  mediaUrl:
-                    commentPostOption === "both" ? generatePhoto() : null,
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
 
-                  user: {
-                    connect: {
-                      id: user.id,
-                    },
+      if (media?.medias) {
+        return Promise.all(
+          media?.medias.map((_media) => {
+            return Promise.all(
+              _media.comments.map((co) => {
+                return prisma.oUserPost.update({
+                  where: {
+                    id: rMedia?.id,
                   },
-                  reactions: {
-                    create: {
-                      reactionType: commentReactionType,
-                      user: {
-                        connect: {
-                          id: user.id,
+                  data: {
+                    medias: {
+                      update: {
+                        where: {
+                          id: _media.id,
                         },
-                      },
-                    },
-                  },
-                  replies: {
-                    create: {
-                      content:
-                        replyPostOption === "contentonly" ||
-                        replyPostOption === "both"
-                          ? reply
-                          : null,
-                      mediaUrl:
-                        replyPostOption === "both" ? generatePhoto() : null,
+                        data: {
+                          comments: {
+                            update: {
+                              where: {
+                                id: co.id,
+                              },
+                              data: {
+                                reactions: {
+                                  create: {
+                                    reactionType: reactionType,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
+                                },
+                                replies: {
+                                  create: {
+                                    content:
+                                      replyPostOption === "contentonly" ||
+                                      replyPostOption === "both"
+                                        ? reply
+                                        : null,
+                                    mediaUrl:
+                                      replyPostOption === "both"
+                                        ? generatePhoto()
+                                        : null,
 
-                      user: {
-                        connect: {
-                          id: user.id,
-                        },
-                      },
-                      reactions: {
-                        create: {
-                          reactionType: replyReactionType,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                        },
-                      },
-                      replies: {
-                        create: {
-                          content:
-                            replyReplyPostOption === "contentonly" ||
-                            replyReplyPostOption === "both"
-                              ? replyReply
-                              : null,
-                          mediaUrl:
-                            replyReplyPostOption === "both"
-                              ? generatePhoto()
-                              : null,
-
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                          reactions: {
-                            create: {
-                              reactionType: replyReplyReactionType,
-                              user: {
-                                connect: {
-                                  id: user.id,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
                                 },
                               },
                             },
@@ -2378,14 +5325,36 @@ export const _make_all_medias_dynamic = async () => {
                       },
                     },
                   },
-                },
-              },
-              reactions: {
-                create: {
-                  reactionType: mediaReactionType,
-                  user: {
-                    connect: {
-                      id: user.id,
+                });
+              })
+            );
+          })!
+        );
+      }
+    }
+
+    if (forWhat === "reply") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("user");
+      const rPost = await getRandomPost("user");
+      const reactionType = getRandomReactionType() as ReactionType;
+      const reply = getRandomCommentReplReply();
+      const replyPostOption = getRandomPostContentOption();
+      const media = await prisma.oUserPost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          medias: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
                     },
                   },
                 },
@@ -2393,108 +5362,327 @@ export const _make_all_medias_dynamic = async () => {
             },
           },
         },
-      },
-    });
+      });
+
+      if (media?.medias) {
+        return Promise.all(
+          media?.medias.map((_media) => {
+            return Promise.all(
+              _media.comments.map((co) => {
+                return Promise.all(
+                  co.replies.map((rep) => {
+                    return prisma.oUserPost.update({
+                      where: {
+                        id: media.id,
+                      },
+                      data: {
+                        medias: {
+                          update: {
+                            where: {
+                              id: rMedia?.id,
+                            },
+                            data: {
+                              comments: {
+                                update: {
+                                  where: {
+                                    id: co.id,
+                                  },
+                                  data: {
+                                    replies: {
+                                      update: {
+                                        where: {
+                                          id: rep.id,
+                                        },
+                                        data: {
+                                          reactions: {
+                                            create: {
+                                              reactionType: reactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                          replies: {
+                                            create: {
+                                              content:
+                                                replyPostOption ===
+                                                  "contentonly" ||
+                                                replyPostOption === "both"
+                                                  ? reply
+                                                  : null,
+                                              mediaUrl:
+                                                replyPostOption === "both"
+                                                  ? generatePhoto()
+                                                  : null,
+
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    });
+                  })
+                );
+              })
+            );
+          })!
+        );
+      }
+    }
+
+    if (forWhat === "replyreply") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("user");
+      const rPost = await getRandomPost("user");
+      const reactionType = getRandomReactionType() as ReactionType;
+      const media = await prisma.oUserPost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          medias: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (media?.medias) {
+        return Promise.all(
+          media?.medias.map((_media) => {
+            return Promise.all(
+              _media.comments.map((co) => {
+                return Promise.all(
+                  co.replies.map((rep) => {
+                    return Promise.all(
+                      rep.replies.map((_rep) => {
+                        return prisma.oUserPost.update({
+                          where: {
+                            id: media.id,
+                          },
+                          data: {
+                            medias: {
+                              update: {
+                                where: {
+                                  id: rMedia?.id,
+                                },
+                                data: {
+                                  comments: {
+                                    update: {
+                                      where: {
+                                        id: co.id,
+                                      },
+                                      data: {
+                                        replies: {
+                                          update: {
+                                            where: {
+                                              id: _rep.id,
+                                            },
+                                            data: {
+                                              replies: {
+                                                update: {
+                                                  where: {
+                                                    id: _rep.id,
+                                                  },
+                                                  data: {
+                                                    reactions: {
+                                                      create: {
+                                                        reactionType:
+                                                          reactionType,
+                                                        user: {
+                                                          connect: {
+                                                            id: user.id,
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        });
+                      })
+                    );
+                  })
+                );
+              })
+            );
+          })!
+        );
+      }
+    }
   }
   if (rPostType === "page") {
-    const user = await getRandomUser();
-    const rMedia = await getRandomMedia("user");
-    const rPost = await getRandomPost("user");
-    const comment = getRandomPostComment();
-    const reply = getRandomCommentReply();
-    const replyReply = getRandomCommentReplReply();
-    const mediaReactionType = getRandomReactionType() as ReactionType;
-    const commentReactionType = getRandomReactionType() as ReactionType;
-    const replyReactionType = getRandomReactionType() as ReactionType;
-    const replyReplyReactionType = getRandomReactionType() as ReactionType;
-    const commentPostOption = getRandomPostContentOption();
-    const replyPostOption = getRandomPostContentOption();
-    const replyReplyPostOption = getRandomPostContentOption();
+    if (forWhat === "media") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("page");
+      const rPost = await getRandomPost("page");
+      const comment = getRandomPostComment();
+      const reactionType = getRandomReactionType() as ReactionType;
 
-    return prisma.oPagePost.update({
-      where: {
-        id: rPost!.id,
-      },
-      data: {
-        medias: {
-          update: {
-            where: {
-              id: rMedia?.id,
+      const commentPostOption = getRandomPostContentOption();
+
+      return prisma.oPagePost.update({
+        where: {
+          id: rPost!.id,
+        },
+        data: {
+          medias: {
+            update: {
+              where: {
+                id: rMedia?.id,
+              },
+              data: {
+                comments: {
+                  create: {
+                    content:
+                      commentPostOption === "contentonly" ||
+                      commentPostOption === "both"
+                        ? comment
+                        : null,
+                    mediaUrl:
+                      commentPostOption === "both" ? generatePhoto() : null,
+
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
+                reactions: {
+                  create: {
+                    reactionType: reactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
+              },
             },
-            data: {
+          },
+        },
+      });
+    }
+
+    if (forWhat === "comment") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("user");
+      const rPost = await getRandomPost("user");
+      const reactionType = getRandomReactionType() as ReactionType;
+      const reply = getRandomCommentReply();
+      const replyPostOption = getRandomPostContentOption();
+      const media = await prisma.oPagePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          medias: {
+            select: {
+              id: true,
               comments: {
-                create: {
-                  content:
-                    commentPostOption === "contentonly" ||
-                    commentPostOption === "both"
-                      ? comment
-                      : null,
-                  mediaUrl:
-                    commentPostOption === "both" ? generatePhoto() : null,
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
 
-                  user: {
-                    connect: {
-                      id: user.id,
-                    },
+      if (media?.medias) {
+        return Promise.all(
+          media?.medias.map((_media) => {
+            return Promise.all(
+              _media.comments.map((co) => {
+                return prisma.oPagePost.update({
+                  where: {
+                    id: rMedia?.id,
                   },
-                  reactions: {
-                    create: {
-                      reactionType: commentReactionType,
-                      user: {
-                        connect: {
-                          id: user.id,
+                  data: {
+                    medias: {
+                      update: {
+                        where: {
+                          id: _media.id,
                         },
-                      },
-                    },
-                  },
-                  replies: {
-                    create: {
-                      content:
-                        replyPostOption === "contentonly" ||
-                        replyPostOption === "both"
-                          ? reply
-                          : null,
-                      mediaUrl:
-                        replyPostOption === "both" ? generatePhoto() : null,
+                        data: {
+                          comments: {
+                            update: {
+                              where: {
+                                id: co.id,
+                              },
+                              data: {
+                                reactions: {
+                                  create: {
+                                    reactionType: reactionType,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
+                                },
+                                replies: {
+                                  create: {
+                                    content:
+                                      replyPostOption === "contentonly" ||
+                                      replyPostOption === "both"
+                                        ? reply
+                                        : null,
+                                    mediaUrl:
+                                      replyPostOption === "both"
+                                        ? generatePhoto()
+                                        : null,
 
-                      user: {
-                        connect: {
-                          id: user.id,
-                        },
-                      },
-                      reactions: {
-                        create: {
-                          reactionType: replyReactionType,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                        },
-                      },
-                      replies: {
-                        create: {
-                          content:
-                            replyReplyPostOption === "contentonly" ||
-                            replyReplyPostOption === "both"
-                              ? replyReply
-                              : null,
-                          mediaUrl:
-                            replyReplyPostOption === "both"
-                              ? generatePhoto()
-                              : null,
-
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                          reactions: {
-                            create: {
-                              reactionType: replyReplyReactionType,
-                              user: {
-                                connect: {
-                                  id: user.id,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
                                 },
                               },
                             },
@@ -2503,14 +5691,36 @@ export const _make_all_medias_dynamic = async () => {
                       },
                     },
                   },
-                },
-              },
-              reactions: {
-                create: {
-                  reactionType: mediaReactionType,
-                  user: {
-                    connect: {
-                      id: user.id,
+                });
+              })
+            );
+          })!
+        );
+      }
+    }
+
+    if (forWhat === "reply") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("user");
+      const rPost = await getRandomPost("user");
+      const reactionType = getRandomReactionType() as ReactionType;
+      const reply = getRandomCommentReplReply();
+      const replyPostOption = getRandomPostContentOption();
+      const media = await prisma.oPagePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          medias: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
                     },
                   },
                 },
@@ -2518,109 +5728,327 @@ export const _make_all_medias_dynamic = async () => {
             },
           },
         },
-      },
-    });
+      });
+
+      if (media?.medias) {
+        return Promise.all(
+          media?.medias.map((_media) => {
+            return Promise.all(
+              _media.comments.map((co) => {
+                return Promise.all(
+                  co.replies.map((rep) => {
+                    return prisma.oPagePost.update({
+                      where: {
+                        id: media.id,
+                      },
+                      data: {
+                        medias: {
+                          update: {
+                            where: {
+                              id: rMedia?.id,
+                            },
+                            data: {
+                              comments: {
+                                update: {
+                                  where: {
+                                    id: co.id,
+                                  },
+                                  data: {
+                                    replies: {
+                                      update: {
+                                        where: {
+                                          id: rep.id,
+                                        },
+                                        data: {
+                                          reactions: {
+                                            create: {
+                                              reactionType: reactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                          replies: {
+                                            create: {
+                                              content:
+                                                replyPostOption ===
+                                                  "contentonly" ||
+                                                replyPostOption === "both"
+                                                  ? reply
+                                                  : null,
+                                              mediaUrl:
+                                                replyPostOption === "both"
+                                                  ? generatePhoto()
+                                                  : null,
+
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    });
+                  })
+                );
+              })
+            );
+          })!
+        );
+      }
+    }
+
+    if (forWhat === "replyreply") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("user");
+      const rPost = await getRandomPost("user");
+      const reactionType = getRandomReactionType() as ReactionType;
+      const media = await prisma.oPagePost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          medias: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (media?.medias) {
+        return Promise.all(
+          media?.medias.map((_media) => {
+            return Promise.all(
+              _media.comments.map((co) => {
+                return Promise.all(
+                  co.replies.map((rep) => {
+                    return Promise.all(
+                      rep.replies.map((_rep) => {
+                        return prisma.oUserPost.update({
+                          where: {
+                            id: media.id,
+                          },
+                          data: {
+                            medias: {
+                              update: {
+                                where: {
+                                  id: rMedia?.id,
+                                },
+                                data: {
+                                  comments: {
+                                    update: {
+                                      where: {
+                                        id: co.id,
+                                      },
+                                      data: {
+                                        replies: {
+                                          update: {
+                                            where: {
+                                              id: _rep.id,
+                                            },
+                                            data: {
+                                              replies: {
+                                                update: {
+                                                  where: {
+                                                    id: _rep.id,
+                                                  },
+                                                  data: {
+                                                    reactions: {
+                                                      create: {
+                                                        reactionType:
+                                                          reactionType,
+                                                        user: {
+                                                          connect: {
+                                                            id: user.id,
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        });
+                      })
+                    );
+                  })
+                );
+              })
+            );
+          })!
+        );
+      }
+    }
   }
+  if (rPostType === "user") {
+    if (forWhat === "media") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("group");
+      const rPost = await getRandomPost("group");
+      const comment = getRandomPostComment();
+      const reactionType = getRandomReactionType() as ReactionType;
 
-  if (rPostType === "group") {
-    const user = await getRandomUser();
-    const rMedia = await getRandomMedia("user");
-    const rPost = await getRandomPost("user");
-    const comment = getRandomPostComment();
-    const reply = getRandomCommentReply();
-    const replyReply = getRandomCommentReplReply();
-    const mediaReactionType = getRandomReactionType() as ReactionType;
-    const commentReactionType = getRandomReactionType() as ReactionType;
-    const replyReactionType = getRandomReactionType() as ReactionType;
-    const replyReplyReactionType = getRandomReactionType() as ReactionType;
-    const commentPostOption = getRandomPostContentOption();
-    const replyPostOption = getRandomPostContentOption();
-    const replyReplyPostOption = getRandomPostContentOption();
+      const commentPostOption = getRandomPostContentOption();
 
-    return prisma.oGroupPost.update({
-      where: {
-        id: rPost!.id,
-      },
-      data: {
-        medias: {
-          update: {
-            where: {
-              id: rMedia?.id,
+      return prisma.oGroupPost.update({
+        where: {
+          id: rPost!.id,
+        },
+        data: {
+          medias: {
+            update: {
+              where: {
+                id: rMedia?.id,
+              },
+              data: {
+                comments: {
+                  create: {
+                    content:
+                      commentPostOption === "contentonly" ||
+                      commentPostOption === "both"
+                        ? comment
+                        : null,
+                    mediaUrl:
+                      commentPostOption === "both" ? generatePhoto() : null,
+
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
+                reactions: {
+                  create: {
+                    reactionType: reactionType,
+                    user: {
+                      connect: {
+                        id: user.id,
+                      },
+                    },
+                  },
+                },
+              },
             },
-            data: {
+          },
+        },
+      });
+    }
+
+    if (forWhat === "comment") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("user");
+      const rPost = await getRandomPost("user");
+      const reactionType = getRandomReactionType() as ReactionType;
+      const reply = getRandomCommentReply();
+      const replyPostOption = getRandomPostContentOption();
+      const media = await prisma.oGroupPost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          medias: {
+            select: {
+              id: true,
               comments: {
-                create: {
-                  content:
-                    commentPostOption === "contentonly" ||
-                    commentPostOption === "both"
-                      ? comment
-                      : null,
-                  mediaUrl:
-                    commentPostOption === "both" ? generatePhoto() : null,
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
 
-                  user: {
-                    connect: {
-                      id: user.id,
-                    },
+      if (media?.medias) {
+        return Promise.all(
+          media?.medias.map((_media) => {
+            return Promise.all(
+              _media.comments.map((co) => {
+                return prisma.oGroupPost.update({
+                  where: {
+                    id: rMedia?.id,
                   },
-                  reactions: {
-                    create: {
-                      reactionType: commentReactionType,
-                      user: {
-                        connect: {
-                          id: user.id,
+                  data: {
+                    medias: {
+                      update: {
+                        where: {
+                          id: _media.id,
                         },
-                      },
-                    },
-                  },
-                  replies: {
-                    create: {
-                      content:
-                        replyPostOption === "contentonly" ||
-                        replyPostOption === "both"
-                          ? reply
-                          : null,
-                      mediaUrl:
-                        replyPostOption === "both" ? generatePhoto() : null,
+                        data: {
+                          comments: {
+                            update: {
+                              where: {
+                                id: co.id,
+                              },
+                              data: {
+                                reactions: {
+                                  create: {
+                                    reactionType: reactionType,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
+                                },
+                                replies: {
+                                  create: {
+                                    content:
+                                      replyPostOption === "contentonly" ||
+                                      replyPostOption === "both"
+                                        ? reply
+                                        : null,
+                                    mediaUrl:
+                                      replyPostOption === "both"
+                                        ? generatePhoto()
+                                        : null,
 
-                      user: {
-                        connect: {
-                          id: user.id,
-                        },
-                      },
-                      reactions: {
-                        create: {
-                          reactionType: replyReactionType,
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                        },
-                      },
-                      replies: {
-                        create: {
-                          content:
-                            replyReplyPostOption === "contentonly" ||
-                            replyReplyPostOption === "both"
-                              ? replyReply
-                              : null,
-                          mediaUrl:
-                            replyReplyPostOption === "both"
-                              ? generatePhoto()
-                              : null,
-
-                          user: {
-                            connect: {
-                              id: user.id,
-                            },
-                          },
-                          reactions: {
-                            create: {
-                              reactionType: replyReplyReactionType,
-                              user: {
-                                connect: {
-                                  id: user.id,
+                                    user: {
+                                      connect: {
+                                        id: user.id,
+                                      },
+                                    },
+                                  },
                                 },
                               },
                             },
@@ -2629,14 +6057,36 @@ export const _make_all_medias_dynamic = async () => {
                       },
                     },
                   },
-                },
-              },
-              reactions: {
-                create: {
-                  reactionType: mediaReactionType,
-                  user: {
-                    connect: {
-                      id: user.id,
+                });
+              })
+            );
+          })!
+        );
+      }
+    }
+
+    if (forWhat === "reply") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("user");
+      const rPost = await getRandomPost("user");
+      const reactionType = getRandomReactionType() as ReactionType;
+      const reply = getRandomCommentReplReply();
+      const replyPostOption = getRandomPostContentOption();
+      const media = await prisma.oGroupPost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          medias: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
                     },
                   },
                 },
@@ -2644,7 +6094,194 @@ export const _make_all_medias_dynamic = async () => {
             },
           },
         },
-      },
-    });
+      });
+
+      if (media?.medias) {
+        return Promise.all(
+          media?.medias.map((_media) => {
+            return Promise.all(
+              _media.comments.map((co) => {
+                return Promise.all(
+                  co.replies.map((rep) => {
+                    return prisma.oGroupPost.update({
+                      where: {
+                        id: media.id,
+                      },
+                      data: {
+                        medias: {
+                          update: {
+                            where: {
+                              id: rMedia?.id,
+                            },
+                            data: {
+                              comments: {
+                                update: {
+                                  where: {
+                                    id: co.id,
+                                  },
+                                  data: {
+                                    replies: {
+                                      update: {
+                                        where: {
+                                          id: rep.id,
+                                        },
+                                        data: {
+                                          reactions: {
+                                            create: {
+                                              reactionType: reactionType,
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                          replies: {
+                                            create: {
+                                              content:
+                                                replyPostOption ===
+                                                  "contentonly" ||
+                                                replyPostOption === "both"
+                                                  ? reply
+                                                  : null,
+                                              mediaUrl:
+                                                replyPostOption === "both"
+                                                  ? generatePhoto()
+                                                  : null,
+
+                                              user: {
+                                                connect: {
+                                                  id: user.id,
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    });
+                  })
+                );
+              })
+            );
+          })!
+        );
+      }
+    }
+
+    if (forWhat === "replyreply") {
+      const user = await getRandomUser();
+      const rMedia = await getRandomMedia("user");
+      const rPost = await getRandomPost("user");
+      const reactionType = getRandomReactionType() as ReactionType;
+      const media = await prisma.oGroupPost.findUnique({
+        where: {
+          id: rPost!.id,
+        },
+        select: {
+          id: true,
+          medias: {
+            select: {
+              id: true,
+              comments: {
+                select: {
+                  id: true,
+                  replies: {
+                    select: {
+                      id: true,
+                      replies: {
+                        select: {
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (media?.medias) {
+        return Promise.all(
+          media?.medias.map((_media) => {
+            return Promise.all(
+              _media.comments.map((co) => {
+                return Promise.all(
+                  co.replies.map((rep) => {
+                    return Promise.all(
+                      rep.replies.map((_rep) => {
+                        return prisma.oGroupPost.update({
+                          where: {
+                            id: media.id,
+                          },
+                          data: {
+                            medias: {
+                              update: {
+                                where: {
+                                  id: rMedia?.id,
+                                },
+                                data: {
+                                  comments: {
+                                    update: {
+                                      where: {
+                                        id: co.id,
+                                      },
+                                      data: {
+                                        replies: {
+                                          update: {
+                                            where: {
+                                              id: _rep.id,
+                                            },
+                                            data: {
+                                              replies: {
+                                                update: {
+                                                  where: {
+                                                    id: _rep.id,
+                                                  },
+                                                  data: {
+                                                    reactions: {
+                                                      create: {
+                                                        reactionType:
+                                                          reactionType,
+                                                        user: {
+                                                          connect: {
+                                                            id: user.id,
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        });
+                      })
+                    );
+                  })
+                );
+              })
+            );
+          })!
+        );
+      }
+    }
   }
 };
