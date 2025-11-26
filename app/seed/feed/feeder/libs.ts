@@ -804,43 +804,6 @@ const createGroupPost = async () => {
   }
 };
 
-export const createUserShareMediaPost = async () => {
-  const rMedia = await getRandomMedia("page");
-  const user = await getRandomUser();
-  return prisma.feed.create({
-    data: {
-      postType: "user",
-      userPost: {
-        create: {
-          postType: "share",
-          userSharePost: {
-            create: {
-              user: {
-                connect: {
-                  id: user.id,
-                },
-              },
-
-              shareWhat: "media",
-
-              media: {
-                connect: {
-                  id: rMedia?.id,
-                },
-              },
-
-              content:
-                getRandomAddedContentForShareTypes() === "content"
-                  ? getRandomPostText()
-                  : null,
-            },
-          },
-        },
-      },
-    },
-  });
-};
-
 export async function _seedFeeds() {
   return await Promise.all(
     Array.from({ length: 3 }, () => {
@@ -855,6 +818,138 @@ export async function _seedFeeds() {
       if (getRandomFeedType() === "group") {
         return createGroupPost();
       }
+    })
+  );
+}
+
+const _create_usershare_post = async () => {
+  const user = await getRandomUser();
+  const postSharedType = getRandomSharedPostType() as
+    | "user"
+    | "page"
+    | "group"
+    | "media";
+
+  const rPostMediaType = getPostMediaType();
+  const postOrMedia =
+    postSharedType === "user" ||
+    postSharedType === "page" ||
+    postSharedType === "group"
+      ? await getRandomPost(postSharedType)
+      : await getRandomMedia(rPostMediaType);
+  return prisma.feed.create({
+    data: {
+      postType: "user",
+      userPost: {
+        create: {
+          postType: "share",
+          userSharePost: {
+            create: {
+              user: {
+                connect: {
+                  id: user.id,
+                },
+              },
+
+              shareWhat: postSharedType as "user" | "page" | "group" | "media",
+              oUserPost:
+                postSharedType === "user" && postOrMedia
+                  ? {
+                      connect: {
+                        id: postOrMedia.id,
+                      },
+                    }
+                  : undefined,
+
+              oPagePost:
+                postSharedType === "page" && postOrMedia
+                  ? {
+                      connect: {
+                        id: postOrMedia.id,
+                      },
+                    }
+                  : undefined,
+
+              oGroupPost:
+                postSharedType === "group" && postOrMedia
+                  ? {
+                      connect: {
+                        id: postOrMedia.id,
+                      },
+                    }
+                  : undefined,
+
+              media:
+                postSharedType === "media" && postOrMedia
+                  ? {
+                      connect: {
+                        id: postOrMedia.id,
+                      },
+                    }
+                  : undefined,
+
+              content:
+                getRandomAddedContentForShareTypes() === "content"
+                  ? getRandomPostText()
+                  : null,
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
+const _create_user_post = async () => {
+  const user = await getRandomUser();
+
+  const postContentOption = getRandomPostContentOption();
+  return prisma.feed.create({
+    data: {
+      postType: "user",
+      userPost: {
+        create: {
+          postType: "original",
+          oUserPost: {
+            create: {
+              user: {
+                connect: { id: user.id },
+              },
+
+              content:
+                postContentOption === "contentonly" ||
+                postContentOption === "both"
+                  ? getRandomPostText()
+                  : null,
+              medias:
+                postContentOption === "both" ||
+                postContentOption === "mediasonly"
+                  ? {
+                      createMany: {
+                        data: generatePhoto("user", getRandomPhotoCount()),
+                      },
+                    }
+                  : undefined,
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
+export async function _seedUserSharePost() {
+  return await Promise.all(
+    Array.from({ length: 3 }, () => {
+      return _create_usershare_post();
+    })
+  );
+}
+
+export async function _seedUserPost() {
+  return await Promise.all(
+    Array.from({ length: 3 }, () => {
+      return _create_user_post();
     })
   );
 }
