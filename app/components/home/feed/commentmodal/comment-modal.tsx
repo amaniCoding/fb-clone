@@ -37,8 +37,64 @@ export default function CommentModal() {
       <div className="shadow-2xl  max-w-[650px] mx-auto rounded-xl bg-white my-10 relative ">
         <div className="sticky top-0 left-0 right-0 py-3 px-2">
           <div className="flex items-center justify-between">
-            <p>Amanuel Ferede's post</p>
-            <p> </p>
+            <p></p>
+            {commentsModalData.currentPostData.postType === "oUserPost" && (
+              <p className="text-xl font-bold">
+                {commentsModalData.currentPostData.oUserPost?.user?.firstName}{" "}
+                {commentsModalData.currentPostData.oUserPost?.user?.lastName}'s
+                Post
+              </p>
+            )}
+
+            {commentsModalData.currentPostData.postType === "userSharePost" && (
+              <p className="text-xl font-bold">
+                {
+                  commentsModalData.currentPostData.userSharePost?.user
+                    ?.firstName
+                }{" "}
+                {
+                  commentsModalData.currentPostData.userSharePost?.user
+                    ?.lastName
+                }
+                's Post
+              </p>
+            )}
+            {commentsModalData.currentPostData.postType === "oPagePost" && (
+              <p className="text-xl font-bold">
+                {commentsModalData.currentPostData.oPagePost?.page?.name}'s Post{" "}
+              </p>
+            )}
+
+            {commentsModalData.currentPostData.postType === "pageSharePost" && (
+              <p className="text-xl font-bold">
+                {commentsModalData.currentPostData.pageSharePost?.page?.name}'s
+                Post{" "}
+              </p>
+            )}
+
+            {commentsModalData.currentPostData.postType === "oGroupPost" && (
+              <p className="text-xl font-bold">
+                {commentsModalData.currentPostData.oGroupPost?.user?.firstName}{" "}
+                {commentsModalData.currentPostData.oGroupPost?.user?.lastName}'s
+                Post{" "}
+              </p>
+            )}
+
+            {commentsModalData.currentPostData.postType ===
+              "toGroupSharedPost" && (
+              <p className="text-xl font-bold">
+                {
+                  commentsModalData.currentPostData.toGroupSharedPost?.user
+                    ?.firstName
+                }{" "}
+                {
+                  commentsModalData.currentPostData.toGroupSharedPost?.user
+                    ?.lastName
+                }
+                's Post{" "}
+              </p>
+            )}
+
             <FaXmark
               className="w-10 h-10 p-2 hover:bg-gray-50 bg-gray-100 rounded-full cursor-pointer"
               onClick={closeModal}

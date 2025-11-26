@@ -7,7 +7,6 @@ import {
   dummyReplyReplies,
   reactionTypes,
 } from "../../dummy";
-import { id } from "zod/v4/locales";
 const postContentOption = ["contentonly", "mediasonly", "both"];
 
 const getRandomPost = async (
@@ -276,7 +275,10 @@ export const _add_comment_and_reactions = async () => {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reactionType = getRandomReactionType() as ReactionType;
-      const commentPostOption = getRandomPostContentOption();
+      const commentPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -294,7 +296,10 @@ export const _add_comment_and_reactions = async () => {
                           ? comment
                           : null,
                       mediaUrl:
-                        commentPostOption === "both" ? generatePhoto() : null,
+                        commentPostOption === "both" ||
+                        commentPostOption === "mediasonly"
+                          ? generatePhoto()
+                          : null,
                       user: {
                         connect: {
                           id: user.id,
@@ -323,7 +328,10 @@ export const _add_comment_and_reactions = async () => {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reactionType = getRandomReactionType() as ReactionType;
-      const commentPostOption = getRandomPostContentOption();
+      const commentPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -341,7 +349,10 @@ export const _add_comment_and_reactions = async () => {
                           ? comment
                           : null,
                       mediaUrl:
-                        commentPostOption === "both" ? generatePhoto() : null,
+                        commentPostOption === "both" ||
+                        commentPostOption === "mediasonly"
+                          ? generatePhoto()
+                          : null,
                       user: {
                         connect: {
                           id: user.id,
@@ -370,7 +381,10 @@ export const _add_comment_and_reactions = async () => {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reactionType = getRandomReactionType() as ReactionType;
-      const commentPostOption = getRandomPostContentOption();
+      const commentPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -388,7 +402,10 @@ export const _add_comment_and_reactions = async () => {
                           ? comment
                           : null,
                       mediaUrl:
-                        commentPostOption === "both" ? generatePhoto() : null,
+                        commentPostOption === "both" ||
+                        commentPostOption === "mediasonly"
+                          ? generatePhoto()
+                          : null,
                       user: {
                         connect: {
                           id: user.id,
@@ -417,7 +434,10 @@ export const _add_comment_and_reactions = async () => {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reactionType = getRandomReactionType() as ReactionType;
-      const commentPostOption = getRandomPostContentOption();
+      const commentPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -435,7 +455,10 @@ export const _add_comment_and_reactions = async () => {
                           ? comment
                           : null,
                       mediaUrl:
-                        commentPostOption === "both" ? generatePhoto() : null,
+                        commentPostOption === "both" ||
+                        commentPostOption === "mediasonly"
+                          ? generatePhoto()
+                          : null,
                       user: {
                         connect: {
                           id: user.id,
@@ -464,7 +487,10 @@ export const _add_comment_and_reactions = async () => {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reactionType = getRandomReactionType() as ReactionType;
-      const commentPostOption = getRandomPostContentOption();
+      const commentPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -482,7 +508,10 @@ export const _add_comment_and_reactions = async () => {
                           ? comment
                           : null,
                       mediaUrl:
-                        commentPostOption === "both" ? generatePhoto() : null,
+                        commentPostOption === "both" ||
+                        commentPostOption === "mediasonly"
+                          ? generatePhoto()
+                          : null,
                       user: {
                         connect: {
                           id: user.id,
@@ -511,7 +540,10 @@ export const _add_comment_and_reactions = async () => {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
       const reactionType = getRandomReactionType() as ReactionType;
-      const commentPostOption = getRandomPostContentOption();
+      const commentPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return prisma.feed.update({
         where: {
           id: feed.id,
@@ -529,7 +561,10 @@ export const _add_comment_and_reactions = async () => {
                           ? comment
                           : null,
                       mediaUrl:
-                        commentPostOption === "both" ? generatePhoto() : null,
+                        commentPostOption === "both" ||
+                        commentPostOption === "mediasonly"
+                          ? generatePhoto()
+                          : null,
                       user: {
                         connect: {
                           id: user.id,
@@ -537,6 +572,7 @@ export const _add_comment_and_reactions = async () => {
                       },
                     },
                   },
+
                   reactions: {
                     create: {
                       reactionType: reactionType,
@@ -646,7 +682,10 @@ export const _add_comment_replies_and_reactions = async () => {
       const reply = getRandomCommentReply();
       const reactionType = getRandomReactionType() as ReactionType;
 
-      const replyPostOption = getRandomPostContentOption();
+      const replyPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
 
       return Promise.all(
         feed.userPost.oUserPost.comments.slice(0, 6).map((co) => {
@@ -683,7 +722,8 @@ export const _add_comment_replies_and_reactions = async () => {
                                     ? reply
                                     : null,
                                 mediaUrl:
-                                  replyPostOption === "both"
+                                  replyPostOption === "both" ||
+                                  replyPostOption === "mediasonly"
                                     ? generatePhoto()
                                     : null,
                                 user: {
@@ -710,8 +750,10 @@ export const _add_comment_replies_and_reactions = async () => {
       const reply = getRandomCommentReply();
       const reactionType = getRandomReactionType() as ReactionType;
 
-      const replyPostOption = getRandomPostContentOption();
-
+      const replyPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return Promise.all(
         feed.userPost.userSharePost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
@@ -747,7 +789,8 @@ export const _add_comment_replies_and_reactions = async () => {
                                     ? reply
                                     : null,
                                 mediaUrl:
-                                  replyPostOption === "both"
+                                  replyPostOption === "both" ||
+                                  replyPostOption === "mediasonly"
                                     ? generatePhoto()
                                     : null,
                                 user: {
@@ -774,8 +817,10 @@ export const _add_comment_replies_and_reactions = async () => {
       const reply = getRandomCommentReply();
       const reactionType = getRandomReactionType() as ReactionType;
 
-      const replyPostOption = getRandomPostContentOption();
-
+      const replyPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return Promise.all(
         feed.pagePost.oPagePost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
@@ -811,7 +856,8 @@ export const _add_comment_replies_and_reactions = async () => {
                                     ? reply
                                     : null,
                                 mediaUrl:
-                                  replyPostOption === "both"
+                                  replyPostOption === "both" ||
+                                  replyPostOption === "mediasonly"
                                     ? generatePhoto()
                                     : null,
                                 user: {
@@ -838,8 +884,10 @@ export const _add_comment_replies_and_reactions = async () => {
       const reply = getRandomCommentReply();
       const reactionType = getRandomReactionType() as ReactionType;
 
-      const replyPostOption = getRandomPostContentOption();
-
+      const replyPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return Promise.all(
         feed.pagePost.pageSharePost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
@@ -875,7 +923,8 @@ export const _add_comment_replies_and_reactions = async () => {
                                     ? reply
                                     : null,
                                 mediaUrl:
-                                  replyPostOption === "both"
+                                  replyPostOption === "both" ||
+                                  replyPostOption === "mediasonly"
                                     ? generatePhoto()
                                     : null,
                                 user: {
@@ -902,8 +951,10 @@ export const _add_comment_replies_and_reactions = async () => {
       const reply = getRandomCommentReply();
       const reactionType = getRandomReactionType() as ReactionType;
 
-      const replyPostOption = getRandomPostContentOption();
-
+      const replyPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return Promise.all(
         feed.groupPost.oGroupPost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
@@ -939,7 +990,8 @@ export const _add_comment_replies_and_reactions = async () => {
                                     ? reply
                                     : null,
                                 mediaUrl:
-                                  replyPostOption === "both"
+                                  replyPostOption === "both" ||
+                                  replyPostOption === "mediasonly"
                                     ? generatePhoto()
                                     : null,
                                 user: {
@@ -967,8 +1019,10 @@ export const _add_comment_replies_and_reactions = async () => {
       const reply = getRandomCommentReply();
       const reactionType = getRandomReactionType() as ReactionType;
 
-      const replyPostOption = getRandomPostContentOption();
-
+      const replyPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return Promise.all(
         feed.groupPost.toGroupSharedPost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
@@ -1004,7 +1058,8 @@ export const _add_comment_replies_and_reactions = async () => {
                                     ? reply
                                     : null,
                                 mediaUrl:
-                                  replyPostOption === "both"
+                                  replyPostOption === "both" ||
+                                  replyPostOption === "mediasonly"
                                     ? generatePhoto()
                                     : null,
                                 user: {

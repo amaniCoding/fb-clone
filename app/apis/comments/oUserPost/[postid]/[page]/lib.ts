@@ -1,5 +1,3 @@
-import { ReplyType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
-import { GReaction, Reactor } from "@/app/apis/types";
 import prisma from "@/app/libs/prisma";
 const commentPreparer = {
   prepareGReactions: async (commentId: string) => {
@@ -10,7 +8,7 @@ const commentPreparer = {
           reactionType: true,
         },
         where: {
-          id: commentId,
+          commentId: commentId,
         },
       });
 
@@ -54,6 +52,7 @@ export const getComments = async (
         select: {
           id: true,
           content: true,
+          mediaUrl: true,
           createdAt: true,
           user: {
             select: {
