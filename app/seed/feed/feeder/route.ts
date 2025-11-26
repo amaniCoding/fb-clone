@@ -5,13 +5,13 @@ export async function GET() {
     /**
      * first seed
      */
-    await _seedFeeds();
+    //await _seedFeeds();
     /**
      * second seed
      */
     //await _seedUserSharePost();
     /** last seed */
-    // await _seedUserPost();
+    //await _seedUserPost();
     return Response.json({ message: "Database seeded successfully" });
   } catch (error) {
     console.log(error);

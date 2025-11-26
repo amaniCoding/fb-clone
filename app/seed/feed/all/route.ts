@@ -14,11 +14,11 @@ export async function GET() {
     /**
      * first seed
      */
-    await _add_comment_and_reactions();
+    //await _add_comment_and_reactions();
     /**
      * second seed
      */
-    //wait _add_comment_replies_and_reactions();
+    await _add_comment_replies_and_reactions();
     /**
      * third seed
      */
