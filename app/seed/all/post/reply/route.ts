@@ -1,13 +1,4 @@
-import {
-  _add_comment_and_reactions,
-  _add_comment_replies_and_reactions,
-  _add_media_comment_and_reactions,
-  _add_media_comment_replies_and_reactions,
-  _add_media_replyreplies_and_reactions,
-  _add_media_replyReply_reactions,
-  _add_reply_replies_and_reactions,
-  _add_replyreply_reactions,
-} from "./lib";
+import { _add_reply_replies_and_reactions } from "../../lib";
 
 export async function GET() {
   try {
