@@ -637,6 +637,7 @@ export const _add_comment_replies_and_reactions = async () => {
     orderBy: {
       createdAt: "desc",
     },
+    take: 5,
   });
   const UPDATE = feeds.map(async (feed) => {
     if (feed.userPost && feed.userPost.oUserPost) {
@@ -647,7 +648,7 @@ export const _add_comment_replies_and_reactions = async () => {
       const replyPostOption = getRandomPostContentOption();
 
       return Promise.all(
-        feed.userPost.oUserPost.comments.map((co) => {
+        feed.userPost.oUserPost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
             where: {
               id: feed.id,
@@ -711,7 +712,7 @@ export const _add_comment_replies_and_reactions = async () => {
       const replyPostOption = getRandomPostContentOption();
 
       return Promise.all(
-        feed.userPost.userSharePost.comments.map((co) => {
+        feed.userPost.userSharePost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
             where: {
               id: feed.id,
@@ -775,7 +776,7 @@ export const _add_comment_replies_and_reactions = async () => {
       const replyPostOption = getRandomPostContentOption();
 
       return Promise.all(
-        feed.pagePost.oPagePost.comments.map((co) => {
+        feed.pagePost.oPagePost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
             where: {
               id: feed.id,
@@ -839,7 +840,7 @@ export const _add_comment_replies_and_reactions = async () => {
       const replyPostOption = getRandomPostContentOption();
 
       return Promise.all(
-        feed.pagePost.pageSharePost.comments.map((co) => {
+        feed.pagePost.pageSharePost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
             where: {
               id: feed.id,
@@ -903,7 +904,7 @@ export const _add_comment_replies_and_reactions = async () => {
       const replyPostOption = getRandomPostContentOption();
 
       return Promise.all(
-        feed.groupPost.oGroupPost.comments.map((co) => {
+        feed.groupPost.oGroupPost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
             where: {
               id: feed.id,
@@ -968,7 +969,7 @@ export const _add_comment_replies_and_reactions = async () => {
       const replyPostOption = getRandomPostContentOption();
 
       return Promise.all(
-        feed.groupPost.toGroupSharedPost.comments.map((co) => {
+        feed.groupPost.toGroupSharedPost.comments.slice(0, 6).map((co) => {
           return prisma.feed.update({
             where: {
               id: feed.id,
