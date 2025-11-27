@@ -10,7 +10,7 @@ const commentPreparer = {
           reactionType: true,
         },
         where: {
-          id: commentId,
+          commentId: commentId,
         },
       });
 
@@ -54,6 +54,7 @@ export const getComments = async (
         select: {
           id: true,
           content: true,
+          mediaUrl: true,
           createdAt: true,
           user: {
             select: {
@@ -64,6 +65,52 @@ export const getComments = async (
                   profilePicture: true,
                 },
               },
+            },
+          },
+          reactions: {
+            select: {
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  Profile: {
+                    select: {
+                      profilePicture: true,
+                    },
+                  },
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+            take: 1,
+          },
+          // first commentors
+          replies: {
+            select: {
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  Profile: {
+                    select: {
+                      profilePicture: true,
+                    },
+                  },
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+            take: 1,
+          },
+          // counts
+          _count: {
+            select: {
+              replies: true,
+              reactions: true,
             },
           },
         },

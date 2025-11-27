@@ -4,13 +4,13 @@ import prisma from "@/app/libs/prisma";
 const commentPreparer = {
   prepareGReactions: async (commentId: string) => {
     try {
-      const r = await prisma.commentReaction.groupBy({
+      const r = await prisma.mediaCommentReaction.groupBy({
         by: ["reactionType"],
         _count: {
           reactionType: true,
         },
         where: {
-          id: commentId,
+          commentId: commentId,
         },
       });
 
@@ -70,6 +70,7 @@ export const getComments = async (
               id: true,
               content: true,
               createdAt: true,
+              mediaUrl: true,
               user: {
                 select: {
                   firstName: true,
@@ -79,6 +80,52 @@ export const getComments = async (
                       profilePicture: true,
                     },
                   },
+                },
+              },
+              reactions: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // first commentors
+              replies: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // counts
+              _count: {
+                select: {
+                  replies: true,
+                  reactions: true,
                 },
               },
             },
@@ -98,22 +145,6 @@ export const getComments = async (
 
       postType: "oUserPost",
       _gReactions: await commentPreparer.prepareGReactions(comment.id),
-      _reactions: {
-        header: {
-          loading: false,
-          currentReactionType: undefined,
-          gReactions: [] as GReaction[],
-          error: "",
-        },
-        body: [] as Reactor[],
-      },
-      replies: {
-        loading: false,
-        page: 1,
-        totalPages: 0,
-        totalRows: 0,
-        replies: [] as ReplyType,
-      },
     };
   });
   // reuslt can be undefined

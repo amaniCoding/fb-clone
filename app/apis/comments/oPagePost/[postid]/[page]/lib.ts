@@ -10,7 +10,7 @@ const commentPreparer = {
           reactionType: true,
         },
         where: {
-          id: commentId,
+          commentId: commentId,
         },
       });
 
@@ -54,6 +54,7 @@ export const getComments = async (
         select: {
           id: true,
           content: true,
+          mediaUrl: true,
           createdAt: true,
           user: {
             select: {

@@ -3,13 +3,13 @@ import prisma from "@/app/libs/prisma";
 const commentPreparer = {
   prepareGReactions: async (commentId: string) => {
     try {
-      const r = await prisma.commentReaction.groupBy({
+      const r = await prisma.mediaCommentReaction.groupBy({
         by: ["reactionType"],
         _count: {
           reactionType: true,
         },
         where: {
-          id: commentId,
+          commentId: commentId,
         },
       });
 
@@ -69,6 +69,7 @@ export const getComments = async (
               id: true,
               content: true,
               createdAt: true,
+              mediaUrl: true,
               user: {
                 select: {
                   firstName: true,
@@ -78,6 +79,52 @@ export const getComments = async (
                       profilePicture: true,
                     },
                   },
+                },
+              },
+              reactions: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // first commentors
+              replies: {
+                select: {
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      Profile: {
+                        select: {
+                          profilePicture: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                orderBy: {
+                  createdAt: "desc",
+                },
+                take: 1,
+              },
+              // counts
+              _count: {
+                select: {
+                  replies: true,
+                  reactions: true,
                 },
               },
             },
