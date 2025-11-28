@@ -1,13 +1,13 @@
 "use client";
 
-import { useCommentsPostType } from "@/app/hooks/commentsModal/comments";
+import { usePostsPostType } from "@/app/hooks/commentsModal/post";
 import { FaXmark } from "react-icons/fa6";
 
 export default function Header({
   post,
   onClose,
 }: {
-  post: useCommentsPostType;
+  post: usePostsPostType;
   onClose: () => void;
 }) {
   const renderPoster = () => {

@@ -69,11 +69,13 @@ type ReplyRepliesShownType = {
 type ShowModalPayLoadType = {
   isOpen: boolean;
   currentParentRefId?: string;
-  starterUrl?: string;
+  commentstarterUrl?: string;
+  postStarterUrl?: string;
   loading?: boolean;
+  postType?: PostType;
 };
 
-type FetchingPostSucceedType = {
+export type FetchingPostSucceedType = {
   postType: PostType;
   oUserPost?: OUserPost;
   userSharePost?: UserSharePost;
@@ -88,6 +90,8 @@ interface CommentModalState {
   currentParentRefId?: string;
   currentPostRef?: {
     refId?: string;
+    starterUrl?: string;
+    postType?: PostType;
     postsShown?: PostsShownType[];
   };
   currentCommentRef?: {
@@ -120,11 +124,13 @@ export const commentModalSlice = createSlice({
       state.isOpen = action.payload.isOpen;
       state.currentParentRefId = action.payload.currentParentRefId;
       state.currentCommentRef = {
-        starterUrl: action.payload.starterUrl,
+        starterUrl: action.payload.commentstarterUrl,
       };
       state.currentPostRef = {
         refId: action.payload.currentParentRefId,
         postsShown: [],
+        postType: action.payload.postType,
+        starterUrl: action.payload.postStarterUrl,
       };
 
       const isShown = state.currentPostRef.postsShown!.find((ps) => {
@@ -137,47 +143,54 @@ export const commentModalSlice = createSlice({
       }
     },
 
+    fetchingPost: (state, action: PayloadAction<boolean>) => {
+      const isShown = state.currentPostRef!.postsShown!.find((ps) => {
+        return ps.refId === state.currentParentRefId;
+      });
+      isShown!.loading = action.payload;
+    },
+
     fetchingPostSucceed: (
       state,
-      action: PayloadAction<FetchingPostSucceedType>
+      action: PayloadAction<FetchingPostSucceedType | undefined>
     ) => {
       const isShown = state.currentPostRef!.postsShown!.find((ps) => {
         return ps.refId === state.currentParentRefId;
       });
-      isShown!.postType = action.payload.postType;
-      if (action.payload.postType === "oUserPost") {
+      isShown!.postType = action.payload!.postType;
+      if (action.payload!.postType === "oUserPost") {
         isShown!.post = {
-          oUserPost: action.payload.oUserPost,
+          oUserPost: action.payload!.oUserPost,
         };
         return;
       }
-      if (action.payload.postType === "userSharePost") {
+      if (action.payload!.postType === "userSharePost") {
         isShown!.post = {
-          userSharePost: action.payload.userSharePost,
+          userSharePost: action.payload!.userSharePost,
         };
         return;
       }
-      if (action.payload.postType === "oPagePost") {
+      if (action.payload!.postType === "oPagePost") {
         isShown!.post = {
-          oPagePost: action.payload.oPagePost,
+          oPagePost: action.payload!.oPagePost,
         };
         return;
       }
-      if (action.payload.postType === "pageSharePost") {
+      if (action.payload!.postType === "pageSharePost") {
         isShown!.post = {
-          pageSharePost: action.payload.pageSharePost,
+          pageSharePost: action.payload!.pageSharePost,
         };
         return;
       }
-      if (action.payload.postType === "oGroupPost") {
+      if (action.payload!.postType === "oGroupPost") {
         isShown!.post = {
-          oGroupPost: action.payload.oGroupPost,
+          oGroupPost: action.payload!.oGroupPost,
         };
         return;
       }
-      if (action.payload.postType === "toGroupSharedPost") {
+      if (action.payload!.postType === "toGroupSharedPost") {
         isShown!.post = {
-          toGroupSharedPost: action.payload.toGroupSharedPost,
+          toGroupSharedPost: action.payload!.toGroupSharedPost,
         };
         return;
       }
@@ -387,6 +400,9 @@ export const {
   replyRepliesFetched,
   fetchingReplyRepliesFailed,
   updatePageForReplyReplies,
+  fetchingPost,
+  fetchingPostSucceed,
+  fetchingPostFaild,
 } = commentModalSlice.actions;
 
 export default commentModalSlice.reducer;

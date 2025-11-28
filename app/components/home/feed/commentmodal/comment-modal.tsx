@@ -17,11 +17,12 @@ import Lower from "./Lower";
 import { FaXmark } from "react-icons/fa6";
 import Header from "./header";
 import CommentsSkeleton from "@/app/components/skeletons/comment";
+import { useFetchPost } from "@/app/hooks/commentsModal/post";
 
 export default function CommentModal() {
   const { data, status } = useSession();
   const dispatch = useAppDispatch();
-  const { post } = useFetchComments();
+  const fetch = useFetchPost();
   const closeModal = () => {
     dispatch(
       showCommentModal({
@@ -31,43 +32,47 @@ export default function CommentModal() {
   };
 
   const renderAppropriatePost = () => {
-    if (post.type === "oUserPost") {
-      return <OUser_Post refFrom="modal" post={post.currentPost?.oUserPost!} />;
+    if (fetch.type === "oUserPost") {
+      return (
+        <OUser_Post refFrom="modal" post={fetch.currentPost?.oUserPost!} />
+      );
     }
 
-    if (post.type === "userSharePost") {
+    if (fetch.type === "userSharePost") {
       return (
         <UserShare_Post
           refFrom="modal"
-          post={post.currentPost?.userSharePost!}
+          post={fetch.currentPost?.userSharePost!}
         />
       );
     }
 
-    if (post.type === "oPagePost") {
-      return <OPage_Post refFrom="modal" post={post.currentPost?.oPagePost!} />;
+    if (fetch.type === "oPagePost") {
+      return (
+        <OPage_Post refFrom="modal" post={fetch.currentPost?.oPagePost!} />
+      );
     }
 
-    if (post.type === "pageSharePost") {
+    if (fetch.type === "pageSharePost") {
       return (
         <PageShare_Post
           refFrom="modal"
-          post={post.currentPost?.pageSharePost!}
+          post={fetch.currentPost?.pageSharePost!}
         />
       );
     }
 
-    if (post.type === "oGroupPost") {
+    if (fetch.type === "oGroupPost") {
       return (
-        <OGroup_Post refFrom="modal" post={post.currentPost?.oGroupPost!} />
+        <OGroup_Post refFrom="modal" post={fetch.currentPost?.oGroupPost!} />
       );
     }
 
-    if (post.type === "toGroupSharedPost") {
+    if (fetch.type === "toGroupSharedPost") {
       return (
         <ToGroupShare_Post
           refFrom="modal"
-          post={post.currentPost?.toGroupSharedPost!}
+          post={fetch.currentPost?.toGroupSharedPost!}
         />
       );
     }
@@ -80,16 +85,16 @@ export default function CommentModal() {
   return (
     <div className="bg-gray-100/75 fixed top-0 bottom-0 left-0 right-0 z-[300] overflow-hidden">
       <div className="shadow-2xl  max-w-[650px] mx-auto rounded-xl bg-white my-10 relative ">
-        {post.loading || post.error.hasError ? (
+        {fetch.loading || fetch.error.hasError ? (
           <CommentsSkeleton />
         ) : (
           <>
             <div className="sticky top-0 left-0 right-0 py-3 px-2">
-              <Header post={post} onClose={closeModal} />
+              <Header post={fetch} onClose={closeModal} />
             </div>
             <div className="max-h-[30rem] overflow-y-auto">
               {renderAppropriatePost()}
-              <Comments />
+              <Comments isFetchingPost={fetch.loading} />
               <p className="my-2"></p>
               <AddComment loggedInUser={data?.user} />
             </div>

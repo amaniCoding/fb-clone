@@ -20,12 +20,11 @@ export default function Lower({ refFrom, post }: TypeProps) {
     dispatch(
       showCommentModal({
         isOpen: true,
-        id: `${post.feedId}${post.postId}`,
-        starterUrl: `/comments/${post.postType}/${post.postId}`,
-        currentPost: {
-          postType: "oUserPost",
-          userSharePost: post,
-        },
+        currentParentRefId: `${post.feedId}${post.postId}`,
+        commentstarterUrl: `/apis/comments/${post.postType}/${post.postId}`,
+        postStarterUrl: `/apis/${post.postType}/${post.postId}`,
+        loading: true,
+        postType: post.postType,
       })
     );
   };

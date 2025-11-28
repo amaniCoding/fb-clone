@@ -6,16 +6,17 @@ import { useCommentsLastNodeRef } from "@/app/hooks/commentsModal/lastnoderef/co
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Comments() {
+export default function Comments({
+  isFetchingPost,
+}: {
+  isFetchingPost: boolean | undefined;
+}) {
   const {
-    post,
-    comment: {
-      loading,
-      comments,
-      error: { error, hasError },
-      page,
-      totalPages,
-    },
+    loading,
+    comments,
+    error: { error, hasError },
+    page,
+    totalPages,
   } = useFetchComments();
   const hasMore = page! <= totalPages!;
   const lastCommentElementRef = useCommentsLastNodeRef(
@@ -108,7 +109,7 @@ export default function Comments() {
             </div>
           );
         })}
-        {loading! && !post.loading! && <CommentsSkeleton />}
+        {loading! && !isFetchingPost! && <CommentsSkeleton />}
         {hasError && <p>{error}</p>}
       </div>
     </div>

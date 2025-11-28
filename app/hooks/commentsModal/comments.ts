@@ -74,30 +74,18 @@ export const useFetchComments = () => {
   const totalRows = currentCommentShown!.totalRows;
 
   return {
-    post: {
-      loading: currentPostShown!.loading,
-      error: {
-        hasError: currentPostShown!.hasError,
-        error: currentPostShown!.error,
-      },
-
-      type: currentPostShown!.postType,
-      currentPost: currentPostShown!.post,
+    loading,
+    page,
+    error: {
+      hasError: hasError,
+      error: error,
     },
-    comment: {
-      loading,
-      page,
-      error: {
-        hasError: hasError,
-        error: error,
-      },
-      comments,
-      totalPages,
-      totalRows,
-    },
+    comments,
+    totalPages,
+    totalRows,
   };
 };
 
-const { post } = useFetchComments();
+const fetch = useFetchComments();
 
-export type useCommentsPostType = typeof post;
+export type useCommentsCommentType = typeof fetch;
