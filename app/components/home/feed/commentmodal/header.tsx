@@ -1,6 +1,6 @@
 "use client";
 
-import { usePostsPostType } from "@/app/hooks/commentsModal/post";
+import { usePostsPostType } from "@/app/hooks/commentsModal/usefetchpost";
 import { FaXmark } from "react-icons/fa6";
 
 export default function Header({

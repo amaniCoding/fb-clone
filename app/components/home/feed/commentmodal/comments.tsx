@@ -1,7 +1,7 @@
 "use client";
 import CommentsSkeleton from "@/app/components/skeletons/comment";
-import { useFetchComments } from "@/app/hooks/commentsModal/comments";
-import { useCommentsLastNodeRef } from "@/app/hooks/commentsModal/lastnoderef/comments";
+import { useFetchComments } from "@/app/hooks/commentsModal/usefetchcomments";
+import { useCommentsLastNodeRef } from "@/app/hooks/commentsModal/uselastnoderef";
 
 import Image from "next/image";
 import Link from "next/link";

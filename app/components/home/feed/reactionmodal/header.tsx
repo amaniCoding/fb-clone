@@ -1,9 +1,9 @@
 "use client";
 
 import Header from "@/app/components/skeletons/reactionsModal/header";
-import { useFetchHeaderGreactions } from "@/app/store/slices/modal/reaction/hooks/header";
 import Greactions from "./greactions";
 import { FaXmark } from "react-icons/fa6";
+import { useFetchHeaderGreactions } from "@/app/hooks/reactionModal/usefetchgreactions";
 
 export default function ModalHeader({ onClose }: { onClose: () => void }) {
   const { loading, gReactions, error } = useFetchHeaderGreactions();

@@ -1,12 +1,13 @@
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { useEffect } from "react";
-import {
-  fetchGReactionsFailed,
-  fetchGReactionsSsucceed,
-  fetchingGReactions,
-  GReactionsResponseType,
-} from "../reaction";
+
 import axios from "axios";
+import {
+  fetchingGReactions,
+  fetchGReactionsSsucceed,
+  GReactionsResponseType,
+  fetchGReactionsFailed,
+} from "@/app/store/slices/modal/reaction/reaction";
 
 export const useFetchReactors = () => {
   const refId = useAppSelector((state) => state.reactionModal.refId);
@@ -34,7 +35,7 @@ export const useFetchReactors = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    const getFeeds = async () => {
+    const getReactors = async () => {
       try {
         dispatch(fetchingGReactions(true));
         const response = await axios.get(fullUrl, {
@@ -53,7 +54,7 @@ export const useFetchReactors = () => {
     };
 
     if (isOnline) {
-      getFeeds();
+      getReactors();
     }
     return () => {
       controller.abort();

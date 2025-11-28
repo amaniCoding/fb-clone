@@ -2,7 +2,7 @@
 
 import Body from "@/app/components/skeletons/reactionsModal/body";
 import Reactors from "./reactors";
-import { useFetchReactors } from "@/app/store/slices/modal/reaction/hooks/body";
+import { useFetchReactors } from "@/app/hooks/reactionModal/usefetchreactors";
 
 export default function ModalBody() {
   const { loading, reactors, error } = useFetchReactors();

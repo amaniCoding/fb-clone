@@ -6,18 +6,15 @@ import { useSession } from "next-auth/react";
 
 import { useAppDispatch } from "@/app/store/hooks";
 import { showCommentModal } from "@/app/store/slices/modal/comment";
-import { useFetchComments } from "@/app/hooks/commentsModal/comments";
 import OUser_Post from "../post/userpost/original/post";
 import UserShare_Post from "../post/userpost/share/post";
 import OPage_Post from "../post/pagepost/original/post";
 import PageShare_Post from "../post/pagepost/share/post";
 import ToGroupShare_Post from "../post/grouppost/share/post";
 import OGroup_Post from "../post/grouppost/original/post";
-import Lower from "./Lower";
-import { FaXmark } from "react-icons/fa6";
 import Header from "./header";
 import CommentsSkeleton from "@/app/components/skeletons/comment";
-import { useFetchPost } from "@/app/hooks/commentsModal/post";
+import { useFetchPost } from "@/app/hooks/commentsModal/usefetchpost";
 
 export default function CommentModal() {
   const { data, status } = useSession();

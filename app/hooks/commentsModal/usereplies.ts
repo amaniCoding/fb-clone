@@ -2,18 +2,16 @@ import { useAppSelector } from "../../store/hooks";
 
 const useReplies = (commentId: string) => {
   // when i request reply the reference will not be changed
-  const refId = useAppSelector((state) => state.commentModal.id);
-
-  const commentsShown = useAppSelector(
-    (state) => state.commentModal.commentsShown
+  const refId = useAppSelector(
+    (state) => state.commentModal.currentReplyRef?.refId
   );
 
-  const currentRef = commentsShown.find((cs) => {
-    return cs.id === refId;
-  });
+  const repliesShown = useAppSelector(
+    (state) => state.commentModal.currentReplyRef!.repliesShown
+  );
 
-  const currentReplyRef = currentRef?.replies?.find((rep) => {
-    return rep.commentid === commentId;
+  const currentReplyRef = repliesShown!.find((cs) => {
+    return cs.refId === refId;
   });
 
   const loading = currentReplyRef?.loading;

@@ -1,4 +1,5 @@
 import { ReactionType } from "@/app/generated/prisma";
+import { useLastReactorNodeRef } from "@/app/hooks/reactionModal/uselastnoderef";
 import Image from "next/image";
 export default function Reactors({
   reactors,
@@ -19,12 +20,16 @@ export default function Reactors({
       }[]
     | undefined;
 }) {
+  const lastNodeRef = useLastReactorNodeRef();
   return (
     <div className="flex items-center space-x-2">
-      <div className="w-10 h-10 rounded-full relative">
-        {reactors!.map((r) => {
+      <div className="w-7 h-7 rounded-full relative">
+        {reactors!.map((r, index) => {
           return r.user.Profile?.profilePicture ? (
-            <>
+            <div
+              key={index}
+              ref={reactors?.length === index + 1 ? lastNodeRef : null}
+            >
               <Image
                 unoptimized
                 alt="Amanuel Ferede"
@@ -41,9 +46,9 @@ export default function Reactors({
                 width={0}
                 height={0}
                 sizes="100vh"
-                className="w-full h-full object-cover absolute bottom-1 right-1"
+                className="w-1.5 h-1.5 object-cover absolute bottom-1 right-1"
               />
-            </>
+            </div>
           ) : null;
         })}
 
