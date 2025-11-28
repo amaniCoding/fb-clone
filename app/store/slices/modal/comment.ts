@@ -126,13 +126,14 @@ export const commentModalSlice = createSlice({
       state.currentCommentRef = {
         starterUrl: action.payload.commentstarterUrl,
       };
-      state.currentPostRef = {
-        refId: action.payload.currentParentRefId,
-        postsShown: [],
-        postType: action.payload.postType,
-        starterUrl: action.payload.postStarterUrl,
-      };
-
+      if (!state.currentPostRef) {
+        state.currentPostRef = {
+          refId: action.payload.currentParentRefId,
+          postsShown: [],
+          postType: action.payload.postType,
+          starterUrl: action.payload.postStarterUrl,
+        };
+      }
       const isShown = state.currentPostRef.postsShown!.find((ps) => {
         return ps.refId === action.payload.currentParentRefId;
       });
@@ -214,10 +215,12 @@ export const commentModalSlice = createSlice({
         return cs.refId === state.currentParentRefId;
       });
       // currentCommentRef is defiend now
-      state.currentCommentRef = {
-        refId: state.currentParentRefId,
-        commentsShown: [],
-      };
+      if (!state.currentCommentRef) {
+        state.currentCommentRef = {
+          refId: state.currentParentRefId,
+          commentsShown: [],
+        };
+      }
       if (!isShown) {
         state.currentCommentRef!.commentsShown!.push({
           refId: state.currentParentRefId,
@@ -271,10 +274,12 @@ export const commentModalSlice = createSlice({
       const newRefId = `${state.currentCommentRef!.refId}${
         action.payload.commentId
       }`;
-      state.currentReplyRef = {
-        refId: newRefId,
-        repliesShown: [],
-      };
+      if (!state.currentReplyRef) {
+        state.currentReplyRef = {
+          refId: newRefId,
+          repliesShown: [],
+        };
+      }
       const isShown = state.currentReplyRef!.repliesShown!.find((rs) => {
         return rs.refId === newRefId;
       });
@@ -329,10 +334,12 @@ export const commentModalSlice = createSlice({
       const newRefId = `${state.currentReplyRef!.refId}${
         action.payload.replyId
       }`;
-      state.currentReplyReplyRef = {
-        refId: newRefId,
-        replyRepliesShown: [],
-      };
+      if (!state.currentReplyReplyRef) {
+        state.currentReplyReplyRef = {
+          refId: newRefId,
+          replyRepliesShown: [],
+        };
+      }
       const isShown = state.currentReplyReplyRef!.replyRepliesShown!.find(
         (rrs) => {
           return rrs.refId === newRefId;
