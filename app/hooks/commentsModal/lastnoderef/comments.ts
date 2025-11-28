@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import { useAppDispatch } from "@/app/store/hooks";
-import { updateCommentsPage } from "@/app/store/slices/modal/comment";
+import { updatePageForComments } from "@/app/store/slices/modal/comment";
 
 export const useCommentsLastNodeRef = (
   hasMore: boolean,
@@ -18,7 +18,7 @@ export const useCommentsLastNodeRef = (
         if (entries[0].isIntersecting) {
           const newPage = page + 1;
           console.log(newPage);
-          dispatch(updateCommentsPage(newPage));
+          dispatch(updatePageForComments(newPage));
         }
       });
 

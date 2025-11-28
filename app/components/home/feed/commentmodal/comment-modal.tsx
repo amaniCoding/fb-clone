@@ -15,17 +15,62 @@ import ToGroupShare_Post from "../post/grouppost/share/post";
 import OGroup_Post from "../post/grouppost/original/post";
 import Lower from "./Lower";
 import { FaXmark } from "react-icons/fa6";
+import Header from "./header";
+import CommentsSkeleton from "@/app/components/skeletons/comment";
 
 export default function CommentModal() {
   const { data, status } = useSession();
   const dispatch = useAppDispatch();
-  const commentsModalData = useFetchComments();
+  const { post } = useFetchComments();
   const closeModal = () => {
     dispatch(
       showCommentModal({
         isOpen: false,
       })
     );
+  };
+
+  const renderAppropriatePost = () => {
+    if (post.type === "oUserPost") {
+      return <OUser_Post refFrom="modal" post={post.currentPost?.oUserPost!} />;
+    }
+
+    if (post.type === "userSharePost") {
+      return (
+        <UserShare_Post
+          refFrom="modal"
+          post={post.currentPost?.userSharePost!}
+        />
+      );
+    }
+
+    if (post.type === "oPagePost") {
+      return <OPage_Post refFrom="modal" post={post.currentPost?.oPagePost!} />;
+    }
+
+    if (post.type === "pageSharePost") {
+      return (
+        <PageShare_Post
+          refFrom="modal"
+          post={post.currentPost?.pageSharePost!}
+        />
+      );
+    }
+
+    if (post.type === "oGroupPost") {
+      return (
+        <OGroup_Post refFrom="modal" post={post.currentPost?.oGroupPost!} />
+      );
+    }
+
+    if (post.type === "toGroupSharedPost") {
+      return (
+        <ToGroupShare_Post
+          refFrom="modal"
+          post={post.currentPost?.toGroupSharedPost!}
+        />
+      );
+    }
   };
 
   if (status === "loading") {
@@ -35,118 +80,21 @@ export default function CommentModal() {
   return (
     <div className="bg-gray-100/75 fixed top-0 bottom-0 left-0 right-0 z-[300] overflow-hidden">
       <div className="shadow-2xl  max-w-[650px] mx-auto rounded-xl bg-white my-10 relative ">
-        <div className="sticky top-0 left-0 right-0 py-3 px-2">
-          <div className="flex items-center justify-between">
-            <p></p>
-            {commentsModalData.currentPostData.postType === "oUserPost" && (
-              <p className="text-xl font-bold">
-                {commentsModalData.currentPostData.oUserPost?.user?.firstName}{" "}
-                {commentsModalData.currentPostData.oUserPost?.user?.lastName}'s
-                Post
-              </p>
-            )}
-
-            {commentsModalData.currentPostData.postType === "userSharePost" && (
-              <p className="text-xl font-bold">
-                {
-                  commentsModalData.currentPostData.userSharePost?.user
-                    ?.firstName
-                }{" "}
-                {
-                  commentsModalData.currentPostData.userSharePost?.user
-                    ?.lastName
-                }
-                's Post
-              </p>
-            )}
-            {commentsModalData.currentPostData.postType === "oPagePost" && (
-              <p className="text-xl font-bold">
-                {commentsModalData.currentPostData.oPagePost?.page?.name}'s Post{" "}
-              </p>
-            )}
-
-            {commentsModalData.currentPostData.postType === "pageSharePost" && (
-              <p className="text-xl font-bold">
-                {commentsModalData.currentPostData.pageSharePost?.page?.name}'s
-                Post{" "}
-              </p>
-            )}
-
-            {commentsModalData.currentPostData.postType === "oGroupPost" && (
-              <p className="text-xl font-bold">
-                {commentsModalData.currentPostData.oGroupPost?.user?.firstName}{" "}
-                {commentsModalData.currentPostData.oGroupPost?.user?.lastName}'s
-                Post{" "}
-              </p>
-            )}
-
-            {commentsModalData.currentPostData.postType ===
-              "toGroupSharedPost" && (
-              <p className="text-xl font-bold">
-                {
-                  commentsModalData.currentPostData.toGroupSharedPost?.user
-                    ?.firstName
-                }{" "}
-                {
-                  commentsModalData.currentPostData.toGroupSharedPost?.user
-                    ?.lastName
-                }
-                's Post{" "}
-              </p>
-            )}
-
-            <FaXmark
-              className="w-10 h-10 p-2 hover:bg-gray-50 bg-gray-100 rounded-full cursor-pointer"
-              onClick={closeModal}
-            />
-          </div>
-        </div>
-        <div className="max-h-[30rem] overflow-y-auto">
-          {commentsModalData.currentPostData.postType === "oUserPost" && (
-            <OUser_Post
-              refFrom="modal"
-              post={commentsModalData.currentPostData.oUserPost!}
-            />
-          )}
-
-          {commentsModalData.currentPostData.postType === "userSharePost" && (
-            <UserShare_Post
-              refFrom="modal"
-              post={commentsModalData.currentPostData.userSharePost!}
-            />
-          )}
-          {commentsModalData.currentPostData.postType === "oPagePost" && (
-            <OPage_Post
-              refFrom="modal"
-              post={commentsModalData.currentPostData.oPagePost!}
-            />
-          )}
-
-          {commentsModalData.currentPostData.postType === "pageSharePost" && (
-            <PageShare_Post
-              refFrom="modal"
-              post={commentsModalData.currentPostData.pageSharePost!}
-            />
-          )}
-
-          {commentsModalData.currentPostData.postType === "oGroupPost" && (
-            <OGroup_Post
-              refFrom="modal"
-              post={commentsModalData.currentPostData.oGroupPost!}
-            />
-          )}
-          {commentsModalData.currentPostData.postType ===
-            "toGroupSharedPost" && (
-            <ToGroupShare_Post
-              refFrom="modal"
-              post={commentsModalData.currentPostData.toGroupSharedPost!}
-            />
-          )}
-
-          <Comments />
-          <p className="my-2"></p>
-          <AddComment loggedInUser={data?.user} />
-        </div>
+        {post.loading || post.error.hasError ? (
+          <CommentsSkeleton />
+        ) : (
+          <>
+            <div className="sticky top-0 left-0 right-0 py-3 px-2">
+              <Header post={post} onClose={closeModal} />
+            </div>
+            <div className="max-h-[30rem] overflow-y-auto">
+              {renderAppropriatePost()}
+              <Comments />
+              <p className="my-2"></p>
+              <AddComment loggedInUser={data?.user} />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

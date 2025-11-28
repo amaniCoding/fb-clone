@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { getReplies } from "./lib";
+import { getReplies, ReplyType } from "./lib";
 
 type RouteType = {
   postid: string;
@@ -37,3 +37,9 @@ export async function GET(
     return Response.json({ error }, { status: 500 });
   }
 }
+
+export type ReplyResponseType = {
+  replies: ReplyType;
+  totalPages: number;
+  totalRows: number;
+};

@@ -94,6 +94,32 @@ export const getReplies = async (
                       },
                     },
                   },
+                  reactions: {
+                    select: {
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
+                  },
+
+                  // counts
+                  _count: {
+                    select: {
+                      reactions: true,
+                    },
+                  },
                 },
               },
             },
@@ -114,15 +140,6 @@ export const getReplies = async (
         commentId: _post.comments[0].id,
         replyId: _post.comments[0].replies[0].id,
         _gReactions: await commentPreparer.prepareGReactions(reply.id),
-        _reactions: {
-          header: {
-            loading: false,
-            currentReactionType: undefined,
-            gReactions: [] as GReaction[],
-            error: "",
-          },
-          body: [] as Reactor[],
-        },
       };
     }
   );

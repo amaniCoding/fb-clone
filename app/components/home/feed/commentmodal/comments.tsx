@@ -7,7 +7,16 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Comments() {
-  const { loading, comments, error, page, totalPages } = useFetchComments();
+  const {
+    post,
+    comment: {
+      loading,
+      comments,
+      error: { error, hasError },
+      page,
+      totalPages,
+    },
+  } = useFetchComments();
   const hasMore = page! <= totalPages!;
   const lastCommentElementRef = useCommentsLastNodeRef(
     hasMore,
@@ -99,8 +108,8 @@ export default function Comments() {
             </div>
           );
         })}
-        {loading ? loading === true && <CommentsSkeleton /> : null}
-        {error && error !== "" && <p>Error loading comments</p>}
+        {loading! && !post.loading! && <CommentsSkeleton />}
+        {hasError && <p>{error}</p>}
       </div>
     </div>
   );

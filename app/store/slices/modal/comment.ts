@@ -9,45 +9,32 @@ import {
   PageSharePost,
 } from "@/app/apis/feeder/[page]/lib";
 import { ReplyType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
+import { ReplyResponseType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/route";
+import { ReplyReplysType } from "@/app/apis/replyreplies/oUserPost/[postid]/[commentid]/[replyid]/[page]/lib";
+import { ReplyRepliesResponseType } from "@/app/apis/replyreplies/oUserPost/[postid]/[commentid]/[replyid]/[page]/route";
 import { PostType } from "@/app/generated/prisma";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { is } from "zod/v4/locales";
 type CommentsShownType = {
-  id?: string;
+  refId?: string;
+
   loading?: boolean;
   page?: number;
   error?: string;
+  hasError?: boolean;
   totalRows?: number;
   totalPages?: number;
   comments?: CommentType;
-  replies?: RepliesShownType[];
 };
 
-type RepliesShownType = {
-  commentid?: string;
-  loading?: boolean;
-  page?: number;
-  error?: string;
-  totalRows?: number;
-  totalPages?: number;
-  replies?: ReplyType;
-  replyReplies?: ReplyRepliesShownType[];
-};
+type PostsShownType = {
+  refId?: string;
 
-type ReplyRepliesShownType = {
-  replyId?: string;
   loading?: boolean;
-  page?: number;
   error?: string;
-  totalRows?: number;
-  totalPages?: number;
-  replies?: ReplyType;
-};
-type ShowModalPayLoadType = {
-  isOpen: boolean;
-  id?: string | undefined;
-  starterUrl?: string;
-  currentPost?: {
-    postType: PostType | undefined;
+  hasError?: boolean;
+  postType?: PostType;
+  post?: {
     oUserPost?: OUserPost;
     userSharePost?: UserSharePost;
     oPagePost?: OPagePost;
@@ -55,38 +42,74 @@ type ShowModalPayLoadType = {
     oGroupPost?: OGroupPost;
     toGroupSharedPost?: ToGroupSharedPost;
   };
+};
+
+type RepliesShownType = {
+  refId?: string;
+  loading?: boolean;
+  page?: number;
+  error?: string;
+  hasError?: boolean;
+  totalRows?: number;
+  totalPages?: number;
+  replies?: ReplyType;
+};
+
+type ReplyRepliesShownType = {
+  refId?: string;
+  loading?: boolean;
+  page?: number;
+  error?: string;
+  hasError?: boolean;
+  totalRows?: number;
+  totalPages?: number;
+  replies?: ReplyReplysType;
+};
+
+type ShowModalPayLoadType = {
+  isOpen: boolean;
+  currentParentRefId?: string;
+  starterUrl?: string;
+  loading?: boolean;
+};
+
+type FetchingPostSucceedType = {
+  postType: PostType;
+  oUserPost?: OUserPost;
+  userSharePost?: UserSharePost;
+  oPagePost?: OPagePost;
+  pageSharePost?: PageSharePost;
+  toGroupSharedPost?: ToGroupSharedPost;
+  oGroupPost?: OGroupPost;
 };
 // Define a type for the slice state
 interface CommentModalState {
   isOpen: boolean;
-  id: string | undefined;
-  commentId: string | undefined;
-  replyId: string | undefined;
-  currentPost: {
-    postType: PostType | undefined;
-    oUserPost?: OUserPost;
-    userSharePost?: UserSharePost;
-    oPagePost?: OPagePost;
-    pageSharePost?: PageSharePost;
-    oGroupPost?: OGroupPost;
-    toGroupSharedPost?: ToGroupSharedPost;
+  currentParentRefId?: string;
+  currentPostRef?: {
+    refId?: string;
+    postsShown?: PostsShownType[];
   };
-
-  commentsShown: CommentsShownType[];
-  starterUrl: string | undefined;
+  currentCommentRef?: {
+    refId?: string;
+    commentsShown?: CommentsShownType[];
+    starterUrl?: string;
+  };
+  currentReplyRef?: {
+    refId?: string;
+    repliesShown?: RepliesShownType[];
+    starterUrl?: string;
+  };
+  currentReplyReplyRef?: {
+    refId?: string;
+    replyRepliesShown?: ReplyRepliesShownType[];
+    starterUrl?: string;
+  };
 }
 
 // Define the initial state using that type
 const initialState: CommentModalState = {
   isOpen: false,
-  currentPost: {
-    postType: undefined,
-  },
-  id: undefined,
-  commentId: undefined,
-  replyId: undefined,
-  commentsShown: [],
-  starterUrl: undefined,
 };
 
 export const commentModalSlice = createSlice({
@@ -95,245 +118,257 @@ export const commentModalSlice = createSlice({
   reducers: {
     showCommentModal: (state, action: PayloadAction<ShowModalPayLoadType>) => {
       state.isOpen = action.payload.isOpen;
+      state.currentParentRefId = action.payload.currentParentRefId;
+      state.currentCommentRef = {
+        starterUrl: action.payload.starterUrl,
+      };
+      state.currentPostRef = {
+        refId: action.payload.currentParentRefId,
+        postsShown: [],
+      };
 
-      state.id = action.payload.id;
-      state.starterUrl = action.payload.starterUrl;
-
-      if (action.payload.currentPost) {
-        state.currentPost.postType = action.payload.currentPost.postType;
-
-        if (action.payload.currentPost.postType === "oUserPost") {
-          state.currentPost.oUserPost = action.payload.currentPost.oUserPost;
-        }
-
-        if (action.payload.currentPost.postType === "userSharePost") {
-          state.currentPost.userSharePost =
-            action.payload.currentPost.userSharePost;
-        }
-        if (action.payload.currentPost.postType === "oPagePost") {
-          state.currentPost.oPagePost = action.payload.currentPost.oPagePost;
-        }
-        if (action.payload.currentPost.postType === "pageSharePost") {
-          state.currentPost.pageSharePost =
-            action.payload.currentPost.pageSharePost;
-        }
-        if (action.payload.currentPost.postType === "oGroupPost") {
-          state.currentPost.oGroupPost = action.payload.currentPost.oGroupPost;
-        }
-        if (action.payload.currentPost.postType === "toGroupSharedPost") {
-          state.currentPost.toGroupSharedPost =
-            action.payload.currentPost.toGroupSharedPost;
-        }
-      }
-
-      const isShown = state.commentsShown.find((cs) => {
-        return cs.id === action.payload.id;
+      const isShown = state.currentPostRef.postsShown!.find((ps) => {
+        return ps.refId === action.payload.currentParentRefId;
       });
-
       if (!isShown) {
-        state.commentsShown.push({
-          id: action.payload.id,
-          loading: true,
-          page: 1, // for the first time,
-          error: undefined,
-          totalPages: 0,
-          totalRows: 0,
-          comments: [],
-          replies: [],
+        state.currentPostRef.postsShown!.push({
+          loading: action.payload.loading,
         });
       }
     },
 
-    fetchingComments: (state, action: PayloadAction<boolean>) => {
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
+    fetchingPostSucceed: (
+      state,
+      action: PayloadAction<FetchingPostSucceedType>
+    ) => {
+      const isShown = state.currentPostRef!.postsShown!.find((ps) => {
+        return ps.refId === state.currentParentRefId;
       });
+      isShown!.postType = action.payload.postType;
+      if (action.payload.postType === "oUserPost") {
+        isShown!.post = {
+          oUserPost: action.payload.oUserPost,
+        };
+        return;
+      }
+      if (action.payload.postType === "userSharePost") {
+        isShown!.post = {
+          userSharePost: action.payload.userSharePost,
+        };
+        return;
+      }
+      if (action.payload.postType === "oPagePost") {
+        isShown!.post = {
+          oPagePost: action.payload.oPagePost,
+        };
+        return;
+      }
+      if (action.payload.postType === "pageSharePost") {
+        isShown!.post = {
+          pageSharePost: action.payload.pageSharePost,
+        };
+        return;
+      }
+      if (action.payload.postType === "oGroupPost") {
+        isShown!.post = {
+          oGroupPost: action.payload.oGroupPost,
+        };
+        return;
+      }
+      if (action.payload.postType === "toGroupSharedPost") {
+        isShown!.post = {
+          toGroupSharedPost: action.payload.toGroupSharedPost,
+        };
+        return;
+      }
+    },
 
-      currentShownComment!.loading = action.payload;
+    fetchingPostFaild: (
+      state,
+      action: PayloadAction<{ hasError: boolean; error?: string }>
+    ) => {
+      const isShown = state.currentPostRef!.postsShown!.find((ps) => {
+        return ps.refId === state.currentParentRefId;
+      });
+      if (action.payload.hasError) {
+        isShown!.hasError = action.payload.hasError;
+        isShown!.error = action.payload.error;
+      }
+    },
+
+    fetchingComments: (state, action: PayloadAction<boolean>) => {
+      const isShown = state.currentCommentRef?.commentsShown?.find((cs) => {
+        return cs.refId === state.currentParentRefId;
+      });
+      // currentCommentRef is defiend now
+      state.currentCommentRef = {
+        refId: state.currentParentRefId,
+        commentsShown: [],
+      };
+      if (!isShown) {
+        state.currentCommentRef!.commentsShown!.push({
+          refId: state.currentParentRefId,
+          loading: action.payload,
+          comments: [],
+        });
+      }
     },
 
     commentsFetched: (
       state,
       action: PayloadAction<{ result: CommentsResponseType }>
     ) => {
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
+      const isShown = state.currentCommentRef!.commentsShown!.find((cs) => {
+        return cs.refId === state.currentCommentRef!.refId;
       });
 
-      if (currentShownComment!.comments && action.payload.result.comments) {
-        currentShownComment!.comments = [
-          ...currentShownComment!.comments,
+      if (action.payload.result.comments && isShown!.comments) {
+        isShown!.comments = [
+          ...isShown!.comments,
           ...action.payload.result.comments,
         ];
-        currentShownComment!.totalPages = action.payload.result.totalPages;
-        currentShownComment!.totalRows = action.payload.result.totalRows;
+      }
+      isShown!.totalPages = action.payload.result.totalPages;
+      isShown!.totalRows = action.payload.result.totalRows;
+    },
+    fetchingCommentsFaild: (
+      state,
+      action: PayloadAction<{ hasError: boolean; error?: string }>
+    ) => {
+      const isShown = state.currentCommentRef!.commentsShown!.find((cs) => {
+        return cs.refId === state.currentCommentRef!.refId;
+      });
+      if (action.payload.hasError) {
+        isShown!.error = action.payload.error;
+        isShown!.hasError = action.payload.hasError;
       }
     },
-    fetchingCommentsFaild: (state, action: PayloadAction<string>) => {
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
-      });
 
-      currentShownComment!.error = action.payload;
-    },
-
-    updateCommentsPage: (state, action: PayloadAction<number>) => {
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
+    updatePageForComments: (state, action: PayloadAction<number>) => {
+      const isShown = state.currentCommentRef!.commentsShown!.find((cs) => {
+        return cs.refId === state.currentCommentRef!.refId;
       });
-      currentShownComment!.page = action.payload;
+      isShown!.page = action.payload;
     },
 
     fetchingReplies: (
       state,
-      action: PayloadAction<{ newLoading: boolean; commentId: string }>
+      action: PayloadAction<{ loading: boolean; commentId: string }>
     ) => {
-      state.commentId = action.payload.commentId;
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === action.payload.commentId;
+      const newRefId = `${state.currentCommentRef!.refId}${
+        action.payload.commentId
+      }`;
+      state.currentReplyRef = {
+        refId: newRefId,
+        repliesShown: [],
+      };
+      const isShown = state.currentReplyRef!.repliesShown!.find((rs) => {
+        return rs.refId === newRefId;
       });
 
-      const currentShownReply = currentShownComment!.replies?.find((rep) => {
-        return rep.commentid === action.payload.commentId;
-      });
-
-      if (!currentShownReply) {
-        currentShownComment!.replies?.push({
-          commentid: action.payload.commentId,
-          loading: false,
-          error: undefined,
-          page: 1,
+      if (!isShown) {
+        state.currentReplyRef!.repliesShown!.push({
+          loading: action.payload.loading,
           replies: [],
-          totalPages: 0,
-          totalRows: 0,
-          replyReplies: [],
         });
-      } else {
-        currentShownReply!.loading = action.payload.newLoading;
       }
     },
 
-    repliesFetched: (state, action: PayloadAction<{ replies: ReplyType }>) => {
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
+    repliesFetched: (
+      state,
+      action: PayloadAction<{ result: ReplyResponseType }>
+    ) => {
+      const isShown = state.currentReplyRef!.repliesShown!.find((rs) => {
+        return rs.refId === state.currentReplyRef!.refId;
       });
-
-      const currentShownReply = currentShownComment!.replies?.find((rep) => {
-        return rep.commentid === state.commentId;
-      });
-
-      currentShownReply!.replies = action.payload.replies;
+      if (action.payload.result.replies && isShown!.replies) {
+        isShown!.replies = [
+          ...isShown!.replies,
+          ...action.payload.result.replies,
+        ];
+      }
     },
 
-    fetchingRepliesFailed: (state, action: PayloadAction<string>) => {
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
+    fetchingRepliesFailed: (
+      state,
+      action: PayloadAction<{ hasError: boolean; error: string }>
+    ) => {
+      const isShown = state.currentReplyRef!.repliesShown!.find((rs) => {
+        return rs.refId === state.currentReplyRef!.refId;
       });
-
-      const currentShownReply = currentShownComment!.replies?.find((rep) => {
-        return rep.commentid === state.commentId;
-      });
-
-      currentShownReply!.error = action.payload;
+      if (action.payload.hasError) {
+        isShown!.hasError = action.payload.hasError;
+        isShown!.error = action.payload.error;
+      }
     },
 
-    updateRepliesPage: (state, action: PayloadAction<number>) => {
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
+    updatePageForReplies: (state, action: PayloadAction<number>) => {
+      const isShown = state.currentReplyRef!.repliesShown!.find((rs) => {
+        return rs.refId === state.currentReplyRef!.refId;
       });
-
-      const currentShownReply = currentShownComment!.replies?.find((rep) => {
-        return rep.commentid === state.commentId;
-      });
-
-      currentShownReply!.page = action.payload;
+      isShown!.page = action.payload;
     },
 
     fetchingReplyReplies: (
       state,
-      action: PayloadAction<{ replyId: string; newLoading: boolean }>
+      action: PayloadAction<{ replyId: string; loading: boolean }>
     ) => {
-      state.replyId = action.payload.replyId;
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
-      });
-
-      const currentShownReply = currentShownComment!.replies?.find((rep) => {
-        return rep.commentid === state.commentId;
-      });
-
-      const currentShownReplyReply = currentShownReply!.replyReplies?.find(
-        (rep) => {
-          return rep.replyId === action.payload.replyId;
+      const newRefId = `${state.currentReplyRef!.refId}${
+        action.payload.replyId
+      }`;
+      state.currentReplyReplyRef = {
+        refId: newRefId,
+        replyRepliesShown: [],
+      };
+      const isShown = state.currentReplyReplyRef!.replyRepliesShown!.find(
+        (rrs) => {
+          return rrs.refId === newRefId;
         }
       );
-      if (!currentShownReplyReply) {
-        currentShownReply!.replyReplies?.push({
-          replyId: action.payload.replyId,
-          loading: false,
-          error: undefined,
-          page: 1,
+      if (!isShown) {
+        state.currentReplyReplyRef!.replyRepliesShown!.push({
+          loading: action.payload.loading,
           replies: [],
-          totalPages: 0,
-          totalRows: 0,
         });
-      } else {
-        currentShownReplyReply!.loading = action.payload.newLoading;
       }
     },
 
     replyRepliesFetched: (
       state,
-      action: PayloadAction<{ replies: ReplyType }>
+      action: PayloadAction<ReplyRepliesResponseType>
     ) => {
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
-      });
-
-      const currentShownReply = currentShownComment!.replies?.find((rep) => {
-        return rep.commentid === state.commentId;
-      });
-
-      const currentShownReplyReply = currentShownReply?.replyReplies?.find(
-        (rep) => {
-          return rep.replyId === state.replyId;
+      const isShown = state.currentReplyReplyRef!.replyRepliesShown!.find(
+        (rrs) => {
+          return rrs.refId === state.currentReplyReplyRef!.refId;
         }
       );
-      currentShownReplyReply!.replies = action.payload.replies;
+      if (action.payload.replies && isShown!.replies) {
+        isShown!.replies = [...isShown!.replies, ...action.payload.replies];
+      }
     },
 
-    fetchingReplyRepliesFailed: (state, action: PayloadAction<string>) => {
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
-      });
-
-      const currentShownReply = currentShownComment!.replies?.find((rep) => {
-        return rep.commentid === state.commentId;
-      });
-
-      const currentShownReplyReply = currentShownReply?.replyReplies?.find(
-        (rep) => {
-          return rep.replyId === state.replyId;
+    fetchingReplyRepliesFailed: (
+      state,
+      action: PayloadAction<{ hasError: boolean; error: string }>
+    ) => {
+      const isShown = state.currentReplyReplyRef!.replyRepliesShown!.find(
+        (rrs) => {
+          return rrs.refId === state.currentReplyReplyRef!.refId;
         }
       );
-      currentShownReplyReply!.error = action.payload;
+      if (action.payload.hasError) {
+        isShown!.hasError = action.payload.hasError;
+        isShown!.error = action.payload.error;
+      }
     },
 
-    updateReplyRepliesPage: (state, action: PayloadAction<number>) => {
-      const currentShownComment = state.commentsShown.find((cs) => {
-        return cs.id === state.id;
-      });
-
-      const currentShownReply = currentShownComment!.replies?.find((rep) => {
-        return rep.commentid === state.commentId;
-      });
-
-      const currentShownReplyReply = currentShownReply?.replyReplies?.find(
-        (rep) => {
-          return rep.replyId === state.replyId;
+    updatePageForReplyReplies: (state, action: PayloadAction<number>) => {
+      const isShown = state.currentReplyReplyRef!.replyRepliesShown!.find(
+        (rrs) => {
+          return rrs.refId === state.currentReplyReplyRef!.refId;
         }
       );
-      currentShownReplyReply!.page = action.payload;
+      isShown!.page = action.payload;
     },
   },
 });
@@ -343,15 +378,15 @@ export const {
   fetchingComments,
   commentsFetched,
   fetchingCommentsFaild,
-  updateCommentsPage,
+  updatePageForComments,
   fetchingReplies,
   repliesFetched,
   fetchingRepliesFailed,
-  updateRepliesPage,
+  updatePageForReplies,
   fetchingReplyReplies,
   replyRepliesFetched,
   fetchingReplyRepliesFailed,
-  updateReplyRepliesPage,
+  updatePageForReplyReplies,
 } = commentModalSlice.actions;
 
 export default commentModalSlice.reducer;

@@ -140,15 +140,6 @@ export const getReplies = async (
         commentId: _post.comments[0].id,
         replyId: _post.comments[0].replies[0].id,
         _gReactions: await commentPreparer.prepareGReactions(reply.id),
-        _reactions: {
-          header: {
-            loading: false,
-            currentReactionType: undefined,
-            gReactions: [] as GReaction[],
-            error: "",
-          },
-          body: [] as Reactor[],
-        },
       };
     }
   );

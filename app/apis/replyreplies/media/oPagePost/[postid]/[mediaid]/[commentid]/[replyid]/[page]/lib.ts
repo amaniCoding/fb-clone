@@ -156,15 +156,6 @@ export const getReplies = async (
         commentId: _post.medias[0].comments[0].id,
         mediaId: _post.medias[0].id,
         _gReactions: await commentPreparer.prepareGReactions(reply.id),
-        _reactions: {
-          header: {
-            loading: false,
-            currentReactionType: undefined,
-            gReactions: [] as GReaction[],
-            error: "",
-          },
-          body: [] as Reactor[],
-        },
       };
     });
   // reuslt can be undefined

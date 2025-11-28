@@ -10,20 +10,29 @@ import { useEffect } from "react";
 
 export const useFetchComments = () => {
   const dispatch = useAppDispatch();
-  const refId = useAppSelector((state) => state.commentModal.id);
+  const currentParentRefId = useAppSelector(
+    (state) => state.commentModal.currentParentRefId
+  );
+  const postsShown = useAppSelector(
+    (state) => state.commentModal.currentPostRef!.postsShown
+  );
 
+  const currentPostShown = postsShown!.find((ps) => {
+    return ps.refId === currentParentRefId;
+  });
   const commentsShown = useAppSelector(
-    (state) => state.commentModal.commentsShown
+    (state) => state.commentModal.currentCommentRef!.commentsShown
   );
-  const currentPostData = useAppSelector(
-    (state) => state.commentModal.currentPost
-  );
-  const starterUrl = useAppSelector((state) => state.commentModal.starterUrl);
-  const currentRef = commentsShown.find((cs) => {
-    return cs.id === refId;
+
+  const currentCommentShown = commentsShown!.find((cs) => {
+    return cs.refId === currentParentRefId;
   });
 
-  const page = currentRef ? currentRef!.page : 1;
+  const starterUrl = useAppSelector(
+    (state) => state.commentModal.currentCommentRef!.starterUrl
+  );
+
+  const page = currentCommentShown!.page;
 
   const fullUrl = `${starterUrl!}/${page!}`;
 
@@ -42,7 +51,12 @@ export const useFetchComments = () => {
         );
         dispatch(fetchingComments(false));
       } catch (error) {
-        dispatch(fetchingCommentsFaild("Error in fetching comments"));
+        dispatch(
+          fetchingCommentsFaild({
+            hasError: true,
+            error: "Error while fetching comments",
+          })
+        );
       }
     };
     fetchComments();
@@ -52,21 +66,38 @@ export const useFetchComments = () => {
     };
   }, [dispatch, page!]);
 
-  const loading = currentRef!.loading;
-  const error = currentRef!.error;
-  const comments = currentRef!.comments;
-  const totalPages = currentRef!.totalPages;
-  const totalRows = currentRef!.totalRows;
+  const loading = currentCommentShown!.loading;
+  const error = currentCommentShown!.error;
+  const hasError = currentCommentShown!.hasError;
+  const comments = currentCommentShown!.comments;
+  const totalPages = currentCommentShown!.totalPages;
+  const totalRows = currentCommentShown!.totalRows;
 
   return {
-    loading,
-    page,
-    error,
-    comments,
-    totalPages,
-    totalRows,
-    currentPostData,
-    refId,
-    starterUrl,
+    post: {
+      loading: currentPostShown!.loading,
+      error: {
+        hasError: currentPostShown!.hasError,
+        error: currentPostShown!.error,
+      },
+
+      type: currentPostShown!.postType,
+      currentPost: currentPostShown!.post,
+    },
+    comment: {
+      loading,
+      page,
+      error: {
+        hasError: hasError,
+        error: error,
+      },
+      comments,
+      totalPages,
+      totalRows,
+    },
   };
 };
+
+const { post } = useFetchComments();
+
+export type useCommentsPostType = typeof post;

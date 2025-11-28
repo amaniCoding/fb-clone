@@ -110,6 +110,32 @@ export const getReplies = async (
                       },
                     },
                   },
+                  reactions: {
+                    select: {
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          Profile: {
+                            select: {
+                              profilePicture: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                    orderBy: {
+                      createdAt: "desc",
+                    },
+                    take: 1,
+                  },
+
+                  // counts
+                  _count: {
+                    select: {
+                      reactions: true,
+                    },
+                  },
                 },
               },
             },
@@ -130,15 +156,6 @@ export const getReplies = async (
         commentId: _post.medias[0].comments[0].id,
         mediaId: _post.medias[0].id,
         _gReactions: await commentPreparer.prepareGReactions(reply.id),
-        _reactions: {
-          header: {
-            loading: false,
-            currentReactionType: undefined,
-            gReactions: [] as GReaction[],
-            error: "",
-          },
-          body: [] as Reactor[],
-        },
       };
     });
   // reuslt can be undefined
