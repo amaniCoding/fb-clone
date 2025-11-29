@@ -6,12 +6,14 @@ import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import {
   fetchingReplies,
   fetchingRepliesFailed,
+  fetchingReplyReplies,
   repliesFetched,
 } from "@/app/store/slices/modal/comment";
 import axios from "axios";
 
 import Image from "next/image";
 import Link from "next/link";
+import Replies from "./replies/replies";
 
 export default function Comments({
   isFetchingPost,
@@ -19,29 +21,11 @@ export default function Comments({
   isFetchingPost: boolean | undefined;
 }) {
   const dispatch = useAppDispatch();
-  const currentRefId = useAppSelector(
-    (state) => state.commentModal.currentReplyRef?.refId
-  );
 
   const currentParentRefId = useAppSelector(
     (state) => state.commentModal.currentParentRefId
   );
 
-  const repliesShown = useAppSelector(
-    (state) => state.commentModal.currentReplyRef!.repliesShown
-  );
-
-  const currentRepliesShown = repliesShown!.find((cs) => {
-    return cs.refId === currentRefId;
-  });
-
-  const starterUrl = useAppSelector(
-    (state) => state.commentModal.currentReplyRef!.starterUrl
-  );
-
-  const page_replies = currentRepliesShown!.page;
-
-  const fullUrl = `${starterUrl!}/${page_replies!}`;
   const {
     loading,
     comments,
@@ -55,43 +39,12 @@ export default function Comments({
     loading!,
     page!
   );
-  const viewAllReplies = async (commentId: string) => {
-    try {
-      dispatch(
-        fetchingReplies({
-          loading: true,
-          commentId,
-        })
-      );
-      const controller = new AbortController();
 
-      const response = await axios.get(fullUrl, {
-        signal: controller.signal,
-      });
-      dispatch(repliesFetched(response.data.result));
-      dispatch(
-        fetchingReplies({
-          loading: true,
-        })
-      );
-    } catch {
-      dispatch(
-        fetchingRepliesFailed({
-          hasError: true,
-          error: "error in fetching replies",
-        })
-      );
-    }
-  };
   return (
     <div className="relative">
       <div className="px-3.5 py-2 ">
         <p className="my-2"> pageTemp {page}</p>
         {comments!.map((co, index) => {
-          const refId = `${currentParentRefId}${co.id}`;
-          const currentRepliesShown = repliesShown!.find((cs) => {
-            return cs.refId === refId;
-          });
           const newRxn = co._gReactions
             ? [...co._gReactions].sort((a, b) => b.count - a.count)
             : [];
@@ -165,66 +118,12 @@ export default function Comments({
                   </div>
                 </div>
               </div>
-              <p
-                className="my-1.5 text-gray-500"
-                onClick={() => {
-                  viewAllReplies(co.id);
-                }}
-              >
-                View all {co._count.replies} replies
-              </p>
-              <div id="replies">
-                <p>{currentRepliesShown!.loading && <p>Loading</p>}</p>
-                {currentRepliesShown!.replies!.map((rep) => {
-                  const newRxn = co._gReactions
-                    ? [...co._gReactions].sort((a, b) => b.count - a.count)
-                    : [];
-                  const newRxn_x =
-                    newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
-                  return (
-                    <div className="ml-2 flex flex-col">
-                      {rep.content && <p>{rep.content}</p>}
-                      {rep.mediaUrl ? (
-                        <Image
-                          key={index}
-                          alt=""
-                          src={rep.mediaUrl}
-                          width={0}
-                          height={0}
-                          sizes="100vh"
-                          className="cursor-pointer w-52 object-cover block flex-none"
-                        />
-                      ) : null}
-                      <div className="flex items-center justify-between space-x-5">
-                        <div className="flex items-center space-x-2 text-black/40 text-sm font-semibold">
-                          <p>2hrs</p>
-                          <p>Like</p>
-                          <p>Reply</p>
-                        </div>
-                        <div className="flex items-center">
-                          <p className="text-gray-500">{co._count.reactions}</p>
 
-                          <div className="flex items-center -space-x-1.5">
-                            {newRxn_x.map((rxn, index) =>
-                              rxn.reactionType ? (
-                                <Image
-                                  key={index}
-                                  alt=""
-                                  src={`/reactions/${rxn.reactionType}.png`}
-                                  width={0}
-                                  height={0}
-                                  sizes="100vh"
-                                  className="cursor-pointer w-6 h-6 object-cover rounded-full block flex-none"
-                                />
-                              ) : null
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <Replies
+                refId={`${currentParentRefId}${co.id}`}
+                commentId={co.id}
+                repliesCount={co._count.replies}
+              />
             </div>
           );
         })}
