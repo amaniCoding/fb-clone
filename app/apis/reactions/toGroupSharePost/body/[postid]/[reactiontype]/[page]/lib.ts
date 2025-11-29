@@ -29,6 +29,7 @@ export const getReactors = async (
     where: {
       id: postId,
     },
+
     select: {
       id: true,
       reactions: {
@@ -58,16 +59,12 @@ export const getReactors = async (
   const [_count, _post] = await Promise.all([count, post]);
   // result can be undefined
 
-  const updatedReactors = _post?.reactions.map((reactor) => {
-    return {
-      ...reactor,
-      postType: "toGroupSharePost",
-
-      postId: _post.id,
-    };
-  });
   return {
-    result: updatedReactors,
+    result: _post?.reactions,
     count: _count?._count.reactions,
   };
 };
+
+const result = await getReactors("Postid", "angry", 1, 7);
+const reactors = result.result;
+export type ReactorsType = typeof reactors;

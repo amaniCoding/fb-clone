@@ -7,7 +7,11 @@ import {
   fetchGReactionsSsucceed,
   GReactionsResponseType,
   fetchGReactionsFailed,
-} from "@/app/store/slices/modal/reaction/reaction";
+  fetchingReactors,
+  fetchingReactorsSucceed,
+  fetchingReactorsFaild,
+  ReactorsResponseType,
+} from "@/app/store/slices/modal/reaction";
 
 export const useFetchReactors = () => {
   const refId = useAppSelector((state) => state.reactionModal.refId);
@@ -37,19 +41,17 @@ export const useFetchReactors = () => {
     const controller = new AbortController();
     const getReactors = async () => {
       try {
-        dispatch(fetchingGReactions(true));
+        dispatch(fetchingReactors(true));
         const response = await axios.get(fullUrl, {
           signal: controller.signal,
         });
         dispatch(
-          fetchGReactionsSsucceed(
-            response.data.result as GReactionsResponseType
-          )
+          fetchingReactorsSucceed(response.data.result as ReactorsResponseType)
         );
-        dispatch(fetchingGReactions(false));
+        dispatch(fetchingReactors(false));
       } catch (error) {
-        dispatch(fetchGReactionsFailed("Something went wrong"));
-        dispatch(fetchingGReactions(false));
+        dispatch(fetchingReactorsFaild("Something went wrong"));
+        dispatch(fetchingReactors(false));
       }
     };
 

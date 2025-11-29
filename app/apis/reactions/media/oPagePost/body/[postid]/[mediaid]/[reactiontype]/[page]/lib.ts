@@ -33,7 +33,7 @@ export const getReactors = async (
     },
   });
 
-  const post = prisma.oPagePost.findUnique({
+  const media = prisma.oPagePost.findUnique({
     where: {
       id: postId,
     },
@@ -71,19 +71,11 @@ export const getReactors = async (
     },
   });
 
-  const [_count, _post] = await Promise.all([count, post]);
+  const [_count, _media] = await Promise.all([count, media]);
   // result can be undefined
 
-  const updatedReactors = _post?.medias[0].reactions.map((reactor) => {
-    return {
-      ...reactor,
-      postId: _post.id,
-      postType: "oPagePost",
-      mediaId: _post.medias[0].id,
-    };
-  });
   return {
-    result: updatedReactors,
+    result: _media?.medias[0].reactions,
     count: _count?.medias[0]._count.reactions,
   };
 };

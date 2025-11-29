@@ -6,7 +6,7 @@ export const getReactions = async (mediaId: string) => {
       reactionType: true,
     },
     where: {
-      id: mediaId,
+      mediaId: mediaId,
     },
   });
 

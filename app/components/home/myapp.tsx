@@ -11,11 +11,15 @@ export default function MyApp({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isPostBoxOpened = useAppSelector(
+  const isPostModalOpened = useAppSelector(
     (state) => state.addPost.toShowAddPostModal
   );
-  const isCommentBoxOpened = useAppSelector(
-    (state) => state.post.toShowCommentModal
+  const isCommentModalOpened = useAppSelector(
+    (state) => state.commentModal.isOpen
+  );
+
+  const isReactionModalOpened = useAppSelector(
+    (state) => state.reactionModal.isOpen
   );
 
   const { isOnline, status, showNumber } = useAppSelector(
@@ -32,9 +36,6 @@ export default function MyApp({
   );
 
   useEffect(() => {
-    if (isOnline) {
-    } else {
-    }
     window.addEventListener("online", () => {
       dispatch(
         setNetWorkError({
@@ -47,7 +48,7 @@ export default function MyApp({
     window.addEventListener("offline", () => {
       dispatch(
         setNetWorkError({
-          isOnline: true,
+          isOnline: false,
           status: "You are currently offline",
           showNumber: networkNotification + 1,
         })
@@ -76,12 +77,12 @@ export default function MyApp({
     };
   }, [dispatch, isOnline]);
   useEffect(() => {
-    if (isPostBoxOpened || isCommentBoxOpened) {
+    if (isPostModalOpened || isCommentModalOpened || isReactionModalOpened) {
       document.body.style.overflowY = "hidden";
     } else {
       document.body.style.overflowY = "auto";
     }
-  }, [isCommentBoxOpened, isPostBoxOpened]);
+  }, [isPostModalOpened, isCommentModalOpened, isReactionModalOpened]);
 
   const closeNotification = () => {
     clearTimeout(timeOutId.current);

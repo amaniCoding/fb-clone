@@ -123,9 +123,13 @@ export const commentModalSlice = createSlice({
     showCommentModal: (state, action: PayloadAction<ShowModalPayLoadType>) => {
       state.isOpen = action.payload.isOpen;
       state.currentParentRefId = action.payload.currentParentRefId;
-      state.currentCommentRef = {
-        starterUrl: action.payload.commentstarterUrl,
-      };
+      if (!state.currentCommentRef) {
+        state.currentCommentRef = {
+          starterUrl: action.payload.commentstarterUrl,
+          refId: action.payload.currentParentRefId,
+          commentsShown: [],
+        };
+      }
       if (!state.currentPostRef) {
         state.currentPostRef = {
           refId: action.payload.currentParentRefId,
@@ -214,13 +218,8 @@ export const commentModalSlice = createSlice({
       const isShown = state.currentCommentRef?.commentsShown?.find((cs) => {
         return cs.refId === state.currentParentRefId;
       });
-      // currentCommentRef is defiend now
-      if (!state.currentCommentRef) {
-        state.currentCommentRef = {
-          refId: state.currentParentRefId,
-          commentsShown: [],
-        };
-      }
+      // now currentCommentRef is defiend now
+
       if (!isShown) {
         state.currentCommentRef!.commentsShown!.push({
           refId: state.currentParentRefId,

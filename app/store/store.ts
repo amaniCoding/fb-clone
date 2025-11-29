@@ -3,7 +3,7 @@ import { feedSlice } from "./slices/feed/feed";
 import { addPostSlice } from "./slices/addpost/addpost";
 import { postSlice } from "./slices/post/post";
 import { commentModalSlice } from "./slices/modal/comment";
-import { reactionModalSlice } from "./slices/modal/reaction/reaction";
+import { reactionModalSlice } from "./slices/modal/reaction";
 import { appSlice } from "./slices/app/app";
 
 export const store = configureStore({

@@ -13,19 +13,11 @@ export const getReactors = async (
       id: postId,
     },
     select: {
-      pagePost: {
+      _count: {
         select: {
-          oPagePost: {
-            select: {
-              _count: {
-                select: {
-                  reactions: {
-                    where: {
-                      reactionType: reactionType,
-                    },
-                  },
-                },
-              },
+          reactions: {
+            where: {
+              reactionType: reactionType,
             },
           },
         },
@@ -37,32 +29,24 @@ export const getReactors = async (
     where: {
       id: postId,
     },
+
     select: {
       id: true,
-      pagePost: {
+      reactions: {
+        take: rowsPerPage,
+        skip: skip,
+        where: {
+          reactionType: reactionType,
+        },
         select: {
-          oPagePost: {
+          reactionType: true,
+          user: {
             select: {
-              id: true,
-              reactions: {
-                take: rowsPerPage,
-                skip: skip,
-                where: {
-                  reactionType: reactionType,
-                },
+              firstName: true,
+              lastName: true,
+              Profile: {
                 select: {
-                  reactionType: true,
-                  user: {
-                    select: {
-                      firstName: true,
-                      lastName: true,
-                      Profile: {
-                        select: {
-                          profilePicture: true,
-                        },
-                      },
-                    },
-                  },
+                  profilePicture: true,
                 },
               },
             },
@@ -75,18 +59,8 @@ export const getReactors = async (
   const [_count, _post] = await Promise.all([count, post]);
   // result can be undefined
 
-  const updatedReactors = _post?.pagePost?.oPagePost?.reactions.map(
-    (reactor) => {
-      return {
-        ...reactor,
-        postId: _post.pagePost?.oPagePost?.id,
-        feedId: _post.id,
-        postType: "oPagePost",
-      };
-    }
-  );
   return {
-    result: updatedReactors,
-    count: _count?.pagePost?.oPagePost?._count.reactions,
+    result: _post?.reactions,
+    count: _count?._count.reactions,
   };
 };

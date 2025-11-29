@@ -9,23 +9,8 @@ export type GReactionsResponseType = {
   }[];
 };
 
-type ReactorsResponseType = {
-  reactors:
-    | {
-        feedId: string;
-        postId: string | undefined;
-        postType: string;
-        user: {
-          firstName: string;
-          lastName: string;
-          Profile: {
-            profilePicture: string | null;
-          } | null;
-        };
-        reactionType: ReactionType;
-      }[]
-    | undefined;
-
+export type ReactorsResponseType = {
+  reactors: ReactorsType;
   totalRows: number;
   totalPages: number;
 };
@@ -117,14 +102,15 @@ export const reactionModalSlice = createSlice({
 
       currentRef!.header!.gReactions = action.payload.gReactions;
       const currentReactionType = currentRef?.header?.currentReaction;
-
-      currentRef?.header?.gReactions.map((gr) => {
-        currentRef.body?.push({
-          loading: gr.reactionType === currentReactionType ? true : false,
-          reactionType: gr.reactionType,
-          reactors: [],
+      if (!currentRef?.body) {
+        currentRef!.body = action.payload.gReactions.map((gr) => {
+          return {
+            loading: gr.reactionType === currentReactionType ? true : false,
+            reactionType: gr.reactionType,
+            reactors: [],
+          };
         });
-      });
+      }
     },
     fetchGReactionsFailed: (state, action: PayloadAction<string>) => {
       const currentRef = state.reactionsData.find((rd) => {
@@ -137,9 +123,9 @@ export const reactionModalSlice = createSlice({
         return rd.refId === state.refId;
       });
 
-      const currentReactionType = currentRef?.header?.currentReaction;
+      const currentReactionType = currentRef!.header!.currentReaction;
 
-      const currentReactorRef = currentRef?.body?.find((b) => {
+      const currentReactorRef = currentRef!.body!.find((b) => {
         return b.reactionType === currentReactionType;
       });
       currentReactorRef!.loading = action.payload;
@@ -153,14 +139,14 @@ export const reactionModalSlice = createSlice({
         return rd.refId === state.refId;
       });
 
-      const currentReactionType = currentRef?.header?.currentReaction;
+      const currentReactionType = currentRef!.header!.currentReaction;
 
-      const currentReactorRef = currentRef?.body?.find((b) => {
+      const currentReactorRef = currentRef!.body!.find((b) => {
         return b.reactionType === currentReactionType;
       });
-      if (action.payload.reactors) {
+      if (action.payload.reactors && currentReactorRef!.reactors) {
         currentReactorRef!.reactors = [
-          ...currentReactorRef?.reactors!,
+          ...currentReactorRef!.reactors,
           ...action.payload.reactors,
         ];
       }
@@ -173,9 +159,9 @@ export const reactionModalSlice = createSlice({
         return rd.refId === state.refId;
       });
 
-      const currentReactionType = currentRef?.header?.currentReaction;
+      const currentReactionType = currentRef!.header!.currentReaction;
 
-      const currentReactorRef = currentRef?.body?.find((b) => {
+      const currentReactorRef = currentRef!.body!.find((b) => {
         return b.reactionType === currentReactionType;
       });
       currentReactorRef!.error = action.payload;
@@ -186,9 +172,9 @@ export const reactionModalSlice = createSlice({
         return rd.refId === state.refId;
       });
 
-      const currentReactionType = currentRef?.header?.currentReaction;
+      const currentReactionType = currentRef!.header!.currentReaction;
 
-      const currentReactorRef = currentRef?.body?.find((b) => {
+      const currentReactorRef = currentRef!.body!.find((b) => {
         return b.reactionType === currentReactionType;
       });
       currentReactorRef!.page = action.payload;

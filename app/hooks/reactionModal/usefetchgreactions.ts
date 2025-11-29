@@ -7,7 +7,7 @@ import {
   fetchGReactionsSsucceed,
   GReactionsResponseType,
   fetchGReactionsFailed,
-} from "@/app/store/slices/modal/reaction/reaction";
+} from "@/app/store/slices/modal/reaction";
 
 export const useFetchHeaderGreactions = () => {
   const refId = useAppSelector((state) => state.reactionModal.refId);

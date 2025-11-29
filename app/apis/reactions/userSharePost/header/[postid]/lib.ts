@@ -6,7 +6,7 @@ export const getReactions = async (postId: string) => {
       reactionType: true,
     },
     where: {
-      id: postId,
+      userSharePostId: postId,
     },
   });
 

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { PostType, ReactionType } from "@/app/generated/prisma";
 import { useAppDispatch } from "@/app/store/hooks";
-import { showReactionModal } from "@/app/store/slices/modal/reaction/reaction";
+import { showReactionModal } from "@/app/store/slices/modal/reaction";
 type PropTypes = {
   commentsCount: number | undefined;
   reactionsCount: number | undefined;

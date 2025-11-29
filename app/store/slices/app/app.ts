@@ -1,8 +1,7 @@
-import { FeedsType } from "@/app/apis/feeder/[page]/lib";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
-interface FeedState {
+interface AppState {
   network: {
     isOnline: boolean;
     status: string;
@@ -10,7 +9,7 @@ interface FeedState {
   };
 }
 
-const initialState: FeedState = {
+const initialState: AppState = {
   network: {
     isOnline: navigator.onLine,
     status: "",
