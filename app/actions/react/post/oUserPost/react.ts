@@ -1,52 +1,108 @@
 "use server";
 import { ReactionType } from "@/app/generated/prisma";
+import { State } from "@/app/hooks/react/usereact";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 
-export async function reactOUserPost(id: string, reactionType: ReactionType) {
+export async function reactOuserPost(
+  id: string,
+  reactionType: ReactionType,
+  prevState: State
+) {
   const session = await auth();
   if (!session?.user) {
     throw new Error("Un aauthorized request");
   }
 
   try {
-    const post = await prisma.oUserPost.update({
+    const isReacted = await prisma.oUserPost.findUnique({
       where: {
         id: id,
       },
-      data: {
+      select: {
         reactions: {
-          create: {
-            reactionType: reactionType,
-            user: {
-              connect: {
-                id: session.user.id,
-              },
-            },
+          where: {
+            userId: session.user.id,
+          },
+          select: {
+            id: true,
+            reactionType: true,
           },
         },
       },
     });
 
-    const gReactionsForThisPost = await prisma.reaction.groupBy({
+    if (isReacted?.reactions[0].id) {
+      await prisma.oUserPost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          reactions: {
+            update: {
+              where: {
+                id: isReacted.reactions[0].id,
+              },
+              data: {
+                reactionType: reactionType,
+                user: {
+                  connect: {
+                    id: session.user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    } else {
+      await prisma.oUserPost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          reactions: {
+            create: {
+              reactionType: reactionType,
+              user: {
+                connect: {
+                  id: session.user.id,
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    const gReactions = await prisma.reaction.groupBy({
       by: ["reactionType"],
       _count: {
         reactionType: true,
       },
       where: {
-        groupPostId: post.id,
+        userPostId: id,
       },
+    });
+
+    const _gReactions = gReactions.map((rxn) => {
+      return {
+        reactionType: rxn.reactionType,
+        count: rxn._count.reactionType,
+      };
     });
 
     return {
       success: true,
-      _gReactions: gReactionsForThisPost,
+      _gReactions: _gReactions,
+      reactionType,
       message: "Success ",
     };
-  } catch (error) {
+  } catch {
     return {
-      success: true,
-      _gReactions: [],
+      success: false,
+      _gReactions: undefined,
+      reactionType: undefined,
       message: "Failed ",
     };
   }

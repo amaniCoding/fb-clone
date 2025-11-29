@@ -2,8 +2,10 @@
 import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
+import { State } from "@/app/hooks/react/usereact";
 
 export async function reactUserSharePost(
+  prevState: State,
   id: string,
   reactionType: ReactionType
 ) {
@@ -13,43 +15,94 @@ export async function reactUserSharePost(
   }
 
   try {
-    const post = await prisma.userSharePost.update({
+    const isReacted = await prisma.userSharePost.findUnique({
       where: {
         id: id,
       },
-      data: {
+      select: {
         reactions: {
-          create: {
-            reactionType: reactionType,
-            user: {
-              connect: {
-                id: session.user.id,
-              },
-            },
+          where: {
+            userId: session.user.id,
+          },
+          select: {
+            id: true,
+            reactionType: true,
           },
         },
       },
     });
 
-    const gReactionsForThisPost = await prisma.reaction.groupBy({
+    if (isReacted?.reactions[0].id) {
+      await prisma.userSharePost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          reactions: {
+            update: {
+              where: {
+                id: isReacted.reactions[0].id,
+              },
+              data: {
+                reactionType: reactionType,
+                user: {
+                  connect: {
+                    id: session.user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    } else {
+      await prisma.userSharePost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          reactions: {
+            create: {
+              reactionType: reactionType,
+              user: {
+                connect: {
+                  id: session.user.id,
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    const gReactions = await prisma.reaction.groupBy({
       by: ["reactionType"],
       _count: {
         reactionType: true,
       },
       where: {
-        groupPostId: post.id,
+        userPostId: id,
       },
+    });
+
+    const _gReactions = gReactions.map((rxn) => {
+      return {
+        reactionType: rxn.reactionType,
+        count: rxn._count.reactionType,
+      };
     });
 
     return {
       success: true,
-      _gReactions: gReactionsForThisPost,
+      _gReactions: _gReactions,
+      reactionType,
       message: "Success ",
     };
   } catch (error) {
     return {
       success: true,
       _gReactions: [],
+      reactionType: undefined,
       message: "Failed ",
     };
   }

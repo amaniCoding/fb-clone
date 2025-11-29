@@ -2,8 +2,10 @@
 import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
+import { State } from "@/app/hooks/react/usereact";
 
 export async function reactOPagePostMedia(
+  prevState: State,
   id: string,
   mediaId: string,
   reactionType: ReactionType
@@ -14,30 +16,9 @@ export async function reactOPagePostMedia(
   }
 
   try {
-    const post = await prisma.oPagePost.update({
+    const isMediaReacted = await prisma.oPagePost.findUnique({
       where: {
         id: id,
-      },
-      data: {
-        medias: {
-          update: {
-            where: {
-              id: mediaId,
-            },
-            data: {
-              reactions: {
-                create: {
-                  reactionType: reactionType,
-                  user: {
-                    connect: {
-                      id: session.user.id,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
       },
       select: {
         medias: {
@@ -45,25 +26,100 @@ export async function reactOPagePostMedia(
             id: mediaId,
           },
           select: {
-            id: true,
+            reactions: {
+              where: {
+                userId: session.user.id,
+              },
+              select: {
+                id: true,
+              },
+            },
           },
         },
       },
     });
 
-    const gReactionsForPostMedia = await prisma.mediaReaction.groupBy({
+    if (isMediaReacted?.medias[0].reactions[0].id) {
+      await prisma.oPagePost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          medias: {
+            update: {
+              where: {
+                id: mediaId,
+              },
+              data: {
+                reactions: {
+                  update: {
+                    where: {
+                      id: isMediaReacted.medias[0].reactions[0].id,
+                    },
+                    data: {
+                      reactionType: reactionType,
+                      user: {
+                        connect: {
+                          id: session.user.id,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    } else {
+      await prisma.oPagePost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          medias: {
+            update: {
+              where: {
+                id: mediaId,
+              },
+              data: {
+                reactions: {
+                  create: {
+                    reactionType: reactionType,
+                    user: {
+                      connect: {
+                        id: session.user.id,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    const gReactions = await prisma.mediaReaction.groupBy({
       by: ["reactionType"],
       _count: {
         reactionType: true,
       },
       where: {
-        id: post.medias[0].id,
+        mediaId: mediaId,
       },
+    });
+
+    const _gReactionsForThisPost = gReactions.map((rxn) => {
+      return {
+        reactionType: rxn.reactionType,
+        count: rxn._count.reactionType,
+      };
     });
 
     return {
       success: true,
-      _gReactions: gReactionsForPostMedia,
+      _gReactions: _gReactionsForThisPost,
       reactionType,
       message: "Success ",
     };

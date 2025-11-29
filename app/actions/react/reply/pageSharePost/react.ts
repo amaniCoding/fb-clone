@@ -2,8 +2,10 @@
 import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
+import { State } from "@/app/hooks/react/usereact";
 
-export async function reactReplyForPageSharePost(
+export async function reactReplyForOGroupPost(
+  prevState: State,
   id: string,
   commentId: string,
   replyId: string,
@@ -15,39 +17,9 @@ export async function reactReplyForPageSharePost(
   }
 
   try {
-    const post = await prisma.pageSharePost.update({
+    const isReplyReacted = await prisma.pageSharePost.findUnique({
       where: {
         id: id,
-      },
-      data: {
-        comments: {
-          update: {
-            where: {
-              id: commentId,
-            },
-            data: {
-              replies: {
-                update: {
-                  where: {
-                    id: replyId,
-                  },
-                  data: {
-                    reactions: {
-                      create: {
-                        reactionType: reactionType,
-                        user: {
-                          connect: {
-                            id: session.user.id,
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
       },
       select: {
         comments: {
@@ -61,26 +33,137 @@ export async function reactReplyForPageSharePost(
               },
               select: {
                 id: true,
+                reactions: {
+                  where: {
+                    userId: session.user.id,
+                  },
+                  select: {
+                    id: true,
+                  },
+                },
               },
             },
           },
         },
       },
     });
+    if (isReplyReacted?.comments[0].replies[0].reactions[0].id) {
+      await prisma.pageSharePost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          comments: {
+            update: {
+              where: {
+                id: commentId,
+              },
+              data: {
+                replies: {
+                  update: {
+                    where: {
+                      id: replyId,
+                    },
+                    data: {
+                      reactions: {
+                        update: {
+                          where: {
+                            id: isReplyReacted.comments[0].replies[0]
+                              .reactions[0].id,
+                          },
+                          data: {
+                            reactionType: reactionType,
+                            user: {
+                              connect: {
+                                id: session.user.id,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    } else {
+      await prisma.pageSharePost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          comments: {
+            update: {
+              where: {
+                id: commentId,
+              },
+              data: {
+                replies: {
+                  update: {
+                    where: {
+                      id: replyId,
+                    },
+                    data: {
+                      reactions: {
+                        create: {
+                          reactionType: reactionType,
+                          user: {
+                            connect: {
+                              id: session.user.id,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        select: {
+          comments: {
+            where: {
+              id: commentId,
+            },
+            select: {
+              replies: {
+                where: {
+                  id: replyId,
+                },
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    }
 
-    const gReactionsForPostCommentReply = await prisma.replyReaction.groupBy({
+    const gReactions = await prisma.replyReaction.groupBy({
       by: ["reactionType"],
       _count: {
         reactionType: true,
       },
       where: {
-        id: post.comments[0].replies[0].id,
+        replyId: replyId,
       },
+    });
+
+    const _gReactions = gReactions.map((rxn) => {
+      return {
+        reactionType: rxn.reactionType,
+        count: rxn._count.reactionType,
+      };
     });
 
     return {
       success: true,
-      _gReactions: gReactionsForPostCommentReply,
+      _gReactions: _gReactions,
       reactionType,
       message: "Success ",
     };

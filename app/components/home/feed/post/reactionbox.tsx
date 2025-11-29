@@ -1,5 +1,5 @@
 "use client";
-import { reactOUserPost } from "@/app/actions/react/post/oUserPost/react";
+import { reactOuserPost } from "@/app/actions/react/post/oUserPost/react";
 import {
   OGroupPost,
   OPagePost,
@@ -10,6 +10,7 @@ import {
 } from "@/app/apis/feeder/[page]/lib";
 import { PostType, ReactionType } from "@/app/generated/prisma";
 import Image from "next/image";
+import ReactAPost from "./reactionbox/reactapost";
 
 export default function ReactionBox({
   keepShowing,
@@ -27,33 +28,38 @@ export default function ReactionBox({
   refFrom?: "modal" | "post";
   fromWhat: "post" | "comment" | "reply" | "replyreply";
 }) {
-  const _reactAPost = async (reactionType: ReactionType) => {
-    if (fromWhat === "post") {
-      if (post!.type === "oUserPost") {
-        const _post = post!.post as OUserPost;
-        reactOUserPost(_post.id!, reactionType);
-      }
-      if (post!.type === "userSharePost") {
-        const _post = post!.post as UserSharePost;
-      }
+  const _reactAPost = () => {
+    const x = reactOuserPost.bind(null, "someid", "haha" as ReactionType);
+    return x;
+    // if (fromWhat === "post") {
+    //   if (post!.type === "oUserPost") {
+    //     const _post = post!.post as OUserPost;
+    //     const action = reactOuserPost;
+    //     action.bind(null, "someid");
+    //     action.bind(null, "haha" as ReactionType);
+    //     return action;
+    //   }
+    //   if (post!.type === "userSharePost") {
+    //     const _post = post!.post as UserSharePost;
+    //   }
 
-      if (post!.type === "oPagePost") {
-        const _post = post!.post as OPagePost;
-      }
+    //   if (post!.type === "oPagePost") {
+    //     const _post = post!.post as OPagePost;
+    //   }
 
-      if (post!.type === "pageSharePost") {
-        const _post = post!.post as PageSharePost;
-      }
+    //   if (post!.type === "pageSharePost") {
+    //     const _post = post!.post as PageSharePost;
+    //   }
 
-      if (post!.type === "oGroupPost") {
-        const _post = post!.post as OGroupPost;
-      }
+    //   if (post!.type === "oGroupPost") {
+    //     const _post = post!.post as OGroupPost;
+    //   }
 
-      if (post!.type === "toGroupSharedPost") {
-        const _post = post!.post as ToGroupSharedPost;
-      }
-      return;
-    }
+    //   if (post!.type === "toGroupSharedPost") {
+    //     const _post = post!.post as ToGroupSharedPost;
+    //   }
+    //   return;
+    // }
   };
   return (
     <div
@@ -61,69 +67,7 @@ export default function ReactionBox({
       onMouseEnter={keepShowing}
       onMouseLeave={hideShowing}
     >
-      <Image
-        onClick={() => _reactAPost("like")}
-        alt=""
-        src={"/reactions/like.png"}
-        width={0}
-        height={0}
-        sizes="100vh"
-        className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
-      />
-      <Image
-        onClick={() => _reactAPost("love")}
-        alt=""
-        src={"/reactions/love.png"}
-        width={0}
-        height={0}
-        sizes="100vh"
-        className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
-      />
-      <Image
-        onClick={() => _reactAPost("care")}
-        alt=""
-        src={"/reactions/care.png"}
-        width={0}
-        height={0}
-        sizes="100vh"
-        className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
-      />
-      <Image
-        onClick={() => _reactAPost("haha")}
-        alt=""
-        src={"/reactions/haha.png"}
-        width={0}
-        height={0}
-        sizes="100vh"
-        className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
-      />
-      <Image
-        onClick={() => _reactAPost("wow")}
-        alt=""
-        src={"/reactions/wow.png"}
-        width={0}
-        height={0}
-        sizes="100vh"
-        className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
-      />
-      <Image
-        onClick={() => _reactAPost("sad")}
-        alt=""
-        src={"/reactions/sad.png"}
-        width={0}
-        height={0}
-        sizes="100vh"
-        className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
-      />
-      <Image
-        onClick={() => _reactAPost("angry")}
-        alt=""
-        src={"/reactions/angry.png"}
-        width={0}
-        height={0}
-        sizes="100vh"
-        className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
-      />
+      <ReactAPost reactAction={_reactAPost} />
     </div>
   );
 }

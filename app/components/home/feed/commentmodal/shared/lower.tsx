@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import post from "../../post/post";
 import ReactionBox from "../../post/reactionbox";
 
 export default function Lower({
@@ -42,7 +41,9 @@ export default function Lower({
         />
       )}
       <p>2hrs</p>
-      <p>Like</p>
+      <p onMouseEnter={showReactionBox} onMouseLeave={hideReactionBox}>
+        Like
+      </p>
       {fromWhat === "reply" && <p>reply</p>}
     </div>
   );

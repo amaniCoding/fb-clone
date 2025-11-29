@@ -28,12 +28,13 @@ export default function PostModal(props: { onClose: () => void }) {
     success: false,
     feed: undefined,
   };
+
+  const createPostWithId = createPost.bind(null, "somehit");
   const [state, formAction, isPending] = useActionState(
-    createPost,
+    createPostWithId,
     initialState,
     undefined
   );
-
   const content = useAppSelector((state) => state.addPost.content);
   const uploadedMedias = useAppSelector(
     (state) => state.addPost.upLoadedMedias

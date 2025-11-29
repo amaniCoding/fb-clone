@@ -151,6 +151,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
         <ReactionBox
           post={post}
           refFrom={refFrom}
+          fromWhat="post"
           keepShowing={keepShowing}
           hideShowing={hideShowing}
         />

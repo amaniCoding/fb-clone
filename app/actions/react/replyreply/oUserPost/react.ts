@@ -2,8 +2,10 @@
 import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
+import { State } from "@/app/hooks/react/usereact";
 
 export async function reactReplyReplyForOUserPost(
+  prevState: State,
   id: string,
   commentId: string,
   replyId: string,
@@ -16,50 +18,11 @@ export async function reactReplyReplyForOUserPost(
   }
 
   try {
-    const post = await prisma.oUserPost.update({
+    const isReplyReplyReacted = await prisma.oUserPost.findUnique({
       where: {
         id: id,
       },
-      data: {
-        comments: {
-          update: {
-            where: {
-              id: commentId,
-            },
-            data: {
-              replies: {
-                update: {
-                  where: {
-                    id: replyId,
-                  },
-                  data: {
-                    replies: {
-                      update: {
-                        where: {
-                          id: replyReplyId,
-                        },
-                        data: {
-                          reactions: {
-                            create: {
-                              reactionType: reactionType,
-                              user: {
-                                connect: {
-                                  id: session.user.id,
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      include: {
+      select: {
         comments: {
           where: {
             id: commentId,
@@ -75,7 +38,14 @@ export async function reactReplyReplyForOUserPost(
                     id: replyReplyId,
                   },
                   select: {
-                    id: true,
+                    reactions: {
+                      where: {
+                        userId: session.user.id,
+                      },
+                      select: {
+                        id: true,
+                      },
+                    },
                   },
                 },
               },
@@ -85,20 +55,124 @@ export async function reactReplyReplyForOUserPost(
       },
     });
 
-    const gReactionsForThisPostCommentReplyReply =
-      await prisma.replyReplyReactions.groupBy({
-        by: ["reactionType"],
-        _count: {
-          reactionType: true,
-        },
+    if (isReplyReplyReacted) {
+      await prisma.oUserPost.update({
         where: {
-          id: post.comments[0].replies[0].replies[0].id,
+          id: id,
+        },
+        data: {
+          comments: {
+            update: {
+              where: {
+                id: commentId,
+              },
+              data: {
+                replies: {
+                  update: {
+                    where: {
+                      id: replyId,
+                    },
+                    data: {
+                      replies: {
+                        update: {
+                          where: {
+                            id: replyReplyId,
+                          },
+                          data: {
+                            reactions: {
+                              update: {
+                                where: {
+                                  id: isReplyReplyReacted.comments[0].replies[0]
+                                    .replies[0].reactions[0].id,
+                                },
+                                data: {
+                                  reactionType: reactionType,
+                                  user: {
+                                    connect: {
+                                      id: session.user.id,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       });
+    } else {
+      await prisma.oUserPost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          comments: {
+            update: {
+              where: {
+                id: commentId,
+              },
+              data: {
+                replies: {
+                  update: {
+                    where: {
+                      id: replyId,
+                    },
+                    data: {
+                      replies: {
+                        update: {
+                          where: {
+                            id: replyReplyId,
+                          },
+                          data: {
+                            reactions: {
+                              create: {
+                                reactionType: reactionType,
+                                user: {
+                                  connect: {
+                                    id: session.user.id,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    const gReactions = await prisma.replyReplyReactions.groupBy({
+      by: ["reactionType"],
+      _count: {
+        reactionType: true,
+      },
+      where: {
+        replyReplyId: replyReplyId,
+      },
+    });
+
+    const _gReactions = gReactions.map((rxn) => {
+      return {
+        reactionType: rxn.reactionType,
+        count: rxn._count.reactionType,
+      };
+    });
 
     return {
       success: true,
-      _gReactions: gReactionsForThisPostCommentReplyReply,
+      _gReactions: _gReactions,
       reactionType,
       message: "Success ",
     };

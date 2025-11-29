@@ -2,8 +2,10 @@
 import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
+import { State } from "@/app/hooks/react/usereact";
 
-export async function reactAPost(
+export async function reactOGroupPostComment(
+  prevState: State,
   id: string,
   commentId: string,
   reactionType: ReactionType
@@ -14,30 +16,9 @@ export async function reactAPost(
   }
 
   try {
-    const post = await prisma.oGroupPost.update({
+    const isCommentReacted = await prisma.oGroupPost.findUnique({
       where: {
         id: id,
-      },
-      data: {
-        comments: {
-          update: {
-            where: {
-              id: commentId,
-            },
-            data: {
-              reactions: {
-                create: {
-                  reactionType: reactionType,
-                  user: {
-                    connect: {
-                      id: session.user.id,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
       },
       select: {
         comments: {
@@ -45,25 +26,100 @@ export async function reactAPost(
             id: commentId,
           },
           select: {
-            id: true,
+            reactions: {
+              where: {
+                userId: session.user.id,
+              },
+              select: {
+                id: true,
+              },
+            },
           },
         },
       },
     });
 
-    const gReactionsForPostComment = await prisma.commentReaction.groupBy({
+    if (isCommentReacted) {
+      await prisma.oGroupPost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          comments: {
+            update: {
+              where: {
+                id: commentId,
+              },
+              data: {
+                reactions: {
+                  update: {
+                    where: {
+                      id: isCommentReacted.comments[0].reactions[0].id,
+                    },
+                    data: {
+                      reactionType: reactionType,
+                      user: {
+                        connect: {
+                          id: session.user.id,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    } else {
+      await prisma.oGroupPost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          comments: {
+            update: {
+              where: {
+                id: commentId,
+              },
+              data: {
+                reactions: {
+                  create: {
+                    reactionType: reactionType,
+                    user: {
+                      connect: {
+                        id: session.user.id,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    const gReactions = await prisma.commentReaction.groupBy({
       by: ["reactionType"],
       _count: {
         reactionType: true,
       },
       where: {
-        id: post.comments[0].id,
+        commentId: commentId,
       },
+    });
+
+    const _gReactions = gReactions.map((rxn) => {
+      return {
+        reactionType: rxn.reactionType,
+        count: rxn._count.reactionType,
+      };
     });
 
     return {
       success: true,
-      _gReactions: gReactionsForPostComment,
+      _gReactions: _gReactions,
       reactionType,
       message: "Success ",
     };

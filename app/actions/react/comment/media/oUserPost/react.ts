@@ -2,8 +2,10 @@
 import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
+import { State } from "@/app/hooks/react/usereact";
 
-export async function reactAPost(
+export async function reactOUserPostMediaComment(
+  prevState: State,
   id: string,
   mediaId: string,
   commentId: string,
@@ -15,29 +17,68 @@ export async function reactAPost(
   }
 
   try {
-    const post = await prisma.oUserPost.update({
+    const isMediaCommentReacted = await prisma.oUserPost.findUnique({
       where: {
         id: id,
       },
-      data: {
+      select: {
         medias: {
-          update: {
-            where: {
-              id: mediaId,
-            },
-            data: {
-              comments: {
-                update: {
+          where: {
+            id: mediaId,
+          },
+          select: {
+            comments: {
+              where: {
+                id: commentId,
+              },
+
+              select: {
+                reactions: {
                   where: {
-                    id: commentId,
+                    userId: session.user.id,
                   },
-                  data: {
-                    reactions: {
-                      create: {
-                        reactionType: reactionType,
-                        user: {
-                          connect: {
-                            id: session.user.id,
+                  select: {
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (isMediaCommentReacted?.medias[0].comments[0].reactions[0].id) {
+      await prisma.oUserPost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          medias: {
+            update: {
+              where: {
+                id: mediaId,
+              },
+              data: {
+                comments: {
+                  update: {
+                    where: {
+                      id: commentId,
+                    },
+                    data: {
+                      reactions: {
+                        update: {
+                          where: {
+                            id: isMediaCommentReacted.medias[0].comments[0]
+                              .reactions[0].id,
+                          },
+                          data: {
+                            reactionType: reactionType,
+                            user: {
+                              connect: {
+                                id: session.user.id,
+                              },
+                            },
                           },
                         },
                       },
@@ -48,47 +89,74 @@ export async function reactAPost(
             },
           },
         },
-      },
-      include: {
-        medias: {
-          where: {
-            id: mediaId,
-          },
-          select: {
-            comments: {
+      });
+    } else {
+      await prisma.oUserPost.update({
+        where: {
+          id: id,
+        },
+        data: {
+          medias: {
+            update: {
               where: {
-                id: commentId,
+                id: mediaId,
               },
-              select: {
-                id: true,
+              data: {
+                comments: {
+                  update: {
+                    where: {
+                      id: commentId,
+                    },
+                    data: {
+                      reactions: {
+                        create: {
+                          reactionType: reactionType,
+                          user: {
+                            connect: {
+                              id: session.user.id,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
               },
             },
           },
         },
+      });
+    }
+
+    const gReactions = await prisma.mediaCommentReaction.groupBy({
+      by: ["reactionType"],
+      _count: {
+        reactionType: true,
+      },
+      where: {
+        commentId,
       },
     });
 
-    const gReactionsForThisPostMediaComment =
-      await prisma.mediaReaction.groupBy({
-        by: ["reactionType"],
-        _count: {
-          reactionType: true,
-        },
-        where: {
-          id: post.medias[0].comments[0].id,
-        },
-      });
+    const _gReactions = gReactions.map((rxn) => {
+      return {
+        reactionType: rxn.reactionType,
+        count: rxn._count.reactionType,
+      };
+    });
 
     return {
       success: true,
-      _gReactions: gReactionsForThisPostMediaComment,
+      _gReactions: _gReactions,
       message: "Success ",
+      reactionType,
     };
   } catch (error) {
     return {
       success: true,
       _gReactions: [],
       message: "Failed ",
+      reactionType: undefined,
     };
   }
 }
