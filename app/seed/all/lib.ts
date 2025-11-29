@@ -5326,7 +5326,7 @@ export const _make_all_medias_dynamic = async (
 
       if (media && media.medias) {
         return Promise.all(
-          media?.medias.map((_media) => {
+          media.medias.map((_media) => {
             return Promise.all(
               _media.comments.map((co) => {
                 return prisma.oUserPost.update({
@@ -5423,7 +5423,7 @@ export const _make_all_medias_dynamic = async (
 
       if (media && media.medias) {
         return Promise.all(
-          media?.medias.map((_media) => {
+          media.medias.map((_media) => {
             return Promise.all(
               _media.comments.map((co) => {
                 return Promise.all(

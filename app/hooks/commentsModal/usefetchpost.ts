@@ -14,7 +14,7 @@ import {
   FetchingPostSucceedType,
 } from "@/app/store/slices/modal/comment";
 import axios from "axios";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 export const useFetchPost = () => {
   const dispatch = useAppDispatch();
@@ -36,49 +36,50 @@ export const useFetchPost = () => {
   const url = useAppSelector(
     (state) => state.commentModal.currentPostRef!.starterUrl!
   );
-  const getAppropriatePost = (
-    post: unknown
-  ): FetchingPostSucceedType | undefined => {
-    if (postType === "oUserPost") {
-      return {
-        postType: "oUserPost",
-        oUserPost: post as OUserPost,
-      };
-    }
+  const getAppropriatePost = useCallback(
+    (post: unknown): FetchingPostSucceedType | undefined => {
+      if (postType === "oUserPost") {
+        return {
+          postType: "oUserPost",
+          oUserPost: post as OUserPost,
+        };
+      }
 
-    if (postType === "userSharePost") {
-      return {
-        postType: "userSharePost",
-        userSharePost: post as UserSharePost,
-      };
-    }
+      if (postType === "userSharePost") {
+        return {
+          postType: "userSharePost",
+          userSharePost: post as UserSharePost,
+        };
+      }
 
-    if (postType === "oPagePost") {
-      return {
-        postType: "oPagePost",
-        oPagePost: post as OPagePost,
-      };
-    }
-    if (postType === "pageSharePost") {
-      return {
-        postType: "pageSharePost",
-        pageSharePost: post as PageSharePost,
-      };
-    }
-    if (postType === "oGroupPost") {
-      return {
-        postType: "oGroupPost",
-        oGroupPost: post as OGroupPost,
-      };
-    }
+      if (postType === "oPagePost") {
+        return {
+          postType: "oPagePost",
+          oPagePost: post as OPagePost,
+        };
+      }
+      if (postType === "pageSharePost") {
+        return {
+          postType: "pageSharePost",
+          pageSharePost: post as PageSharePost,
+        };
+      }
+      if (postType === "oGroupPost") {
+        return {
+          postType: "oGroupPost",
+          oGroupPost: post as OGroupPost,
+        };
+      }
 
-    if (postType === "toGroupSharedPost") {
-      return {
-        postType: "toGroupSharedPost",
-        toGroupSharedPost: post as ToGroupSharedPost,
-      };
-    }
-  };
+      if (postType === "toGroupSharedPost") {
+        return {
+          postType: "toGroupSharedPost",
+          toGroupSharedPost: post as ToGroupSharedPost,
+        };
+      }
+    },
+    [postType]
+  );
 
   useEffect(() => {
     const controller = new AbortController();

@@ -17,9 +17,6 @@ export const useFetchComments = () => {
     (state) => state.commentModal.currentPostRef!.postsShown
   );
 
-  const currentPostShown = postsShown!.find((ps) => {
-    return ps.refId === currentParentRefId;
-  });
   const commentsShown = useAppSelector(
     (state) => state.commentModal.currentCommentRef!.commentsShown
   );

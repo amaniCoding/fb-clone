@@ -45,7 +45,7 @@ export const useFetchReactors = () => {
           fetchingReactorsSucceed(response.data.result as ReactorsResponseType)
         );
         dispatch(fetchingReactors(false));
-      } catch (error) {
+      } catch {
         dispatch(fetchingReactorsFaild("Something went wrong"));
         dispatch(fetchingReactors(false));
       }
