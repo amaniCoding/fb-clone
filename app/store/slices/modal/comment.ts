@@ -267,7 +267,7 @@ export const commentModalSlice = createSlice({
 
     fetchingReplies: (
       state,
-      action: PayloadAction<{ loading: boolean; commentId: string }>
+      action: PayloadAction<{ loading: boolean; commentId?: string }>
     ) => {
       const newRefId = `${state.currentCommentRef!.refId}${
         action.payload.commentId
