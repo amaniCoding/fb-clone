@@ -50,7 +50,7 @@ export const useFetchComments = () => {
           })
         );
         dispatch(fetchingComments(false));
-      } catch (error) {
+      } catch {
         dispatch(
           fetchingCommentsFaild({
             hasError: true,
@@ -85,7 +85,3 @@ export const useFetchComments = () => {
     totalRows,
   };
 };
-
-const fetch = useFetchComments();
-
-export type useCommentsCommentType = typeof fetch;

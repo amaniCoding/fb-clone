@@ -5324,7 +5324,7 @@ export const _make_all_medias_dynamic = async (
         },
       });
 
-      if (media?.medias) {
+      if (media && media.medias) {
         return Promise.all(
           media?.medias.map((_media) => {
             return Promise.all(
@@ -5421,7 +5421,7 @@ export const _make_all_medias_dynamic = async (
         },
       });
 
-      if (media?.medias) {
+      if (media && media.medias) {
         return Promise.all(
           media?.medias.map((_media) => {
             return Promise.all(
@@ -5535,9 +5535,9 @@ export const _make_all_medias_dynamic = async (
         },
       });
 
-      if (media?.medias) {
+      if (media && media.medias) {
         return Promise.all(
-          media?.medias.map((_media) => {
+          media.medias.map((_media) => {
             return Promise.all(
               _media.comments.map((co) => {
                 return Promise.all(
@@ -5690,9 +5690,9 @@ export const _make_all_medias_dynamic = async (
         },
       });
 
-      if (media?.medias) {
+      if (media && media.medias) {
         return Promise.all(
-          media?.medias.map((_media) => {
+          media.medias.map((_media) => {
             return Promise.all(
               _media.comments.map((co) => {
                 return prisma.oPagePost.update({

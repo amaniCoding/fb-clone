@@ -40,7 +40,7 @@ export const useFetchHeaderGreactions = () => {
           )
         );
         dispatch(fetchingGReactions(false));
-      } catch (_) {
+      } catch {
         dispatch(fetchGReactionsFailed("Something went wrong"));
         dispatch(fetchingGReactions(false));
       }
@@ -52,7 +52,7 @@ export const useFetchHeaderGreactions = () => {
     return () => {
       controller.abort();
     };
-  }, [dispatch, isOnline]);
+  }, [dispatch, isOnline, url]);
 
   return {
     loading,

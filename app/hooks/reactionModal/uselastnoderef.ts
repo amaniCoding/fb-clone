@@ -1,6 +1,5 @@
 import { useCallback, useRef } from "react";
 import { useAppDispatch } from "@/app/store/hooks";
-import { useFetchReactors } from "./usefetchreactors";
 import { updatePageForReplies } from "@/app/store/slices/modal/comment";
 
 export const useLastReactorNodeRef = (

@@ -57,7 +57,7 @@ export const useFetchReactors = () => {
     return () => {
       controller.abort();
     };
-  }, [dispatch, isOnline]);
+  }, [dispatch, isOnline, fullUrl]);
 
   return {
     loading,

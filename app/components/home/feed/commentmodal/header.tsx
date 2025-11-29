@@ -1,13 +1,38 @@
 "use client";
 
-import { usePostsPostType } from "@/app/hooks/commentsModal/usefetchpost";
+import {
+  OGroupPost,
+  OPagePost,
+  OUserPost,
+  PageSharePost,
+  ToGroupSharedPost,
+  UserSharePost,
+} from "@/app/apis/feeder/[page]/lib";
+import { PostType } from "@/app/generated/prisma";
 import { FaXmark } from "react-icons/fa6";
 
 export default function Header({
   post,
   onClose,
 }: {
-  post: usePostsPostType;
+  post: {
+    loading: boolean | undefined;
+    error: {
+      hasError: boolean | undefined;
+      error: string | undefined;
+    };
+    type: PostType | undefined;
+    currentPost:
+      | {
+          oUserPost?: OUserPost;
+          userSharePost?: UserSharePost;
+          oPagePost?: OPagePost;
+          pageSharePost?: PageSharePost;
+          oGroupPost?: OGroupPost;
+          toGroupSharedPost?: ToGroupSharedPost;
+        }
+      | undefined;
+  };
   onClose: () => void;
 }) {
   const renderPoster = () => {

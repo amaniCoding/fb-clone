@@ -89,7 +89,7 @@ export const useFetchPost = () => {
         });
         dispatch(fetchingPostSucceed(getAppropriatePost(response.data)));
         dispatch(fetchingPost(false));
-      } catch (error) {
+      } catch {
         dispatch(
           fetchingPostFaild({
             hasError: true,
@@ -103,7 +103,7 @@ export const useFetchPost = () => {
     return () => {
       controller.abort();
     };
-  }, [dispatch, url]);
+  }, [dispatch, url, getAppropriatePost]);
 
   return {
     loading: currentPostShown!.loading,
@@ -116,7 +116,3 @@ export const useFetchPost = () => {
     currentPost: currentPostShown!.post,
   };
 };
-
-const fetch = useFetchPost();
-
-export type usePostsPostType = typeof fetch;
