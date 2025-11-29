@@ -16,38 +16,43 @@ export default function ReactionBox({
   hideShowing,
   post,
   refFrom,
+  fromWhat,
 }: {
   keepShowing: () => void;
   hideShowing: () => void;
-  post: {
+  post?: {
     type: PostType;
     post: unknown;
   };
-  refFrom: "modal" | "post";
+  refFrom?: "modal" | "post";
+  fromWhat: "post" | "comment" | "reply" | "replyreply";
 }) {
   const _reactAPost = async (reactionType: ReactionType) => {
-    if (post.type === "oUserPost") {
-      const _post = post.post as OUserPost;
-      reactOUserPost(_post.id!, reactionType);
-    }
-    if (post.type === "userSharePost") {
-      const _post = post.post as UserSharePost;
-    }
+    if (fromWhat === "post") {
+      if (post!.type === "oUserPost") {
+        const _post = post!.post as OUserPost;
+        reactOUserPost(_post.id!, reactionType);
+      }
+      if (post!.type === "userSharePost") {
+        const _post = post!.post as UserSharePost;
+      }
 
-    if (post.type === "oPagePost") {
-      const _post = post.post as OPagePost;
-    }
+      if (post!.type === "oPagePost") {
+        const _post = post!.post as OPagePost;
+      }
 
-    if (post.type === "pageSharePost") {
-      const _post = post.post as PageSharePost;
-    }
+      if (post!.type === "pageSharePost") {
+        const _post = post!.post as PageSharePost;
+      }
 
-    if (post.type === "oGroupPost") {
-      const _post = post.post as OGroupPost;
-    }
+      if (post!.type === "oGroupPost") {
+        const _post = post!.post as OGroupPost;
+      }
 
-    if (post.type === "toGroupSharedPost") {
-      const _post = post.post as ToGroupSharedPost;
+      if (post!.type === "toGroupSharedPost") {
+        const _post = post!.post as ToGroupSharedPost;
+      }
+      return;
     }
   };
   return (

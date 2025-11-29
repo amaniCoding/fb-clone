@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import ReplyReplies from "../replyreplies/replies";
 import { useReplyLastNodeRef } from "@/app/hooks/commentsModal/replies/uselastnoderef";
+import Lower from "../shared/lower";
 
 export default function Replies({
   refId,
@@ -105,11 +106,7 @@ export default function Replies({
               />
             ) : null}
             <div className="flex items-center justify-between space-x-5">
-              <div className="flex items-center space-x-2 text-black/40 text-sm font-semibold">
-                <p>2hrs</p>
-                <p>Like</p>
-                <p>Reply</p>
-              </div>
+              <Lower fromWhat="reply" />
               <div className="flex items-center">
                 <p className="text-gray-500">{rep._count.reactions}</p>
 
