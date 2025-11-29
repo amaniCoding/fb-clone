@@ -4,11 +4,7 @@ import { State } from "@/app/hooks/react/usereact";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 
-export async function reactOuserPost(
-  id: string,
-  reactionType: ReactionType,
-  prevState: State
-) {
+export async function reactOuserPost(id: string, reactionType: ReactionType) {
   const session = await auth();
   if (!session?.user) {
     throw new Error("Un aauthorized request");
@@ -63,7 +59,7 @@ export async function reactOuserPost(
         data: {
           reactions: {
             create: {
-              reactionType: reactionType,
+              reactionType: reactionType!,
               user: {
                 connect: {
                   id: session.user.id,

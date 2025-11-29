@@ -11,7 +11,7 @@ import {
 import { PostType, ReactionType } from "@/app/generated/prisma";
 import Image from "next/image";
 import ReactAPost from "./reactionbox/reactapost";
-
+import { State } from "@/app/hooks/react/usereact";
 export default function ReactionBox({
   keepShowing,
   hideShowing,
@@ -29,45 +29,50 @@ export default function ReactionBox({
   fromWhat: "post" | "comment" | "reply" | "replyreply";
 }) {
   const _reactAPost = () => {
-    const x = reactOuserPost.bind(null, "someid", "haha" as ReactionType);
-    return x;
-    // if (fromWhat === "post") {
-    //   if (post!.type === "oUserPost") {
-    //     const _post = post!.post as OUserPost;
-    //     const action = reactOuserPost;
-    //     action.bind(null, "someid");
-    //     action.bind(null, "haha" as ReactionType);
-    //     return action;
-    //   }
-    //   if (post!.type === "userSharePost") {
-    //     const _post = post!.post as UserSharePost;
-    //   }
+    if (fromWhat === "post") {
+      if (post!.type === "oUserPost") {
+        const _post = post!.post as OUserPost;
+        const x = reactOuserPost.bind(null, _post.postId!);
+        return (
+          <div
+            className="absolute left-0 bottom-12 z-[100] flex items-center p-1.5 bg-white shadow-lg space-x-1 rounded-4xl"
+            onMouseEnter={keepShowing}
+            onMouseLeave={hideShowing}
+          >
+            <ReactAPost
+              reactAction={x}
+              feedId={_post.feedId}
+              postType={_post.postType!}
+            />
+          </div>
+        );
+      }
+      if (post!.type === "userSharePost") {
+        const _post = post!.post as UserSharePost;
+        return null;
+      }
 
-    //   if (post!.type === "oPagePost") {
-    //     const _post = post!.post as OPagePost;
-    //   }
+      if (post!.type === "oPagePost") {
+        const _post = post!.post as OPagePost;
+        return null;
+      }
 
-    //   if (post!.type === "pageSharePost") {
-    //     const _post = post!.post as PageSharePost;
-    //   }
+      if (post!.type === "pageSharePost") {
+        const _post = post!.post as PageSharePost;
+        return null;
+      }
 
-    //   if (post!.type === "oGroupPost") {
-    //     const _post = post!.post as OGroupPost;
-    //   }
+      if (post!.type === "oGroupPost") {
+        const _post = post!.post as OGroupPost;
+        return null;
+      }
 
-    //   if (post!.type === "toGroupSharedPost") {
-    //     const _post = post!.post as ToGroupSharedPost;
-    //   }
-    //   return;
-    // }
+      if (post!.type === "toGroupSharedPost") {
+        const _post = post!.post as ToGroupSharedPost;
+        return null;
+      }
+      return null;
+    }
   };
-  return (
-    <div
-      className="absolute left-0 bottom-12 z-[100] flex items-center p-1.5 bg-white shadow-lg space-x-1 rounded-4xl"
-      onMouseEnter={keepShowing}
-      onMouseLeave={hideShowing}
-    >
-      <ReactAPost reactAction={_reactAPost} />
-    </div>
-  );
+  return <>{_reactAPost()}</>;
 }

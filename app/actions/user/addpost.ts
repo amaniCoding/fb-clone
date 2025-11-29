@@ -92,26 +92,42 @@ const prepareGReactions = async (
           };
         });
       }
-      case "toGroupSharedPost":
-        {
-          const r = await prisma.reaction.groupBy({
-            by: ["reactionType"],
-            _count: {
-              reactionType: true,
-            },
-            where: {
-              toGroupSharePostId: id,
-            },
-          });
+      case "oGroupPost": {
+        const r = await prisma.reaction.groupBy({
+          by: ["reactionType"],
+          _count: {
+            reactionType: true,
+          },
+          where: {
+            groupPostId: id,
+          },
+        });
 
-          return r.map((rxn) => {
-            return {
-              reactionType: rxn.reactionType,
-              count: rxn._count.reactionType,
-            };
-          });
-        }
-        break;
+        return r.map((rxn) => {
+          return {
+            reactionType: rxn.reactionType,
+            count: rxn._count.reactionType,
+          };
+        });
+      }
+      case "toGroupSharedPost": {
+        const r = await prisma.reaction.groupBy({
+          by: ["reactionType"],
+          _count: {
+            reactionType: true,
+          },
+          where: {
+            toGroupSharePostId: id,
+          },
+        });
+
+        return r.map((rxn) => {
+          return {
+            reactionType: rxn.reactionType,
+            count: rxn._count.reactionType,
+          };
+        });
+      }
 
       default:
         break;
@@ -119,26 +135,6 @@ const prepareGReactions = async (
   } catch (error) {}
 };
 
-const prepareMeidaGReactions = async (mediaId: string | undefined) => {
-  try {
-    const r = await prisma.mediaReaction.groupBy({
-      by: ["reactionType"],
-      _count: {
-        reactionType: true,
-      },
-      where: {
-        id: mediaId,
-      },
-    });
-
-    return r.map((rxn) => {
-      return {
-        reactionType: rxn.reactionType,
-        count: rxn._count.reactionType,
-      };
-    });
-  } catch (error) {}
-};
 export type State = {
   success: boolean;
   message: string;

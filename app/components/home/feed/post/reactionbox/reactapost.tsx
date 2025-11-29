@@ -1,27 +1,32 @@
 "use client";
+import { PostType, ReactionType } from "@/app/generated/prisma";
 import { State } from "@/app/hooks/react/usereact";
 import Image from "next/image";
-import { useActionState } from "react";
+import { useActionState, useTransition } from "react";
 
 export default function ReactAPost({
   reactAction,
+  feedId,
+  postType,
 }: {
-  reactAction: (prevState: State) => Promise<State>;
+  reactAction: (reactionType: ReactionType) => Promise<State>;
+  postType: PostType;
+  feedId: string;
 }) {
-  const initialState: State = {
-    _gReactions: undefined,
-    message: undefined,
-    reactionType: undefined,
-    success: false,
+  const handleClick = (reactionType: ReactionType) => {
+    startTransition(async () => {
+      const result = await reactAction.bind(null, reactionType)();
+    });
   };
-  const [state, formAction, isPending] = useActionState(
-    reactAction,
-    initialState
-  );
+  const [isPending, startTransition] = useTransition();
 
   return (
-    <form>
-      <button formAction={formAction}>
+    <div>
+      <button
+        formAction={() => {
+          handleClick("like");
+        }}
+      >
         <Image
           alt=""
           src={"/reactions/like.png"}
@@ -31,7 +36,7 @@ export default function ReactAPost({
           className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
         />
       </button>
-      <button formAction={formAction}>
+      <button formAction={() => {}}>
         <Image
           alt=""
           src={"/reactions/love.png"}
@@ -41,7 +46,7 @@ export default function ReactAPost({
           className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
         />
       </button>
-      <button formAction={formAction}>
+      <button formAction={() => {}}>
         <Image
           alt=""
           src={"/reactions/care.png"}
@@ -51,7 +56,7 @@ export default function ReactAPost({
           className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
         />
       </button>
-      <button formAction={formAction}>
+      <button formAction={() => {}}>
         <Image
           alt=""
           src={"/reactions/haha.png"}
@@ -61,7 +66,7 @@ export default function ReactAPost({
           className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
         />
       </button>
-      <button formAction={formAction}>
+      <button formAction={() => {}}>
         <Image
           alt=""
           src={"/reactions/wow.png"}
@@ -71,7 +76,7 @@ export default function ReactAPost({
           className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
         />
       </button>
-      <button formAction={formAction}>
+      <button formAction={() => {}}>
         <Image
           alt=""
           src={"/reactions/sad.png"}
@@ -81,7 +86,7 @@ export default function ReactAPost({
           className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
         />
       </button>
-      <button formAction={formAction}>
+      <button formAction={() => {}}>
         <Image
           alt=""
           src={"/reactions/angry.png"}
@@ -91,6 +96,6 @@ export default function ReactAPost({
           className="cursor-pointer w-12 h-12 object-cover rounded-full block flex-none"
         />
       </button>
-    </form>
+    </div>
   );
 }
