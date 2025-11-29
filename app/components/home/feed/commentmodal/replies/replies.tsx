@@ -9,6 +9,7 @@ import {
 } from "@/app/store/slices/modal/comment";
 import axios from "axios";
 import ReplyReplies from "../replyreplies/replies";
+import { useReplyLastNodeRef } from "@/app/hooks/commentsModal/replies/uselastnoderef";
 
 export default function Replies({
   refId,
@@ -20,7 +21,6 @@ export default function Replies({
   repliesCount: number;
 }) {
   const dispatch = useAppDispatch();
-
   const repliesShown = useAppSelector(
     (state) => state.commentModal.currentReplyRef!.repliesShown
   );
@@ -31,8 +31,18 @@ export default function Replies({
     (state) => state.commentModal.currentReplyRef!.starterUrl
   );
 
-  const page = currentRepliesShown!.page;
+  const page = currentRepliesShown!.page!;
+  const totalPages = currentRepliesShown!.totalPages!;
+  const loading = currentRepliesShown!.loading!;
+  const hasError = currentRepliesShown!.hasError!;
+  const error = currentRepliesShown!.error!;
+  const replies = currentRepliesShown!.replies!;
   const fullUrl = `${starterUrl!}/${page!}`;
+
+  const hasMore = page! <= totalPages!;
+
+  const lastNodeElementRef = useReplyLastNodeRef(hasMore, loading!, page!);
+
   const viewAllReplies = async (commentId: string) => {
     try {
       dispatch(
@@ -71,14 +81,17 @@ export default function Replies({
       >
         View all {repliesCount} replies
       </p>
-      <p>{currentRepliesShown!.loading && <p>Loading</p>}</p>
-      {currentRepliesShown!.replies!.map((rep, index) => {
+      <p>{loading && <p>Loading</p>}</p>
+      {replies!.map((rep, index) => {
         const newRxn = rep._gReactions
           ? [...rep._gReactions].sort((a, b) => b.count - a.count)
           : [];
         const newRxn_x = newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
         return (
-          <div className="ml-2 flex flex-col">
+          <div
+            className="ml-2 flex flex-col"
+            ref={replies.length === index + 1 ? lastNodeElementRef : null}
+          >
             {rep.content && <p>{rep.content}</p>}
             {rep.mediaUrl ? (
               <Image
@@ -125,7 +138,7 @@ export default function Replies({
           </div>
         );
       })}
-      {currentRepliesShown!.hasError && <p>{currentRepliesShown?.error}</p>}
+      {hasError && <p>{error}</p>}
     </div>
   );
 }

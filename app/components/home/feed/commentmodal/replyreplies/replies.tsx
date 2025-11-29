@@ -10,6 +10,7 @@ import {
   fetchingReplyRepliesFailed,
 } from "@/app/store/slices/modal/comment";
 import axios from "axios";
+import { useReplyRepliesLastNodeRef } from "@/app/hooks/commentsModal/replyreplies/uselastnoderef";
 
 export default function ReplyReplies({
   refId,
@@ -32,8 +33,21 @@ export default function ReplyReplies({
     (state) => state.commentModal.currentReplyRef!.starterUrl
   );
 
-  const page = currentRepliesShown!.page;
+  const page = currentRepliesShown!.page!;
+  const totalPages = currentRepliesShown!.totalPages!;
+  const loading = currentRepliesShown!.loading!;
+  const hasError = currentRepliesShown!.hasError!;
+  const error = currentRepliesShown!.error!;
+  const replies = currentRepliesShown!.replies!;
   const fullUrl = `${starterUrl!}/${page!}`;
+
+  const hasMore = page! <= totalPages!;
+
+  const lastNodeElementRef = useReplyRepliesLastNodeRef(
+    hasMore,
+    loading!,
+    page!
+  );
   const viewAllReplyReplies = async (replyId: string) => {
     try {
       dispatch(
@@ -72,14 +86,17 @@ export default function ReplyReplies({
       >
         View all {repliesCount} replies
       </p>
-      <p>{currentRepliesShown!.loading && <p>Loading</p>}</p>
-      {currentRepliesShown!.replies!.map((rep, index) => {
+      <p>{loading && <p>Loading</p>}</p>
+      {replies!.map((rep, index) => {
         const newRxn = rep._gReactions
           ? [...rep._gReactions].sort((a, b) => b.count - a.count)
           : [];
         const newRxn_x = newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
         return (
-          <div className="ml-2 flex flex-col">
+          <div
+            className="ml-2 flex flex-col"
+            ref={replies.length === index + 1 ? lastNodeElementRef : null}
+          >
             {rep.content && <p>{rep.content}</p>}
             {rep.mediaUrl ? (
               <Image
@@ -96,7 +113,6 @@ export default function ReplyReplies({
               <div className="flex items-center space-x-2 text-black/40 text-sm font-semibold">
                 <p>2hrs</p>
                 <p>Like</p>
-                <p>Reply</p>
               </div>
               <div className="flex items-center">
                 <p className="text-gray-500">{rep._count.reactions}</p>
@@ -121,7 +137,7 @@ export default function ReplyReplies({
           </div>
         );
       })}
-      {currentRepliesShown!.hasError && <p>{currentRepliesShown?.error}</p>}
+      {hasError && <p>{error}</p>}
     </div>
   );
 }
