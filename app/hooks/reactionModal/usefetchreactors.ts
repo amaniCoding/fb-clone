@@ -47,7 +47,6 @@ export const useFetchReactors = () => {
         dispatch(fetchingReactors(false));
       } catch {
         dispatch(fetchingReactorsFaild("Something went wrong"));
-        dispatch(fetchingReactors(false));
       }
     };
 
@@ -57,7 +56,7 @@ export const useFetchReactors = () => {
     return () => {
       controller.abort();
     };
-  }, [dispatch, isOnline, fullUrl]);
+  }, [dispatch, isOnline, fullUrl, currentReactionType]);
 
   return {
     loading,

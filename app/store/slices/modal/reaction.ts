@@ -118,6 +118,17 @@ export const reactionModalSlice = createSlice({
       });
       currentRef!.header!.error = action.payload;
     },
+
+    udpateHeader: (
+      state,
+      action: PayloadAction<{ currentReactionType: ReactionType }>
+    ) => {
+      const currentRef = state.reactionsData.find((rd) => {
+        return rd.refId === state.refId;
+      });
+      currentRef!.header!.currentReaction = action.payload.currentReactionType;
+    },
+
     fetchingReactors: (state, action: PayloadAction<boolean>) => {
       const currentRef = state.reactionsData.find((rd) => {
         return rd.refId === state.refId;
@@ -187,6 +198,7 @@ export const {
   fetchingGReactions,
   fetchGReactionsSsucceed,
   fetchingReactorsFaild,
+  udpateHeader,
   fetchingReactors,
   fetchingReactorsSucceed,
   fetchGReactionsFailed,

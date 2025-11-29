@@ -24,6 +24,7 @@ export const useFetchHeaderGreactions = () => {
   const loading = currRef?.header?.loading;
   const error = currRef?.header?.error;
   const gReactions = currRef?.header?.gReactions;
+  const currentReactionType = currRef?.header?.currentReaction;
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -58,5 +59,6 @@ export const useFetchHeaderGreactions = () => {
     loading,
     error,
     gReactions,
+    currentReactionType,
   };
 };
