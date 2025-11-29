@@ -3,10 +3,6 @@ import { useEffect } from "react";
 
 import axios from "axios";
 import {
-  fetchingGReactions,
-  fetchGReactionsSsucceed,
-  GReactionsResponseType,
-  fetchGReactionsFailed,
   fetchingReactors,
   fetchingReactorsSucceed,
   fetchingReactorsFaild,

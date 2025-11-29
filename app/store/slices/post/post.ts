@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface UploadedMediaType {
-  url: string;
-  type: string;
-}
 // Define a type for the slice state
 interface PostState {
   toShowCommentModal: boolean;

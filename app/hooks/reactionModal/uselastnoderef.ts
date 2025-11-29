@@ -3,10 +3,11 @@ import { useAppDispatch } from "@/app/store/hooks";
 import { useFetchReactors } from "./usefetchreactors";
 import { updatePageForReplies } from "@/app/store/slices/modal/comment";
 
-export const useLastReactorNodeRef = () => {
-  const { loading, page, totalPages } = useFetchReactors();
-  const hasMore = page! <= totalPages!;
-
+export const useLastReactorNodeRef = (
+  hasMore: boolean,
+  loading: boolean,
+  page: number
+) => {
   const observer = useRef<IntersectionObserver>(null);
   const dispatch = useAppDispatch();
   const lastCommentNodeRef = useCallback(
@@ -23,7 +24,7 @@ export const useLastReactorNodeRef = () => {
 
       if (node) observer.current.observe(node);
     },
-    [hasMore, loading, page]
+    [dispatch, hasMore, loading, page]
   );
 
   return lastCommentNodeRef;

@@ -40,7 +40,7 @@ export const useFetchHeaderGreactions = () => {
           )
         );
         dispatch(fetchingGReactions(false));
-      } catch (error) {
+      } catch (_) {
         dispatch(fetchGReactionsFailed("Something went wrong"));
         dispatch(fetchingGReactions(false));
       }

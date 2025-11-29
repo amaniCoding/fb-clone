@@ -1,26 +1,14 @@
+import { ReactorsType } from "@/app/apis/reactions/oGroupPost/body/[postid]/[reactiontype]/[page]/lib";
 import { ReactionType } from "@/app/generated/prisma";
 import { useLastReactorNodeRef } from "@/app/hooks/reactionModal/uselastnoderef";
 import Image from "next/image";
 export default function Reactors({
   reactors,
+  lastNodeRef,
 }: {
-  reactors:
-    | {
-        feedId: string;
-        postId: string | undefined;
-        postType: string;
-        user: {
-          firstName: string;
-          lastName: string;
-          Profile: {
-            profilePicture: string | null;
-          } | null;
-        };
-        reactionType: ReactionType;
-      }[]
-    | undefined;
+  reactors: ReactorsType;
+  lastNodeRef: (node: HTMLDivElement) => void;
 }) {
-  const lastNodeRef = useLastReactorNodeRef();
   return (
     <div className="flex items-center space-x-2">
       <div className="w-7 h-7 rounded-full relative">

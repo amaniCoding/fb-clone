@@ -47,7 +47,7 @@ export const feedSlice = createSlice({
     },
 
     updatePage: (state, action: PayloadAction<number>) => {
-      state.feeds.page = state.feeds.page + 1;
+      state.feeds.page = action.payload + 1;
     },
   },
 });

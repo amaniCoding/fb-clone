@@ -8,8 +8,6 @@ import {
 } from "@/app/apis/feeder/[page]/lib";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import {
-  fetchingComments,
-  fetchingCommentsFaild,
   fetchingPost,
   fetchingPostFaild,
   fetchingPostSucceed,
@@ -105,7 +103,7 @@ export const useFetchPost = () => {
     return () => {
       controller.abort();
     };
-  }, [dispatch]);
+  }, [dispatch, url]);
 
   return {
     loading: currentPostShown!.loading,

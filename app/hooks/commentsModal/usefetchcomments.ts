@@ -64,7 +64,7 @@ export const useFetchComments = () => {
     return () => {
       controller.abort();
     };
-  }, [dispatch, page!]);
+  }, [dispatch, page!, fullUrl]);
 
   const loading = currentCommentShown!.loading;
   const error = currentCommentShown!.error;

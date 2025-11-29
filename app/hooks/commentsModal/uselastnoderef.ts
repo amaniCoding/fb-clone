@@ -24,7 +24,7 @@ export const useCommentsLastNodeRef = (
 
       if (node) observer.current.observe(node);
     },
-    [hasMore, loading, page]
+    [dispatch, hasMore, loading, page]
   );
 
   return lastCommentNodeRef;
