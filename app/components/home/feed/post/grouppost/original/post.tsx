@@ -1,10 +1,10 @@
 "use client";
 import Content from "../../shared/content";
+import Lower from "../../shared/lower";
 import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";
 import GroupHeader from "../header";
 
-import Lower from "./lower";
 import { OGroupPost } from "@/app/apis/feeder/[page]/lib";
 
 type PropsTypes = {
@@ -13,6 +13,10 @@ type PropsTypes = {
 };
 
 export default function OGroup_Post({ refFrom, post }: PropsTypes) {
+  const _post = {
+    type: post.postType!,
+    post,
+  };
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       <GroupHeader
@@ -31,7 +35,7 @@ export default function OGroup_Post({ refFrom, post }: PropsTypes) {
         feedId={post.feedId}
         postId={post.postId}
       />
-      <Lower post={post} refFrom={refFrom} />
+      <Lower post={_post} refFrom={refFrom} />
     </div>
   );
 }

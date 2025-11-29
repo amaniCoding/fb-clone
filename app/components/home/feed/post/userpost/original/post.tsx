@@ -3,7 +3,7 @@ import UserHeader from "../header";
 import Content from "../../shared/content";
 import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";
-import Lower from "./lower";
+import Lower from "../../shared/lower";
 import { OUserPost } from "@/app/apis/feeder/[page]/lib";
 
 type PropsTypes = {
@@ -12,6 +12,10 @@ type PropsTypes = {
 };
 
 export default function OUser_Post({ refFrom, post }: PropsTypes) {
+  const _post = {
+    type: post.postType!,
+    post,
+  };
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       <UserHeader
@@ -32,7 +36,7 @@ export default function OUser_Post({ refFrom, post }: PropsTypes) {
         postId={post.postId}
         feedId={post.feedId}
       />
-      <Lower post={post} refFrom={refFrom} />
+      <Lower post={_post} refFrom={refFrom} />
     </div>
   );
 }

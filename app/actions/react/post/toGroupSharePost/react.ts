@@ -3,7 +3,10 @@ import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 
-export async function reactAPost(id: string, reactionType: ReactionType) {
+export async function reactToGroupSharePost(
+  id: string,
+  reactionType: ReactionType
+) {
   const session = await auth();
   if (!session?.user) {
     throw new Error("Un aauthorized request");

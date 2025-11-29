@@ -3,7 +3,7 @@ import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 
-export async function reactAPost(
+export async function reactReplyForUserSharePost(
   id: string,
   commentId: string,
   replyId: string,

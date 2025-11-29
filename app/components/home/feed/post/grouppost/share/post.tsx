@@ -5,10 +5,10 @@ import { ToGroupSharedPost } from "@/app/apis/feeder/[page]/lib";
 import PageHeader from "../../pagepost/header";
 import UserHeader from "../../userpost/header";
 import GroupHeader from "../header";
-import Lower from "./lower";
 import Medias from "../../shared/Medias";
 import Content from "../../shared/content";
 import Upper from "../../shared/upper";
+import Lower from "../../shared/lower";
 
 type PropsTypes = {
   post: ToGroupSharedPost;
@@ -16,6 +16,10 @@ type PropsTypes = {
 };
 
 export default function ToGroupShare_Post({ refFrom, post }: PropsTypes) {
+  const _post = {
+    type: post.postType!,
+    post,
+  };
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       {post.sharer === "user" && (
@@ -126,7 +130,7 @@ export default function ToGroupShare_Post({ refFrom, post }: PropsTypes) {
         feedId={post.feedId}
         postId={post.postId}
       />
-      <Lower post={post} refFrom={refFrom} />
+      <Lower post={_post} refFrom={refFrom} />
     </div>
   );
 }

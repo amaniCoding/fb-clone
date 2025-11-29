@@ -2,13 +2,13 @@
 
 import { PageSharePost } from "@/app/apis/feeder/[page]/lib";
 
-import Lower from "./lower";
 import PageHeader from "../header";
 import GroupHeader from "../../grouppost/header";
 import UserHeader from "../../userpost/header";
 import Content from "../../shared/content";
 import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";
+import Lower from "../../shared/lower";
 
 type PropsTypes = {
   post: PageSharePost;
@@ -16,6 +16,10 @@ type PropsTypes = {
 };
 
 export default function PageShare_Post({ refFrom, post }: PropsTypes) {
+  const _post = {
+    type: post.postType!,
+    post,
+  };
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       <PageHeader
@@ -117,7 +121,7 @@ export default function PageShare_Post({ refFrom, post }: PropsTypes) {
         feedId={post.feedId}
         postId={post.postId}
       />
-      <Lower post={post} refFrom={refFrom} />
+      <Lower post={_post} refFrom={refFrom} />
     </div>
   );
 }

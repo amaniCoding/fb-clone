@@ -4,10 +4,10 @@ import { UserSharePost } from "@/app/apis/feeder/[page]/lib";
 import Content from "../../shared/content";
 import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";
-import Lower from "./lower";
 import UserHeader from "../header";
 import PageHeader from "../../pagepost/header";
 import GroupHeader from "../../grouppost/header";
+import Lower from "../../shared/lower";
 
 type PropsTypes = {
   post: UserSharePost;
@@ -15,6 +15,10 @@ type PropsTypes = {
 };
 
 export default function UserShare_Post({ refFrom, post }: PropsTypes) {
+  const _post = {
+    type: post.postType!,
+    post,
+  };
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       <UserHeader
@@ -119,7 +123,7 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
         feedId={post.feedId}
         postId={post.postId}
       />
-      <Lower post={post} refFrom={refFrom} />
+      <Lower post={_post} refFrom={refFrom} />
     </div>
   );
 }
