@@ -2,14 +2,14 @@
 import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
-import { State } from "@/app/hooks/react/usereact";
+import { State } from "../../../types";
 
 export async function reactOPagePostMediaComment(
-  prevState: State,
   id: string,
   mediaId: string,
   commentId: string,
-  reactionType: ReactionType
+  reactionType: ReactionType,
+  prevState: State
 ) {
   const session = await auth();
   if (!session?.user) {

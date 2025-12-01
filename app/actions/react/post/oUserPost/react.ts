@@ -1,10 +1,14 @@
 "use server";
 import { ReactionType } from "@/app/generated/prisma";
-import { State } from "@/app/hooks/react/usereact";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
+import { State } from "../../types";
 
-export async function reactOuserPost(id: string, reactionType: ReactionType) {
+export async function reactOuserPost(
+  id: string,
+  reactionType: ReactionType,
+  prevState: State
+) {
   const session = await auth();
   if (!session?.user) {
     throw new Error("Un aauthorized request");

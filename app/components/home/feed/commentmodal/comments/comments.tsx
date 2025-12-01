@@ -13,7 +13,8 @@ import axios from "axios";
 
 import Image from "next/image";
 import Link from "next/link";
-import Replies from "./replies/replies";
+import Replies from "../replies/replies";
+import Lower from "../shared/lower";
 
 export default function Comments({
   isFetchingPost,
@@ -91,11 +92,7 @@ export default function Comments({
                     ) : null}
                   </div>
                   <div className="flex items-center justify-between space-x-5">
-                    <div className="flex items-center space-x-2 text-black/40 text-sm font-semibold">
-                      <p>2hrs</p>
-                      <p>Like</p>
-                      <p>Reply</p>
-                    </div>
+                    <Lower fromWhat="comment" />
                     <div className="flex items-center">
                       <p className="text-gray-500">{co._count.reactions}</p>
 

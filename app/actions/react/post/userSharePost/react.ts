@@ -2,12 +2,12 @@
 import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
-import { State } from "@/app/hooks/react/usereact";
+import { State } from "../../types";
 
 export async function reactUserSharePost(
-  prevState: State,
   id: string,
-  reactionType: ReactionType
+  reactionType: ReactionType,
+  prevState: State
 ) {
   const session = await auth();
   if (!session?.user) {
@@ -26,7 +26,6 @@ export async function reactUserSharePost(
           },
           select: {
             id: true,
-            reactionType: true,
           },
         },
       },

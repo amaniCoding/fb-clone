@@ -2,9 +2,6 @@
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import {
-  fetchingReplies,
-  repliesFetched,
-  fetchingRepliesFailed,
   fetchingReplyReplies,
   replyRepliesFetched,
   fetchingReplyRepliesFailed,

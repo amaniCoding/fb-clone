@@ -13,8 +13,8 @@ import {
   ToGroupSharedPost,
   UserSharePost,
 } from "@/app/apis/feeder/[page]/lib";
-import ReactionBox from "../reactionbox";
 import { PostType } from "@/app/generated/prisma";
+import ReactionBox from "../reactionbox/post/reactionbox";
 
 type TypeProps = {
   post: {
@@ -150,8 +150,6 @@ export default function Lower({ refFrom, post }: TypeProps) {
       {toShowReactionBox && (
         <ReactionBox
           post={post}
-          refFrom={refFrom}
-          fromWhat="post"
           keepShowing={keepShowing}
           hideShowing={hideShowing}
         />

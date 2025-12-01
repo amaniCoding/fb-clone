@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useAppDispatch } from "@/app/store/hooks";
 import { useRef, useState } from "react";
-import ReactionBox from "../post/reactionbox";
+import ReactionBox from "../post/reactionbox/comment/reactionbox";
 
 export default function Lower() {
   const dispatch = useAppDispatch();
@@ -32,9 +32,7 @@ export default function Lower() {
   };
   return (
     <div className="flex items-center justify-between relative mx-1.5">
-      {toShowReactionBox && (
-        <ReactionBox keepShowing={keepShowing} hideShowing={hideShowing} />
-      )}
+      {toShowReactionBox && <ReactionBox />}
       <div
         className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100"
         onMouseEnter={showReactionBox}

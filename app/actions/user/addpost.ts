@@ -361,11 +361,7 @@ const postToFeed = async (
   }
 };
 
-export async function createPost(
-  id: string,
-  prevState: State,
-  formData: FormData
-) {
+export async function createPost(prevState: State, formData: FormData) {
   const session = await auth();
   if (!session?.user) {
     throw new Error("Un aauthorized request");

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import ReactionBox from "../../post/reactionbox";
+import ReactionBox from "../../post/reactionbox/comment/reactionbox";
 
 export default function Lower({
   fromWhat,
@@ -33,18 +33,13 @@ export default function Lower({
   };
   return (
     <div className="flex items-center space-x-2 text-black/40 text-sm font-semibold">
-      {toShowReactionBox && (
-        <ReactionBox
-          fromWhat={fromWhat}
-          keepShowing={keepShowing}
-          hideShowing={hideShowing}
-        />
-      )}
+      {toShowReactionBox && <ReactionBox />}
       <p>2hrs</p>
       <p onMouseEnter={showReactionBox} onMouseLeave={hideReactionBox}>
         Like
       </p>
       {fromWhat === "reply" && <p>reply</p>}
+      {fromWhat === "comment" && <p>reply</p>}
     </div>
   );
 }

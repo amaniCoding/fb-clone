@@ -1,5 +1,4 @@
 "use client";
-import Comments from "./comments";
 import AddComment from "./addcomment";
 
 import { useSession } from "next-auth/react";
@@ -15,6 +14,7 @@ import OGroup_Post from "../post/grouppost/original/post";
 import Header from "./header";
 import CommentsSkeleton from "@/app/components/skeletons/comment";
 import { useFetchPost } from "@/app/hooks/commentsModal/usefetchpost";
+import Comments from "./comments/comments";
 
 export default function CommentModal() {
   const { data, status } = useSession();

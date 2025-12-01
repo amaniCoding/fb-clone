@@ -2,15 +2,15 @@
 import { ReactionType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
-import { State } from "@/app/hooks/react/usereact";
+import { State } from "../../../types";
 
 export async function reactReplyForOGroupPostMedia(
-  prevState: State,
   id: string,
   mediaId: string,
   commentId: string,
   replyId: string,
-  reactionType: ReactionType
+  reactionType: ReactionType,
+  prevState: State
 ) {
   const session = await auth();
   if (!session?.user) {

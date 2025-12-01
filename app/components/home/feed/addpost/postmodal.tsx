@@ -29,9 +29,8 @@ export default function PostModal(props: { onClose: () => void }) {
     feed: undefined,
   };
 
-  const createPostWithId = createPost.bind(null, "somehit");
   const [state, formAction, isPending] = useActionState(
-    createPostWithId,
+    createPost,
     initialState,
     undefined
   );
