@@ -3,9 +3,9 @@ import Image from "next/image";
 export default async function ContactList() {
   return (
     <>
-      {users.map((user) => {
+      {users.map((user, index) => {
         return (
-          <div className="w-full opacity-45" key={user.userid}>
+          <div className="w-full opacity-45" key={index}>
             <div className="flex items-center space-x-2 py-2 px-2.5 rounded-md hover:bg-gray-100">
               <Image
                 alt="Amanuel Ferede"
