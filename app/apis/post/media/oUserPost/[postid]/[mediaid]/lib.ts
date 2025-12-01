@@ -153,15 +153,18 @@ export const getMediaInfo = async (postId: string, mediaId: string) => {
     _gReactions: await mediaPreparer.prepareGReactions(_media?.medias[0].id!),
   };
 
-  const updatedMedias = await Promise.all(
-    _medias?.medias.map(async (m) => {
-      return {
-        ...m,
-        postId: _medias.id,
-        _gReactions: await mediaPreparer.prepareGReactions(m.id),
-      };
-    })!
-  );
+  const updatedMedias = _medias
+    ? await Promise.all(
+        _medias?.medias &&
+          _medias?.medias.map(async (m) => {
+            return {
+              ...m,
+              postId: _medias.id,
+              _gReactions: await mediaPreparer.prepareGReactions(m.id),
+            };
+          })
+      )
+    : undefined;
 
   // reuslt can be undefined
   return {
