@@ -91,6 +91,8 @@ export const useFetchPost = () => {
         dispatch(fetchingPostSucceed(getAppropriatePost(response.data)));
         dispatch(fetchingPost(false));
       } catch {
+        dispatch(fetchingPost(false));
+
         dispatch(
           fetchingPostFaild({
             hasError: true,
