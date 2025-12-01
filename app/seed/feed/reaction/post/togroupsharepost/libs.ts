@@ -28,7 +28,7 @@ export async function _seeder() {
       }
       return prisma.toGroupSharePost.update({
         where: {
-          id: "someid",
+          id: post.id,
         },
         data: {
           reactions: {
