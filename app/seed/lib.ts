@@ -6,7 +6,7 @@ import {
   dummyReplies,
   dummyReplyReplies,
   reactionTypes,
-} from "../dummy";
+} from "./dummy";
 const postContentOption = ["contentonly", "mediasonly", "both"];
 
 const getRandomPost = async (
