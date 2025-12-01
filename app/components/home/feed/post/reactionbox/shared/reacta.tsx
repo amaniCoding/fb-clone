@@ -35,41 +35,41 @@ export default function ReactA({
 
   const reactWithCare = actionOn.bind(null, "care" as ReactionType);
   const [stateCare, formActionCare, isPendingCare] = useActionState(
-    reactWithLove,
+    reactWithCare,
     initialState,
     undefined
   );
 
   const reactWithHaha = actionOn.bind(null, "haha" as ReactionType);
   const [stateHaha, formActionHaha, isPendingHaha] = useActionState(
-    reactWithLove,
+    reactWithHaha,
     initialState,
     undefined
   );
 
   const reactWithWow = actionOn.bind(null, "wow" as ReactionType);
   const [stateWow, formActionWow, isPendingWow] = useActionState(
-    reactWithLove,
+    reactWithWow,
     initialState,
     undefined
   );
 
   const reactWithSad = actionOn.bind(null, "sad" as ReactionType);
   const [stateSad, formActionSad, isPendingSad] = useActionState(
-    reactWithLove,
+    reactWithSad,
     initialState,
     undefined
   );
 
   const reactWithAngry = actionOn.bind(null, "angry" as ReactionType);
   const [stateAngry, formActionAngry, isPendingAngry] = useActionState(
-    reactWithLove,
+    reactWithAngry,
     initialState,
     undefined
   );
 
   return (
-    <form>
+    <form className="flex items-center">
       <button formAction={formActionLike}>
         <Image
           alt=""

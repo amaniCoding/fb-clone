@@ -38,7 +38,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
           commentstarterUrl: `/apis/comments/${_post!.postType}/${
             _post.postId
           }`,
-          postStarterUrl: `/apis/${_post!.postType}/${_post!.postId}`,
+          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
@@ -53,7 +53,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
           commentstarterUrl: `/apis/comments/${_post!.postType}/${
             _post.postId
           }`,
-          postStarterUrl: `/apis/${_post!.postType}/${_post!.postId}`,
+          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
@@ -69,7 +69,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
           commentstarterUrl: `/apis/comments/${_post!.postType}/${
             _post.postId
           }`,
-          postStarterUrl: `/apis/${_post!.postType}/${_post!.postId}`,
+          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
@@ -85,7 +85,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
           commentstarterUrl: `/apis/comments/${_post!.postType}/${
             _post.postId
           }`,
-          postStarterUrl: `/apis/${_post!.postType}/${_post!.postId}`,
+          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
@@ -101,7 +101,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
           commentstarterUrl: `/apis/comments/${_post!.postType}/${
             _post.postId
           }`,
-          postStarterUrl: `/apis/${_post!.postType}/${_post!.postId}`,
+          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
@@ -117,7 +117,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
           commentstarterUrl: `/apis/comments/${_post!.postType}/${
             _post.postId
           }`,
-          postStarterUrl: `/apis/${_post!.postType}/${_post!.postId}`,
+          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
