@@ -13,7 +13,7 @@ export async function _seeder() {
   const user = await getRandomUser();
 
   const postContentOption = getRandomPostContentOption();
-  return await prisma.feed.create({
+  return prisma.feed.create({
     data: {
       postType: "user",
       userPost: {

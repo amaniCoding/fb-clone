@@ -1,0 +1,53 @@
+import prisma from "@/app/libs/prisma";
+import { getRandomPostComment } from "@/app/seed/lib";
+import {
+  generateSinglePhoto,
+  getRandomPostContentOption,
+  getRandomUser,
+} from "@/app/seed/libs";
+
+export async function _seeder() {
+  const user = await getRandomUser();
+  const comment = getRandomPostComment();
+  const commentPostOption = getRandomPostContentOption() as
+    | "contentonly"
+    | "mediasonly"
+    | "both";
+
+  const posts = await prisma.oUserPost.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  return Promise.all(
+    posts.map((post) => {
+      return prisma.oUserPost.update({
+        where: {
+          id: post.id,
+        },
+        data: {
+          comments: {
+            create: {
+              content:
+                commentPostOption === "contentonly" ||
+                commentPostOption === "both"
+                  ? comment
+                  : null,
+              mediaUrl:
+                commentPostOption === "both" ||
+                commentPostOption === "mediasonly"
+                  ? generateSinglePhoto()
+                  : null,
+              user: {
+                connect: {
+                  id: user.id,
+                },
+              },
+            },
+          },
+        },
+      });
+    })
+  );
+}
