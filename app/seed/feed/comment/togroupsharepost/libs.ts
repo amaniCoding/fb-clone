@@ -7,13 +7,6 @@ import {
 } from "@/app/seed/libs";
 
 export async function _seeder() {
-  const user = await getRandomUser();
-  const comment = getRandomPostComment();
-  const commentPostOption = getRandomPostContentOption() as
-    | "contentonly"
-    | "mediasonly"
-    | "both";
-
   const posts = await prisma.toGroupSharePost.findMany({
     select: {
       id: true,
@@ -21,7 +14,13 @@ export async function _seeder() {
   });
 
   return Promise.all(
-    posts.map((post) => {
+    posts.map(async (post) => {
+      const user = await getRandomUser();
+      const comment = getRandomPostComment();
+      const commentPostOption = getRandomPostContentOption() as
+        | "contentonly"
+        | "mediasonly"
+        | "both";
       return prisma.toGroupSharePost.update({
         where: {
           id: post.id,
