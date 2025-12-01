@@ -109,13 +109,15 @@ export const useFetchPost = () => {
   }, [dispatch, url, getAppropriatePost]);
 
   return {
-    loading: currentPostShown!.loading,
+    loading: currentPostShown!.loading ? currentPostShown!.loading : undefined,
     error: {
-      hasError: currentPostShown!.hasError,
-      error: currentPostShown!.error,
+      hasError: currentPostShown!.hasError
+        ? currentPostShown!.hasError
+        : undefined,
+      error: currentPostShown!.error ? currentPostShown!.error : undefined,
     },
 
-    type: currentPostShown!.postType,
-    currentPost: currentPostShown!.post,
+    type: currentPostShown!.postType ? currentPostShown!.postType : undefined,
+    currentPost: currentPostShown!.post ? currentPostShown!.post : undefined,
   };
 };

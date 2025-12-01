@@ -223,6 +223,7 @@ export const commentModalSlice = createSlice({
           return cs.refId === state.currentCommentRef!.refId;
         });
         isShown!.loading = true;
+        isShown!.comments = [];
       }
 
       // now currentCommentRef is defiend now
@@ -340,17 +341,13 @@ export const commentModalSlice = createSlice({
           refId: newRefId,
           replyRepliesShown: [],
         };
-      }
-      const isShown = state.currentReplyReplyRef!.replyRepliesShown!.find(
-        (rrs) => {
-          return rrs.refId === newRefId;
-        }
-      );
-      if (!isShown) {
-        state.currentReplyReplyRef!.replyRepliesShown!.push({
-          loading: action.payload.loading,
-          replies: [],
-        });
+      } else {
+        const isShown = state.currentReplyReplyRef!.replyRepliesShown!.find(
+          (rrs) => {
+            return rrs.refId === newRefId;
+          }
+        );
+        isShown!.loading = action.payload.loading;
       }
     },
 

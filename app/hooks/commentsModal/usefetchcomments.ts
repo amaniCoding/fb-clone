@@ -30,6 +30,24 @@ export const useFetchComments = () => {
 
   const fullUrl = `${starterUrl!}/${page!}`;
 
+  const loading = currentCommentShown!.loading
+    ? currentCommentShown!.loading
+    : undefined;
+  const error = currentCommentShown!.error
+    ? currentCommentShown!.error
+    : undefined;
+  const hasError = currentCommentShown!.hasError
+    ? currentCommentShown!.hasError
+    : undefined;
+  const comments = currentCommentShown!.comments
+    ? currentCommentShown!.comments
+    : undefined;
+  const totalPages = currentCommentShown!.totalPages
+    ? currentCommentShown!.totalPages
+    : undefined;
+  const totalRows = currentCommentShown!.totalRows
+    ? currentCommentShown!.totalRows
+    : undefined;
   useEffect(() => {
     const controller = new AbortController();
     const fetchComments = async () => {
@@ -61,13 +79,6 @@ export const useFetchComments = () => {
       controller.abort();
     };
   }, [dispatch, page!, fullUrl]);
-
-  const loading = currentCommentShown!.loading;
-  const error = currentCommentShown!.error;
-  const hasError = currentCommentShown!.hasError;
-  const comments = currentCommentShown!.comments;
-  const totalPages = currentCommentShown!.totalPages;
-  const totalRows = currentCommentShown!.totalRows;
 
   return {
     loading,
