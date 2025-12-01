@@ -16,7 +16,7 @@ export async function _seeder() {
     },
   });
 
-  if (isReacted) {
+  if (isReacted?.userPostId) {
     return;
   }
   return prisma.oUserPost.update({

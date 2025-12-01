@@ -1,5 +1,5 @@
 import prisma from "@/app/libs/prisma";
-import { getRandomPostComment, getRandomReactionType } from "@/app/seed/lib";
+import { getRandomPostComment } from "@/app/seed/lib";
 import {
   generateSinglePhoto,
   getRandomPostContentOption,
