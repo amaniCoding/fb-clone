@@ -10,7 +10,6 @@ import {
 
 export async function _seeder() {
   const page = await getRandomPage();
-  const postType = getRandomPostType();
   const postContentOption = getRandomPostContentOption();
   return await prisma.feed.create({
     data: {

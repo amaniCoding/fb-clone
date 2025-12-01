@@ -1,6 +1,4 @@
-import { MediaOwnerType, MediaType } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
-import { dummyTexts } from "@/app/seed/dummy";
 import {
   getPostMediaType,
   getRandomAddedContentForShareTypes,

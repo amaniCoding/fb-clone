@@ -9,7 +9,7 @@ export function _seeder() {
         profilePicture: group.profilePicture,
         superAdmin: {
           connect: {
-            id: "b6301af3-34a2-4d63-92fe-f66f1197f925",
+            id: "2b78f7a2-17ac-4fc3-a65f-9ab8edbb3b2f",
           },
         },
       },
