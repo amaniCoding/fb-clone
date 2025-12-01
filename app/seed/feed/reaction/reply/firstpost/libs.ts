@@ -9,6 +9,7 @@ import {
   generateSinglePhoto,
   getRandomPostContentOption,
   getRandomUser,
+  getUsers,
 } from "@/app/seed/libs";
 
 export async function _seeder() {
@@ -35,46 +36,37 @@ export async function _seeder() {
         post?.comments.map((co) => {
           Promise.all(
             co.replies.map(async (rep) => {
-              const user = await getRandomUser();
-              const reactionType = getRandomReactionType() as ReactionType;
+              const users = await getUsers();
+              return Promise.all(
+                users.map((user) => {
+                  const reactionType = getRandomReactionType() as ReactionType;
 
-              const isReacted = await prisma.replyReaction.findFirst({
-                where: {
-                  replyId: rep.id,
-                },
-                select: {
-                  replyId: true,
-                },
-              });
+                  return prisma.oUserPost.update({
+                    where: {
+                      id: "someid",
+                    },
+                    data: {
+                      comments: {
+                        update: {
+                          where: {
+                            id: co.id,
+                          },
+                          data: {
+                            replies: {
+                              update: {
+                                where: {
+                                  id: rep.id,
+                                },
 
-              if (isReacted?.replyId) {
-                return;
-              }
-
-              return prisma.oUserPost.update({
-                where: {
-                  id: "someid",
-                },
-                data: {
-                  comments: {
-                    update: {
-                      where: {
-                        id: co.id,
-                      },
-                      data: {
-                        replies: {
-                          update: {
-                            where: {
-                              id: rep.id,
-                            },
-
-                            data: {
-                              reactions: {
-                                create: {
-                                  reactionType: reactionType,
-                                  user: {
-                                    connect: {
-                                      id: user.id,
+                                data: {
+                                  reactions: {
+                                    create: {
+                                      reactionType: reactionType,
+                                      user: {
+                                        connect: {
+                                          id: user.id,
+                                        },
+                                      },
                                     },
                                   },
                                 },
@@ -84,9 +76,9 @@ export async function _seeder() {
                         },
                       },
                     },
-                  },
-                },
-              });
+                  });
+                })
+              );
             })
           );
         })

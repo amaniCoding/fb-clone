@@ -1,7 +1,7 @@
 import { ReactionType } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
 import { getRandomReactionType } from "@/app/seed/lib";
-import { getRandomUser } from "@/app/seed/libs";
+import { getRandomUser, getUsers } from "@/app/seed/libs";
 
 export async function _seeder() {
   const posts = await prisma.oGroupPost.findMany({
@@ -12,37 +12,31 @@ export async function _seeder() {
 
   return Promise.all(
     posts.map(async (post) => {
-      const user = await getRandomUser();
-      const reactionType = getRandomReactionType() as ReactionType;
-      const isReacted = await prisma.reaction.findFirst({
-        where: {
-          userId: user.id,
-        },
-        select: {
-          userPostId: true,
-        },
-      });
+      const users = await getUsers();
 
-      if (isReacted?.userPostId) {
-        return;
-      }
-      return prisma.oGroupPost.update({
-        where: {
-          id: post.id,
-        },
-        data: {
-          reactions: {
-            create: {
-              reactionType: reactionType,
-              user: {
-                connect: {
-                  id: user.id,
+      return Promise.all(
+        users.map((user) => {
+          const reactionType = getRandomReactionType() as ReactionType;
+
+          return prisma.oGroupPost.update({
+            where: {
+              id: post.id,
+            },
+            data: {
+              reactions: {
+                create: {
+                  reactionType: reactionType,
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
                 },
               },
             },
-          },
-        },
-      });
+          });
+        })
+      );
     })
   );
 }

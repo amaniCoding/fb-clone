@@ -142,6 +142,7 @@ export const commentModalSlice = createSlice({
       });
       if (!isShown) {
         state.currentPostRef.postsShown!.push({
+          refId: action.payload.currentParentRefId,
           loading: action.payload.loading,
         });
       }

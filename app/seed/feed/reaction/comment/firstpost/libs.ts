@@ -1,7 +1,7 @@
 import { ReactionType } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
 import { getRandomReactionType } from "@/app/seed/lib";
-import { getRandomUser } from "@/app/seed/libs";
+import { getRandomUser, getUsers } from "@/app/seed/libs";
 
 export async function _seeder() {
   const post = await prisma.oUserPost.findUnique({
@@ -20,46 +20,40 @@ export async function _seeder() {
   return post
     ? Promise.all(
         post?.comments.map(async (co) => {
-          const user = await getRandomUser();
-          const reactionType = getRandomReactionType() as ReactionType;
-          const isReacted = await prisma.commentReaction.findFirst({
-            where: {
-              commentId: co.id,
-            },
-            select: {
-              commentId: true,
-            },
-          });
-          if (isReacted?.commentId) {
-            return;
-          }
+          const users = await getUsers();
 
-          return prisma.oUserPost.update({
-            where: {
-              id: "someid",
-            },
-            data: {
-              comments: {
-                update: {
-                  where: {
-                    id: co.id,
-                  },
-                  data: {
-                    reactions: {
-                      create: {
-                        reactionType: reactionType,
-                        user: {
-                          connect: {
-                            id: user.id,
+          return Promise.all(
+            users.map((user) => {
+              const reactionType = getRandomReactionType() as ReactionType;
+
+              return prisma.oUserPost.update({
+                where: {
+                  id: "someid",
+                },
+                data: {
+                  comments: {
+                    update: {
+                      where: {
+                        id: co.id,
+                      },
+                      data: {
+                        reactions: {
+                          create: {
+                            reactionType: reactionType,
+                            user: {
+                              connect: {
+                                id: user.id,
+                              },
+                            },
                           },
                         },
                       },
                     },
                   },
                 },
-              },
-            },
-          });
+              });
+            })
+          );
         })
       )
     : undefined;
