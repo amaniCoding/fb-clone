@@ -194,7 +194,7 @@ const getRandomUser = async () => {
   return users[rIndex];
 };
 
-const getRandomReactionType = () => {
+export const getRandomReactionType = () => {
   const rIndex = getRandomNumber(reactionTypes.length, 0);
   return reactionTypes[rIndex];
 };
@@ -205,17 +205,17 @@ function generatePhoto() {
   return `/users/${randomPhoto}.jpg`;
 }
 
-const getRandomPostComment = () => {
+export const getRandomPostComment = () => {
   const rIndex = getRandomNumber(dummyComments.length, 0);
   return dummyComments[rIndex];
 };
 
-const getRandomCommentReply = () => {
+export const getRandomCommentReply = () => {
   const rIndex = getRandomNumber(dummyReplies.length, 0);
   return dummyReplies[rIndex];
 };
 
-const getRandomCommentReplReply = () => {
+export const getRandomCommentReplReply = () => {
   const rIndex = getRandomNumber(dummyReplyReplies.length, 0);
   return dummyReplyReplies[rIndex];
 };

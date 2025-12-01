@@ -2,14 +2,14 @@ import { MediaOwnerType, MediaType } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
 import { dummyTexts } from "./dummy";
 
-const sharedPostTypes = ["user", "page", "group", "media"];
+export const sharedPostTypes = ["user", "page", "group", "media"];
 
-const postContentOption = ["contentonly", "mediasonly", "both"];
+export const postContentOption = ["contentonly", "mediasonly", "both"];
 
 const feedTypes = ["user", "page", "group"];
-const userPostTypes = ["original", "share"];
+export const originalPostTypes = ["original", "share"];
 
-const postMediaTypes = ["user", "page", "group"];
+export const postMediaTypes = ["user", "page", "group"];
 
 const toGroupSharerTypes = ["user", "page"];
 const addedContentForSharePostTypes = ["content", "nocontent"];
@@ -23,28 +23,28 @@ const getRandomFeedType = () => {
   return feedTypes[rIndex] as "user" | "page" | "group";
 };
 
-const getRandomPostType = () => {
-  const rIndex = getRandomNumber(userPostTypes.length, 0);
-  return userPostTypes[rIndex] as "original" | "share";
+export const getRandomPostType = () => {
+  const rIndex = getRandomNumber(originalPostTypes.length, 0);
+  return originalPostTypes[rIndex] as "original" | "share";
 };
 
-const getPostMediaType = () => {
+export const getPostMediaType = () => {
   const rIndex = getRandomNumber(postMediaTypes.length, 0);
   return postMediaTypes[rIndex] as "user" | "page" | "group";
 };
 
-const getRandomSharedPostType = () => {
+export const getRandomSharedPostType = () => {
   const rIndex = getRandomNumber(3, 0);
   return sharedPostTypes[rIndex];
 };
 
-const getRandomSharer = async () => {
+export const getRandomSharer = async () => {
   const rIndex = getRandomNumber(2, 0);
   const sharer = toGroupSharerTypes[rIndex] as "user" | "page";
   return sharer;
 };
 
-const getUsers = async () => {
+export const getUsers = async () => {
   return await prisma.user.findMany({
     select: {
       id: true,
@@ -52,33 +52,33 @@ const getUsers = async () => {
   });
 };
 
-const getPages = async () => {
+export const getPages = async () => {
   return await prisma.page.findMany({});
 };
 
-const getGroups = async () => {
+export const getGroups = async () => {
   return await prisma.group.findMany({});
 };
 
-const getRandomUser = async () => {
+export const getRandomUser = async () => {
   const users = await getUsers();
   const rIndex = getRandomNumber(users.length, 0);
   return users[rIndex];
 };
 
-const getRandomPage = async () => {
+export const getRandomPage = async () => {
   const pages = await getPages();
   const rIndex = getRandomNumber(pages.length, 0);
   return pages[rIndex];
 };
 
-const getRandomGroup = async () => {
+export const getRandomGroup = async () => {
   const groups = await getGroups();
   const rIndex = getRandomNumber(groups.length, 0);
   return groups[rIndex];
 };
 
-const getRandomPost = async (forWhat: "user" | "page" | "group") => {
+export const getRandomPost = async (forWhat: "user" | "page" | "group") => {
   if (forWhat === "user") {
     const userPosts = await prisma.oUserPost.findMany({
       select: {
@@ -196,7 +196,7 @@ const getRandomPost = async (forWhat: "user" | "page" | "group") => {
   }
 };
 
-const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
+export const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
   if (forWhat === "user") {
     const oUserPosts = await prisma.oUserPost.findMany({
       where: {
@@ -366,12 +366,18 @@ const getRandomMedia = async (forWhat: "user" | "page" | "group") => {
   }
 };
 
-const getRandomAddedContentForShareTypes = () => {
+export const getRandomAddedContentForShareTypes = () => {
   const rIndex = getRandomNumber(2, 0);
   return addedContentForSharePostTypes[rIndex];
 };
 
-function generatePhoto(owner: MediaOwnerType, photoCount: number) {
+export function generateSinglePhoto() {
+  const randomPhoto = getRandomNumber(15, 1);
+
+  return `/users/${randomPhoto}.jpg`;
+}
+
+export function generatePhoto(owner: MediaOwnerType, photoCount: number) {
   return Array.from({ length: photoCount }, () => {
     const randomPhoto = getRandomNumber(15, 1);
 
@@ -383,17 +389,17 @@ function generatePhoto(owner: MediaOwnerType, photoCount: number) {
   });
 }
 
-const getRandomPostContentOption = () => {
+export const getRandomPostContentOption = () => {
   const rIndex = getRandomNumber(postContentOption.length, 0);
   return postContentOption[rIndex];
 };
 
-const getRandomPostText = () => {
+export const getRandomPostText = () => {
   const rIndex = getRandomNumber(dummyTexts.length, 0);
   return dummyTexts[rIndex];
 };
 
-const getRandomPhotoCount = () => {
+export const getRandomPhotoCount = () => {
   return getRandomNumber(6, 1);
 };
 

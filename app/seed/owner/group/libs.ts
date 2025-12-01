@@ -1,13 +1,13 @@
 import prisma from "@/app/libs/prisma";
-import { pages } from "../dummy";
+import { groups } from "../../dummy";
 
 export function _seeder() {
-  return pages.map((page) => {
-    return prisma.page.create({
+  return groups.map((group) => {
+    return prisma.group.create({
       data: {
-        name: page.name,
-        profilePicture: page.profilePicture,
-        admin: {
+        name: group.name,
+        profilePicture: group.profilePicture,
+        superAdmin: {
           connect: {
             id: "b6301af3-34a2-4d63-92fe-f66f1197f925",
           },

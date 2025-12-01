@@ -1,0 +1,95 @@
+import { ReactionType } from "@/app/generated/prisma";
+import prisma from "@/app/libs/prisma";
+import {
+  getRandomCommentReply,
+  getRandomPostComment,
+  getRandomReactionType,
+} from "@/app/seed/lib";
+import {
+  generateSinglePhoto,
+  getRandomPostContentOption,
+  getRandomUser,
+} from "@/app/seed/libs";
+
+export async function _seeder() {
+  const post = await prisma.oUserPost.findUnique({
+    where: {
+      id: "someid",
+    },
+    select: {
+      comments: {
+        select: {
+          id: true,
+          replies: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return post
+    ? Promise.all(
+        post?.comments.map((co) => {
+          Promise.all(
+            co.replies.map(async (rep) => {
+              const user = await getRandomUser();
+              const reactionType = getRandomReactionType() as ReactionType;
+
+              const isReacted = await prisma.replyReaction.findFirst({
+                where: {
+                  replyId: rep.id,
+                },
+                select: {
+                  replyId: true,
+                },
+              });
+
+              if (isReacted?.replyId) {
+                return;
+              }
+
+              return prisma.oUserPost.update({
+                where: {
+                  id: "someid",
+                },
+                data: {
+                  comments: {
+                    update: {
+                      where: {
+                        id: co.id,
+                      },
+                      data: {
+                        replies: {
+                          update: {
+                            where: {
+                              id: rep.id,
+                            },
+
+                            data: {
+                              reactions: {
+                                create: {
+                                  reactionType: reactionType,
+                                  user: {
+                                    connect: {
+                                      id: user.id,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            })
+          );
+        })
+      )
+    : undefined;
+}
