@@ -12,7 +12,6 @@ import PageShare_Post from "../post/pagepost/share/post";
 import ToGroupShare_Post from "../post/grouppost/share/post";
 import OGroup_Post from "../post/grouppost/original/post";
 import Header from "./header";
-import CommentsSkeleton from "@/app/components/skeletons/comment";
 import { useFetchPost } from "@/app/hooks/commentsModal/usefetchpost";
 import Comments from "./comments/comments";
 import PostSkeleton from "@/app/components/skeletons/post";
@@ -28,6 +27,9 @@ export default function CommentModal() {
       })
     );
   };
+
+  console.log("loading", fetch.loading);
+  console.log("hasError", fetch.error.hasError);
 
   const renderAppropriatePost = () => {
     if (fetch.type === "oUserPost") {
@@ -82,7 +84,7 @@ export default function CommentModal() {
 
   return (
     <div className="bg-gray-100/75 fixed top-0 bottom-0 left-0 right-0 z-[300] overflow-hidden">
-      {fetch.loading || fetch.error.hasError ? (
+      {fetch.loading! || fetch.error.hasError! ? (
         <div className="shadow-2xl  py-3 my-24 px-4 h-56 max-w-[650px] mx-auto rounded-xl relative bg-white ">
           <PostSkeleton />
         </div>

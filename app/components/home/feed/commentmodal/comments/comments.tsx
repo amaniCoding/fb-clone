@@ -2,14 +2,7 @@
 import CommentsSkeleton from "@/app/components/skeletons/comment";
 import { useFetchComments } from "@/app/hooks/commentsModal/usefetchcomments";
 import { useCommentsLastNodeRef } from "@/app/hooks/commentsModal/uselastnoderef";
-import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import {
-  fetchingReplies,
-  fetchingRepliesFailed,
-  fetchingReplyReplies,
-  repliesFetched,
-} from "@/app/store/slices/modal/comment";
-import axios from "axios";
+import { useAppSelector } from "@/app/store/hooks";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -21,8 +14,6 @@ export default function Comments({
 }: {
   isFetchingPost: boolean | undefined;
 }) {
-  const dispatch = useAppDispatch();
-
   const currentParentRefId = useAppSelector(
     (state) => state.commentModal.currentParentRefId
   );

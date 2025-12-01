@@ -11,7 +11,7 @@ import { useEffect } from "react";
 export const useFetchComments = () => {
   const dispatch = useAppDispatch();
   const currentParentRefId = useAppSelector(
-    (state) => state.commentModal.currentParentRefId
+    (state) => state.commentModal.currentCommentRef!.refId
   );
 
   const commentsShown = useAppSelector(
@@ -45,12 +45,14 @@ export const useFetchComments = () => {
         );
         dispatch(fetchingComments(false));
       } catch {
-        dispatch(
-          fetchingCommentsFaild({
-            hasError: true,
-            error: "Error while fetching comments",
-          })
-        );
+        dispatch(fetchingComments(false));
+
+        // dispatch(
+        //   fetchingCommentsFaild({
+        //     hasError: true,
+        //     error: "Error while fetching comments",
+        //   })
+        // );
       }
     };
     fetchComments();

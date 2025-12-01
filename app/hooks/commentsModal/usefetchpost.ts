@@ -93,12 +93,12 @@ export const useFetchPost = () => {
       } catch {
         dispatch(fetchingPost(false));
 
-        dispatch(
-          fetchingPostFaild({
-            hasError: true,
-            error: "Error while fetching posts",
-          })
-        );
+        // dispatch(
+        //   fetchingPostFaild({
+        //     hasError: true,
+        //     error: "Error while fetching posts",
+        //   })
+        // );
       }
     };
     fetchPosts();

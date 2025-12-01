@@ -126,33 +126,30 @@ export const commentModalSlice = createSlice({
         state.currentCommentRef = {
           starterUrl: action.payload.commentstarterUrl,
           refId: action.payload.currentParentRefId,
-          commentsShown: [],
         };
       }
       if (!state.currentPostRef) {
         state.currentPostRef = {
           refId: action.payload.currentParentRefId,
-          postsShown: [],
           postType: action.payload.postType,
           starterUrl: action.payload.postStarterUrl,
         };
       }
-      const isShown = state.currentPostRef.postsShown!.find((ps) => {
-        return ps.refId === action.payload.currentParentRefId;
-      });
-      if (!isShown) {
-        state.currentPostRef.postsShown!.push({
-          refId: action.payload.currentParentRefId,
-          loading: action.payload.loading,
-        });
-      }
     },
 
     fetchingPost: (state, action: PayloadAction<boolean>) => {
-      const isShown = state.currentPostRef!.postsShown!.find((ps) => {
-        return ps.refId === state.currentParentRefId;
-      });
-      isShown!.loading = action.payload;
+      if (!state.currentPostRef!.postsShown) {
+        state.currentPostRef!.postsShown = [
+          {
+            loading: action.payload,
+          },
+        ];
+      } else {
+        const isShown = state.currentPostRef!.postsShown!.find((ps) => {
+          return ps.refId === state.currentParentRefId;
+        });
+        isShown!.loading = action.payload;
+      }
     },
 
     fetchingPostSucceed: (
@@ -215,18 +212,20 @@ export const commentModalSlice = createSlice({
     },
 
     fetchingComments: (state, action: PayloadAction<boolean>) => {
-      const isShown = state.currentCommentRef?.commentsShown?.find((cs) => {
-        return cs.refId === state.currentParentRefId;
-      });
-      // now currentCommentRef is defiend now
-
-      if (!isShown) {
-        state.currentCommentRef!.commentsShown!.push({
-          refId: state.currentParentRefId,
-          loading: action.payload,
-          comments: [],
+      if (!state.currentCommentRef!.commentsShown) {
+        state.currentCommentRef!.commentsShown = [
+          {
+            loading: action.payload,
+          },
+        ];
+      } else {
+        const isShown = state.currentCommentRef!.commentsShown!.find((cs) => {
+          return cs.refId === state.currentCommentRef!.refId;
         });
+        isShown!.loading = true;
       }
+
+      // now currentCommentRef is defiend now
     },
 
     commentsFetched: (
@@ -276,18 +275,21 @@ export const commentModalSlice = createSlice({
       if (!state.currentReplyRef) {
         state.currentReplyRef = {
           refId: newRefId,
-          repliesShown: [],
         };
-      }
-      const isShown = state.currentReplyRef!.repliesShown!.find((rs) => {
-        return rs.refId === newRefId;
-      });
-
-      if (!isShown) {
-        state.currentReplyRef!.repliesShown!.push({
-          loading: action.payload.loading,
-          replies: [],
-        });
+      } else {
+        if (!state.currentReplyRef.repliesShown) {
+          state.currentReplyRef.repliesShown = [
+            {
+              loading: action.payload.loading,
+              replies: [],
+            },
+          ];
+        } else {
+          const isShown = state.currentReplyRef!.repliesShown!.find((rs) => {
+            return rs.refId === newRefId;
+          });
+          isShown!.loading = action.payload.loading;
+        }
       }
     },
 
