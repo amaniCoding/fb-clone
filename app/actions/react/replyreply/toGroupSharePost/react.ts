@@ -12,12 +12,11 @@ export async function reactReplyReplyForToGroupSharePost(
   reactionType: ReactionType,
   prevState: State
 ) {
-  const session = await auth();
-  if (!session?.user) {
-    throw new Error("Un aauthorized request");
-  }
-
   try {
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error("Un aauthorized request");
+    }
     const isReplyReplyReacted = await prisma.toGroupSharePost.findUnique({
       where: {
         id: id,

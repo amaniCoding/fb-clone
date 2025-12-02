@@ -10,12 +10,11 @@ export async function reactOPagePostComment(
   reactionType: ReactionType,
   prevState: State
 ) {
-  const session = await auth();
-  if (!session?.user) {
-    throw new Error("Un aauthorized request");
-  }
-
   try {
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error("Un aauthorized request");
+    }
     const isCommentReacted = await prisma.pageSharePost.findUnique({
       where: {
         id: id,

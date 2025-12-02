@@ -1,28 +1,6 @@
-import { GReaction, Reactor } from "@/app/apis/types";
 import { ReactionType } from "@/app/generated/prisma";
 import prisma from "@/app/libs/prisma";
-const commentPreparer = {
-  prepareGReactions: async (commentId: string) => {
-    try {
-      const r = await prisma.commentReaction.groupBy({
-        by: ["reactionType"],
-        _count: {
-          reactionType: true,
-        },
-        where: {
-          id: commentId,
-        },
-      });
 
-      return r.map((rxn) => {
-        return {
-          reactionType: rxn.reactionType,
-          count: rxn._count.reactionType,
-        };
-      });
-    } catch (error) {}
-  },
-};
 export const getReactors = async (
   postId: string,
   commentId: string,

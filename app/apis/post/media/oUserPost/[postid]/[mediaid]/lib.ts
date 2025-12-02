@@ -1,3 +1,4 @@
+import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 const mediaPreparer = {
   prepareGReactions: async (id: string) => {
@@ -19,6 +20,27 @@ const mediaPreparer = {
         };
       });
     } catch (error) {}
+  },
+  isReacted: async (id: string | undefined) => {
+    const session = await auth();
+
+    const isReactedByMe = await prisma.reaction.findFirst({
+      where: {
+        pagePostId: id,
+        userId: session?.user.id,
+      },
+      select: {
+        pagePostId: true,
+        reactionType: true,
+      },
+    });
+
+    if (isReactedByMe?.pagePostId) {
+      return {
+        isReacted: true,
+        reactionType: isReactedByMe.reactionType,
+      };
+    }
   },
 };
 export const getMediaInfo = async (postId: string, mediaId: string) => {
@@ -150,7 +172,7 @@ export const getMediaInfo = async (postId: string, mediaId: string) => {
   const updatedMedia = {
     ..._media?.medias[0],
     postId: _media?.id,
-    _gReactions: await mediaPreparer.prepareGReactions(_media?.medias[0].id!),
+    _isReacted: await mediaPreparer.isReacted(_media?.medias[0].id!),
   };
 
   const updatedMedias = _medias
@@ -161,6 +183,7 @@ export const getMediaInfo = async (postId: string, mediaId: string) => {
               ...m,
               postId: _medias.id,
               _gReactions: await mediaPreparer.prepareGReactions(m.id),
+              _isReacted: await mediaPreparer.isReacted(m?.id!),
             };
           })
       )

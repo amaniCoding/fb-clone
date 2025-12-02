@@ -1,5 +1,164 @@
 import prisma from "@/app/libs/prisma";
 import { FeedPostType, ReactionType } from "@/app/generated/prisma";
+import { auth } from "@/app/libs/auth/auth";
+
+const isReacted = async (
+  type:
+    | "oUserPost"
+    | "userSharePost"
+    | "oPagePost"
+    | "pageSharePost"
+    | "oGroupPost"
+    | "toGroupSharedPost",
+  id: string | undefined
+) => {
+  switch (type) {
+    case "oUserPost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            userPostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            userPostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.userPostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+    case "userSharePost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            userSharePostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            userSharePostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.userSharePostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+
+    case "oPagePost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            pagePostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            pagePostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.pagePostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+
+    case "pageSharePost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            pageSharePostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            pageSharePostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.pageSharePostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+
+    case "oGroupPost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            groupPostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            groupPostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.groupPostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+
+    case "toGroupSharedPost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            toGroupSharePostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            toGroupSharePostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.toGroupSharePostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+    default:
+      break;
+  }
+};
 
 const prepareGReactions = async (
   type:
@@ -133,26 +292,6 @@ const prepareGReactions = async (
   } catch (error) {}
 };
 
-const prepareMeidaGReactions = async (mediaId: string | undefined) => {
-  try {
-    const r = await prisma.mediaReaction.groupBy({
-      by: ["reactionType"],
-      _count: {
-        reactionType: true,
-      },
-      where: {
-        id: mediaId,
-      },
-    });
-
-    return r.map((rxn) => {
-      return {
-        reactionType: rxn.reactionType,
-        count: rxn._count.reactionType,
-      };
-    });
-  } catch (error) {}
-};
 export const getFeeds = async (page: number) => {
   const skip = (page - 1) * 10;
   const count = prisma.feed.count();
@@ -1090,6 +1229,10 @@ export const getFeeds = async (page: number) => {
             "oUserPost",
             feed.userPost?.oUserPost?.id
           ),
+          _isReacted: await isReacted(
+            "oUserPost",
+            feed.userPost?.oUserPost?.id
+          ),
         },
         // share
         userSharePost: {
@@ -1097,6 +1240,10 @@ export const getFeeds = async (page: number) => {
           feedId: feed.id,
           postId: feed.userPost?.userSharePost?.id,
           _gReactions: await prepareGReactions(
+            "userSharePost",
+            feed.userPost?.userSharePost?.id
+          ),
+          _isReacted: await isReacted(
             "userSharePost",
             feed.userPost?.userSharePost?.id
           ),
@@ -1114,6 +1261,10 @@ export const getFeeds = async (page: number) => {
             "oPagePost",
             feed.pagePost?.oPagePost?.id
           ),
+          _isReacted: await isReacted(
+            "oPagePost",
+            feed.pagePost?.oPagePost?.id
+          ),
         },
 
         // apge share post
@@ -1122,6 +1273,10 @@ export const getFeeds = async (page: number) => {
           feedId: feed.id,
           postId: feed.pagePost?.pageSharePost?.id,
           _gReactions: await prepareGReactions(
+            "pageSharePost",
+            feed.pagePost?.pageSharePost?.id
+          ),
+          _isReacted: await isReacted(
             "pageSharePost",
             feed.pagePost?.pageSharePost?.id
           ),
@@ -1140,6 +1295,10 @@ export const getFeeds = async (page: number) => {
             "oGroupPost",
             feed.groupPost?.oGroupPost?.id
           ),
+          _isReacted: await isReacted(
+            "oGroupPost",
+            feed.groupPost?.oGroupPost?.id
+          ),
         },
         // share
         toGroupSharedPost: {
@@ -1147,6 +1306,10 @@ export const getFeeds = async (page: number) => {
           feedId: feed.id,
           postId: feed.groupPost?.toGroupSharedPost?.id,
           _gReactions: await prepareGReactions(
+            "toGroupSharedPost",
+            feed.groupPost?.toGroupSharedPost?.id
+          ),
+          _isReacted: await isReacted(
             "toGroupSharedPost",
             feed.groupPost?.toGroupSharedPost?.id
           ),

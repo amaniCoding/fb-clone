@@ -12,12 +12,11 @@ export async function reactReplyForOUserPostMedia(
   reactionType: ReactionType,
   prevState: State
 ) {
-  const session = await auth();
-  if (!session?.user) {
-    throw new Error("Un aauthorized request");
-  }
-
   try {
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error("Un aauthorized request");
+    }
     const isReplyMediaReacted = await prisma.oUserPost.findUnique({
       where: {
         id: id,

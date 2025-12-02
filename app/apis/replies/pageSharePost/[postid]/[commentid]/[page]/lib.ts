@@ -1,15 +1,15 @@
-import { GReaction, Reactor } from "@/app/apis/types";
+import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
-const commentPreparer = {
-  prepareGReactions: async (commentId: string) => {
+const replyPreparer = {
+  prepareGReactions: async (replyId: string) => {
     try {
-      const r = await prisma.commentReaction.groupBy({
+      const r = await prisma.replyReaction.groupBy({
         by: ["reactionType"],
         _count: {
           reactionType: true,
         },
         where: {
-          id: commentId,
+          replyId: replyId,
         },
       });
 
@@ -20,6 +20,27 @@ const commentPreparer = {
         };
       });
     } catch (error) {}
+  },
+  isReacted: async (id: string | undefined) => {
+    const session = await auth();
+
+    const isReactedByMe = await prisma.replyReaction.findFirst({
+      where: {
+        replyId: id,
+        userId: session?.user.id,
+      },
+      select: {
+        replyId: true,
+        reactionType: true,
+      },
+    });
+
+    if (isReactedByMe?.replyId) {
+      return {
+        isReacted: true,
+        reactionType: isReactedByMe.reactionType,
+      };
+    }
   },
 };
 export const getReplies = async (
@@ -142,7 +163,7 @@ export const getReplies = async (
       postId: _post.id,
       commentId: _post.comments[0].id,
       postType: "pageSharePost",
-      _gReactions: await commentPreparer.prepareGReactions(reply.id),
+      _gReactions: await replyPreparer.prepareGReactions(reply.id),
     };
   });
   // reuslt can be undefined

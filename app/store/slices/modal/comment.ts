@@ -237,9 +237,9 @@ export const commentModalSlice = createSlice({
         return cs.refId === state.currentCommentRef!.refId;
       });
 
-      if (action.payload.result.comments && isShown!.comments) {
+      if (action.payload.result.comments) {
         isShown!.comments = [
-          ...isShown!.comments,
+          ...isShown!.comments!,
           ...action.payload.result.comments,
         ];
       }

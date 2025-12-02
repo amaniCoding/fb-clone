@@ -1,3 +1,4 @@
+import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 const postPreparer = {
   prepareGReactions: async (postId: string) => {
@@ -19,6 +20,27 @@ const postPreparer = {
         };
       });
     } catch (error) {}
+  },
+  isReacted: async (id: string | undefined) => {
+    const session = await auth();
+
+    const isReactedByMe = await prisma.reaction.findFirst({
+      where: {
+        pagePostId: id,
+        userId: session?.user.id,
+      },
+      select: {
+        pagePostId: true,
+        reactionType: true,
+      },
+    });
+
+    if (isReactedByMe?.pagePostId) {
+      return {
+        isReacted: true,
+        reactionType: isReactedByMe.reactionType,
+      };
+    }
   },
 };
 export const getPost = async (postId: string) => {
@@ -99,6 +121,7 @@ export const getPost = async (postId: string) => {
   const udpatedPost = {
     ..._post,
     _gReactions: await postPreparer.prepareGReactions(_post?.id!),
+    _isReacted: await postPreparer.isReacted(_post?.id!),
   };
   return udpatedPost;
 };

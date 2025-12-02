@@ -6,6 +6,164 @@ import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 
 import { put, PutBlobResult, del } from "@vercel/blob";
+
+const isReacted = async (
+  type:
+    | "oUserPost"
+    | "userSharePost"
+    | "oPagePost"
+    | "pageSharePost"
+    | "oGroupPost"
+    | "toGroupSharedPost",
+  id: string | undefined
+) => {
+  switch (type) {
+    case "oUserPost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            userPostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            userPostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.userPostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+    case "userSharePost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            userSharePostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            userSharePostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.userSharePostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+
+    case "oPagePost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            pagePostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            pagePostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.pagePostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+
+    case "pageSharePost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            pageSharePostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            pageSharePostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.pageSharePostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+
+    case "oGroupPost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            groupPostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            groupPostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.groupPostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+
+    case "toGroupSharedPost":
+      {
+        const session = await auth();
+
+        const isReactedByMe = await prisma.reaction.findFirst({
+          where: {
+            toGroupSharePostId: id,
+            userId: session?.user.id,
+          },
+          select: {
+            toGroupSharePostId: true,
+            reactionType: true,
+          },
+        });
+
+        if (isReactedByMe?.toGroupSharePostId) {
+          return {
+            isReacted: true,
+            reactionType: isReactedByMe.reactionType,
+          };
+        }
+      }
+      break;
+    default:
+      break;
+  }
+};
 const prepareGReactions = async (
   type:
     | "oUserPost"
@@ -349,6 +507,10 @@ const postToFeed = async (
               "oUserPost",
               feed.userPost?.oUserPost?.id
             ),
+            _isReacted: await isReacted(
+              "oUserPost",
+              feed.userPost?.oUserPost?.id
+            ),
           },
         },
       } as FeedsType;
@@ -362,15 +524,14 @@ const postToFeed = async (
 };
 
 export async function createPost(prevState: State, formData: FormData) {
-  const session = await auth();
-  if (!session?.user) {
-    throw new Error("Un aauthorized request");
-  }
-  const medias: File[] = formData.getAll("photos") as File[];
-  const content = formData.get("post") as string;
-  console.log(medias);
-
   try {
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error("Un aauthorized request");
+    }
+    const medias: File[] = formData.getAll("photos") as File[];
+    const content = formData.get("post") as string;
+    console.log(medias);
     const feed = await postToFeed(content, session.user.id, medias);
 
     return {

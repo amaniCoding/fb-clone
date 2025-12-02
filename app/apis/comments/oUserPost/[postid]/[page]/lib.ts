@@ -1,3 +1,4 @@
+import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";
 const commentPreparer = {
   prepareGReactions: async (commentId: string) => {
@@ -19,6 +20,27 @@ const commentPreparer = {
         };
       });
     } catch (error) {}
+  },
+  isReacted: async (id: string | undefined) => {
+    const session = await auth();
+
+    const isReactedByMe = await prisma.commentReaction.findFirst({
+      where: {
+        commentId: id,
+        userId: session?.user.id,
+      },
+      select: {
+        commentId: true,
+        reactionType: true,
+      },
+    });
+
+    if (isReactedByMe?.commentId) {
+      return {
+        isReacted: true,
+        reactionType: isReactedByMe.reactionType,
+      };
+    }
   },
 };
 export const getComments = async (
@@ -130,6 +152,7 @@ export const getComments = async (
       postId: _post.id,
 
       _gReactions: await commentPreparer.prepareGReactions(comment.id),
+      isReacted: await commentPreparer.isReacted(comment.id),
     };
   });
   // reuslt can be undefined
