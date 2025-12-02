@@ -12,10 +12,8 @@ export default function Comment({
   gReactions,
   currentParentRefId,
   ref,
-  index,
 }: {
   comment: CommentType;
-  index: number;
   ref: Ref<HTMLDivElement> | undefined;
   currentParentRefId: string | undefined;
   gReactions: {
@@ -27,11 +25,7 @@ export default function Comment({
     <div className="relative">
       <div className="flex flex-col">
         <div className="px-3.5 py-2 ">
-          <div
-            className="flex flex-row space-x-3 bg-yellow-300"
-            key={index}
-            ref={ref}
-          >
+          <div className="flex flex-row space-x-3 bg-yellow-300" ref={ref}>
             <Link href={"/#"} className="flex-none">
               {comment!.user.Profile?.profilePicture ? (
                 <Image

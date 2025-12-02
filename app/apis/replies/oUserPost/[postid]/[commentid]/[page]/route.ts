@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { getReplies, ReplyType } from "./lib";
+import { getReplies, ReplysType } from "./lib";
 import { auth } from "@/app/libs/auth/auth";
 
 type RouteType = {
@@ -44,7 +44,7 @@ export async function GET(
 }
 
 export type ReplyResponseType = {
-  replies: ReplyType;
+  replies: ReplysType;
   totalPages: number;
   totalRows: number;
 };

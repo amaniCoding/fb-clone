@@ -8,7 +8,7 @@ import {
   UserSharePost,
   PageSharePost,
 } from "@/app/apis/feeder/[page]/lib";
-import { ReplyType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
+import { ReplysType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
 import { ReplyResponseType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/route";
 import { ReplyReplysType } from "@/app/apis/replyreplies/oUserPost/[postid]/[commentid]/[replyid]/[page]/lib";
 import { ReplyRepliesResponseType } from "@/app/apis/replyreplies/oUserPost/[postid]/[commentid]/[replyid]/[page]/route";
@@ -51,7 +51,7 @@ type RepliesShownType = {
   hasError?: boolean;
   totalRows?: number;
   totalPages?: number;
-  replies?: ReplyType;
+  replies?: ReplysType;
 };
 
 type ReplyRepliesShownType = {

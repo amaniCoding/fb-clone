@@ -41,10 +41,10 @@ export default function Comments({
           comments!.length === index + 1 ? lastCommentElementRef : null;
         return (
           <Comment
+            key={index}
             comment={comment}
             currentParentRefId={currentParentRefId}
             gReactions={newGReactions}
-            index={index}
             ref={ref}
           />
         );
