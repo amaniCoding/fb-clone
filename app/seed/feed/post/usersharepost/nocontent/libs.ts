@@ -1,22 +1,15 @@
 import prisma from "@/app/libs/prisma";
 import {
-  getRandomUser,
-  getRandomPage,
-  getRandomGroup,
-  getRandomSharedPostType,
   getPostMediaType,
-  getRandomPost,
   getRandomMedia,
-  getRandomAddedContentForShareTypes,
+  getRandomPost,
   getRandomPostText,
-  getRandomSharer,
+  getRandomSharedPostType,
+  getRandomUser,
 } from "@/app/seed/libs";
 
 export async function _seeder() {
-  const sharer = await getRandomSharer();
   const user = await getRandomUser();
-  const page = await getRandomPage();
-  const group = await getRandomGroup();
   const postSharedType = getRandomSharedPostType() as
     | "user"
     | "page"
@@ -32,33 +25,15 @@ export async function _seeder() {
       : await getRandomMedia(rPostMediaType);
   return prisma.feed.create({
     data: {
-      postType: "group",
-      groupPost: {
+      postType: "user",
+      userPost: {
         create: {
           postType: "share",
-          toGroupSharedPost: {
+          userSharePost: {
             create: {
-              sharer: sharer,
-              user:
-                sharer === "user"
-                  ? {
-                      connect: {
-                        id: user.id,
-                      },
-                    }
-                  : undefined,
-
-              page:
-                sharer === "page"
-                  ? {
-                      connect: {
-                        id: page.id,
-                      },
-                    }
-                  : undefined,
-              group: {
+              user: {
                 connect: {
-                  id: group.id,
+                  id: user.id,
                 },
               },
 
@@ -99,10 +74,7 @@ export async function _seeder() {
                     }
                   : undefined,
 
-              content:
-                getRandomAddedContentForShareTypes() === "content"
-                  ? getRandomPostText()
-                  : null,
+              content: null,
             },
           },
         },

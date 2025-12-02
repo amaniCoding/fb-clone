@@ -1,16 +1,15 @@
 import prisma from "@/app/libs/prisma";
 import {
-  getRandomPage,
-  getRandomSharedPostType,
   getPostMediaType,
-  getRandomPost,
   getRandomMedia,
-  getRandomAddedContentForShareTypes,
+  getRandomPost,
   getRandomPostText,
+  getRandomSharedPostType,
+  getRandomUser,
 } from "@/app/seed/libs";
 
 export async function _seeder() {
-  const page = await getRandomPage();
+  const user = await getRandomUser();
   const postSharedType = getRandomSharedPostType() as
     | "user"
     | "page"
@@ -26,15 +25,15 @@ export async function _seeder() {
       : await getRandomMedia(rPostMediaType);
   return prisma.feed.create({
     data: {
-      postType: "page",
-      pagePost: {
+      postType: "user",
+      userPost: {
         create: {
           postType: "share",
-          pageSharePost: {
+          userSharePost: {
             create: {
-              page: {
+              user: {
                 connect: {
-                  id: page.id,
+                  id: user.id,
                 },
               },
 
@@ -75,10 +74,7 @@ export async function _seeder() {
                     }
                   : undefined,
 
-              content:
-                getRandomAddedContentForShareTypes() === "content"
-                  ? getRandomPostText()
-                  : null,
+              content: getRandomPostText(),
             },
           },
         },

@@ -2,7 +2,6 @@ import prisma from "@/app/libs/prisma";
 import {
   getRandomUser,
   getRandomGroup,
-  getRandomPostContentOption,
   getRandomPostText,
   generatePhoto,
   getRandomPhotoCount,
@@ -11,7 +10,6 @@ import {
 export async function _seeder() {
   const user = await getRandomUser();
   const group = await getRandomGroup();
-  const postContentOption = getRandomPostContentOption();
   return prisma.feed.create({
     data: {
       postType: "group",
@@ -27,20 +25,9 @@ export async function _seeder() {
                 connect: { id: group.id },
               },
 
-              content:
-                postContentOption === "contentonly" ||
-                postContentOption === "both"
-                  ? getRandomPostText()
-                  : null,
-              medias:
-                postContentOption === "both" ||
-                postContentOption === "mediasonly"
-                  ? {
-                      createMany: {
-                        data: generatePhoto("group", getRandomPhotoCount()),
-                      },
-                    }
-                  : undefined,
+              content: getRandomPostText(),
+
+              medias: undefined,
             },
           },
         },

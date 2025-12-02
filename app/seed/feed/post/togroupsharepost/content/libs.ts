@@ -1,16 +1,21 @@
 import prisma from "@/app/libs/prisma";
 import {
-  getPostMediaType,
-  getRandomAddedContentForShareTypes,
-  getRandomMedia,
-  getRandomPost,
-  getRandomPostText,
-  getRandomSharedPostType,
   getRandomUser,
+  getRandomPage,
+  getRandomGroup,
+  getRandomSharedPostType,
+  getPostMediaType,
+  getRandomPost,
+  getRandomMedia,
+  getRandomPostText,
+  getRandomSharer,
 } from "@/app/seed/libs";
 
 export async function _seeder() {
+  const sharer = await getRandomSharer();
   const user = await getRandomUser();
+  const page = await getRandomPage();
+  const group = await getRandomGroup();
   const postSharedType = getRandomSharedPostType() as
     | "user"
     | "page"
@@ -26,15 +31,33 @@ export async function _seeder() {
       : await getRandomMedia(rPostMediaType);
   return prisma.feed.create({
     data: {
-      postType: "user",
-      userPost: {
+      postType: "group",
+      groupPost: {
         create: {
           postType: "share",
-          userSharePost: {
+          toGroupSharedPost: {
             create: {
-              user: {
+              sharer: sharer,
+              user:
+                sharer === "user"
+                  ? {
+                      connect: {
+                        id: user.id,
+                      },
+                    }
+                  : undefined,
+
+              page:
+                sharer === "page"
+                  ? {
+                      connect: {
+                        id: page.id,
+                      },
+                    }
+                  : undefined,
+              group: {
                 connect: {
-                  id: user.id,
+                  id: group.id,
                 },
               },
 
@@ -75,10 +98,7 @@ export async function _seeder() {
                     }
                   : undefined,
 
-              content:
-                getRandomAddedContentForShareTypes() === "content"
-                  ? getRandomPostText()
-                  : null,
+              content: getRandomPostText(),
             },
           },
         },
