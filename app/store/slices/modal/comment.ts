@@ -1,4 +1,4 @@
-import { CommentType } from "@/app/apis/comments/oUserPost/[postid]/[page]/lib";
+import { CommentsType } from "@/app/apis/comments/oUserPost/[postid]/[page]/lib";
 import { CommentsResponseType } from "@/app/apis/comments/oUserPost/[postid]/[page]/route";
 import {
   OGroupPost,
@@ -23,7 +23,7 @@ type CommentsShownType = {
   hasError?: boolean;
   totalRows?: number;
   totalPages?: number;
-  comments?: CommentType;
+  comments?: CommentsType;
 };
 
 type PostsShownType = {

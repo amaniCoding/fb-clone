@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { CommentType, getComments } from "./lib";
+import { CommentsType, getComments } from "./lib";
 import { auth } from "@/app/libs/auth/auth";
 
 type RouteType = {
@@ -42,7 +42,7 @@ export async function GET(
 }
 
 export type CommentsResponseType = {
-  comments: CommentType;
+  comments: CommentsType;
   totalRows: number;
   totalPages: number;
 };

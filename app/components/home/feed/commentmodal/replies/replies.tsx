@@ -9,7 +9,7 @@ import {
 import axios from "axios";
 import ReplyReplies from "../replyreplies/replies";
 import { useReplyLastNodeRef } from "@/app/hooks/commentsModal/replies/uselastnoderef";
-import Lower from "../shared/lower";
+import Lower from "../shared/left";
 
 export default function Replies({
   refId,

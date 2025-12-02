@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import ReactionBox from "../../post/reactionbox/comment/reactionbox";
 
-export default function Lower({
+export default function Left({
   fromWhat,
 }: {
   fromWhat: "post" | "comment" | "reply" | "replyreply";
@@ -32,7 +32,7 @@ export default function Lower({
     }, 500);
   };
   return (
-    <div className="flex items-center space-x-2 text-black/40 text-sm font-semibold">
+    <div className="flex items-center justify-between space-x-2 text-black/40 text-sm font-semibold">
       {toShowReactionBox && <ReactionBox />}
       <p>2hrs</p>
       <p onMouseEnter={showReactionBox} onMouseLeave={hideReactionBox}>

@@ -165,4 +165,6 @@ export const getComments = async (
 
 const result = await getComments("someid", 1, 7);
 const comments = result.result;
-export type CommentType = typeof comments;
+const comment = comments && comments[0];
+export type CommentsType = typeof comments;
+export type CommentType = typeof comment;
