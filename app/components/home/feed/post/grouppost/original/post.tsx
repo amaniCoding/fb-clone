@@ -5,7 +5,7 @@ import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";
 import GroupHeader from "../header";
 
-import { OGroupPost } from "@/app/apis/feeder/[page]/lib";
+import { OGroupPost } from "@/app/api/feeder/[page]/lib";
 
 type PropsTypes = {
   post: OGroupPost;

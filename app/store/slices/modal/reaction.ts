@@ -1,4 +1,4 @@
-import { ReactorsType } from "@/app/apis/reactions/oUserPost/body/[postid]/[reactiontype]/[page]/lib";
+import { ReactorsType } from "@/app/api/reactions/oUserPost/body/[postid]/[reactiontype]/[page]/lib";
 import { ReactionType } from "@/app/generated/prisma";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 

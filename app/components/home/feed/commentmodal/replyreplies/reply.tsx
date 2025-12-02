@@ -1,5 +1,5 @@
 import Content from "./content";
-import { ReplyType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
+import { ReplyType } from "@/app/api/replies/oUserPost/[postid]/[commentid]/[page]/lib";
 import Lower from "./lower";
 import { Ref } from "react";
 import { ReactionType } from "@/app/generated/prisma";

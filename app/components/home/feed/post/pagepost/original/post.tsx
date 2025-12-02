@@ -5,7 +5,7 @@ import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";
 import PageHeader from "../header";
 
-import { OPagePost } from "@/app/apis/feeder/[page]/lib";
+import { OPagePost } from "@/app/api/feeder/[page]/lib";
 
 type PropsTypes = {
   post: OPagePost;

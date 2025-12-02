@@ -1,4 +1,4 @@
-import { CommentsResponseType } from "@/app/apis/comments/oUserPost/[postid]/[page]/route";
+import { CommentsResponseType } from "@/app/api/comments/oUserPost/[postid]/[page]/route";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import {
   commentsFetched,

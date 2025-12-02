@@ -1,6 +1,6 @@
 import Lower from "./lower";
 
-import { CommentType } from "@/app/apis/comments/oUserPost/[postid]/[page]/lib";
+import { CommentType } from "@/app/api/comments/oUserPost/[postid]/[page]/lib";
 import { ReactionType } from "@/app/generated/prisma";
 import Upper from "./upper";
 import Profile from "./profile";

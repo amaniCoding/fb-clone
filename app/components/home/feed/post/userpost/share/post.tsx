@@ -1,6 +1,6 @@
 "use client";
 
-import { UserSharePost } from "@/app/apis/feeder/[page]/lib";
+import { UserSharePost } from "@/app/api/feeder/[page]/lib";
 import Content from "../../shared/content";
 import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";

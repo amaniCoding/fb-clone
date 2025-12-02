@@ -7,7 +7,7 @@ import {
   PageSharePost,
   ToGroupSharedPost,
   UserSharePost,
-} from "@/app/apis/feeder/[page]/lib";
+} from "@/app/api/feeder/[page]/lib";
 import { PostType } from "@/app/generated/prisma";
 import { FaXmark } from "react-icons/fa6";
 

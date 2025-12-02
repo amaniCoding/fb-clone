@@ -1,6 +1,6 @@
 "use client";
 
-import { ToGroupSharedPost } from "@/app/apis/feeder/[page]/lib";
+import { ToGroupSharedPost } from "@/app/api/feeder/[page]/lib";
 
 import PageHeader from "../../pagepost/header";
 import UserHeader from "../../userpost/header";

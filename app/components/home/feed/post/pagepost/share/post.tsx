@@ -1,6 +1,6 @@
 "use client";
 
-import { PageSharePost } from "@/app/apis/feeder/[page]/lib";
+import { PageSharePost } from "@/app/api/feeder/[page]/lib";
 
 import PageHeader from "../header";
 import GroupHeader from "../../grouppost/header";

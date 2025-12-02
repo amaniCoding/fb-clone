@@ -12,7 +12,7 @@ import {
   PageSharePost,
   ToGroupSharedPost,
   UserSharePost,
-} from "@/app/apis/feeder/[page]/lib";
+} from "@/app/api/feeder/[page]/lib";
 import { PostType } from "@/app/generated/prisma";
 import ReactionBox from "../reactionbox/post/reactionbox";
 
@@ -35,10 +35,8 @@ export default function Lower({ refFrom, post }: TypeProps) {
         showCommentModal({
           isOpen: true,
           currentParentRefId: `${_post!.feedId}${_post!.postId}`,
-          commentstarterUrl: `/apis/comments/${_post!.postType}/${
-            _post.postId
-          }`,
-          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
+          commentstarterUrl: `/api/comments/${_post!.postType}/${_post.postId}`,
+          postStarterUrl: `/api/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
@@ -50,10 +48,8 @@ export default function Lower({ refFrom, post }: TypeProps) {
         showCommentModal({
           isOpen: true,
           currentParentRefId: `${_post!.feedId}${_post!.postId}`,
-          commentstarterUrl: `/apis/comments/${_post!.postType}/${
-            _post.postId
-          }`,
-          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
+          commentstarterUrl: `/api/comments/${_post!.postType}/${_post.postId}`,
+          postStarterUrl: `/api/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
@@ -66,10 +62,8 @@ export default function Lower({ refFrom, post }: TypeProps) {
         showCommentModal({
           isOpen: true,
           currentParentRefId: `${_post!.feedId}${_post!.postId}`,
-          commentstarterUrl: `/apis/comments/${_post!.postType}/${
-            _post.postId
-          }`,
-          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
+          commentstarterUrl: `/api/comments/${_post!.postType}/${_post.postId}`,
+          postStarterUrl: `/api/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
@@ -82,10 +76,8 @@ export default function Lower({ refFrom, post }: TypeProps) {
         showCommentModal({
           isOpen: true,
           currentParentRefId: `${_post!.feedId}${_post!.postId}`,
-          commentstarterUrl: `/apis/comments/${_post!.postType}/${
-            _post.postId
-          }`,
-          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
+          commentstarterUrl: `/api/comments/${_post!.postType}/${_post.postId}`,
+          postStarterUrl: `/api/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
@@ -98,10 +90,8 @@ export default function Lower({ refFrom, post }: TypeProps) {
         showCommentModal({
           isOpen: true,
           currentParentRefId: `${_post!.feedId}${_post!.postId}`,
-          commentstarterUrl: `/apis/comments/${_post!.postType}/${
-            _post.postId
-          }`,
-          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
+          commentstarterUrl: `/api/comments/${_post!.postType}/${_post.postId}`,
+          postStarterUrl: `/api/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })
@@ -114,10 +104,8 @@ export default function Lower({ refFrom, post }: TypeProps) {
         showCommentModal({
           isOpen: true,
           currentParentRefId: `${_post!.feedId}${_post!.postId}`,
-          commentstarterUrl: `/apis/comments/${_post!.postType}/${
-            _post.postId
-          }`,
-          postStarterUrl: `/apis/post/${_post!.postType}/${_post!.postId}`,
+          commentstarterUrl: `/api/comments/${_post!.postType}/${_post.postId}`,
+          postStarterUrl: `/api/post/${_post!.postType}/${_post!.postId}`,
           loading: true,
           postType: _post!.postType,
         })

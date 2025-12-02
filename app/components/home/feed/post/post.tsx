@@ -5,7 +5,7 @@ import {
   GroupPostType,
   PagePostType,
   UserPostType,
-} from "@/app/apis/feeder/[page]/lib";
+} from "@/app/api/feeder/[page]/lib";
 import UserPost from "./userpost";
 import PagePost from "./pagepost";
 import GroupPost from "./grouppost";

@@ -1,6 +1,6 @@
 "use server";
 
-import { FeedsType } from "@/app/apis/feeder/[page]/lib";
+import { FeedsType } from "@/app/api/feeder/[page]/lib";
 import { MediaOwnerType, MediaType } from "@/app/generated/prisma";
 import { auth } from "@/app/libs/auth/auth";
 import prisma from "@/app/libs/prisma";

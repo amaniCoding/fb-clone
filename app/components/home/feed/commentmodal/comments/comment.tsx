@@ -1,4 +1,4 @@
-import { CommentType } from "@/app/apis/comments/oUserPost/[postid]/[page]/lib";
+import { CommentType } from "@/app/api/comments/oUserPost/[postid]/[page]/lib";
 import { Ref } from "react";
 
 import Replies from "../replies/replies";

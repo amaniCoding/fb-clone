@@ -1,5 +1,5 @@
-import { CommentsType } from "@/app/apis/comments/oUserPost/[postid]/[page]/lib";
-import { CommentsResponseType } from "@/app/apis/comments/oUserPost/[postid]/[page]/route";
+import { CommentsType } from "@/app/api/comments/oUserPost/[postid]/[page]/lib";
+import { CommentsResponseType } from "@/app/api/comments/oUserPost/[postid]/[page]/route";
 import {
   OGroupPost,
   OPagePost,
@@ -7,11 +7,11 @@ import {
   ToGroupSharedPost,
   UserSharePost,
   PageSharePost,
-} from "@/app/apis/feeder/[page]/lib";
-import { ReplysType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
-import { ReplyResponseType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/route";
-import { ReplyReplysType } from "@/app/apis/replyreplies/oUserPost/[postid]/[commentid]/[replyid]/[page]/lib";
-import { ReplyRepliesResponseType } from "@/app/apis/replyreplies/oUserPost/[postid]/[commentid]/[replyid]/[page]/route";
+} from "@/app/api/feeder/[page]/lib";
+import { ReplysType } from "@/app/api/replies/oUserPost/[postid]/[commentid]/[page]/lib";
+import { ReplyResponseType } from "@/app/api/replies/oUserPost/[postid]/[commentid]/[page]/route";
+import { ReplyReplysType } from "@/app/api/replyreplies/oUserPost/[postid]/[commentid]/[replyid]/[page]/lib";
+import { ReplyRepliesResponseType } from "@/app/api/replyreplies/oUserPost/[postid]/[commentid]/[replyid]/[page]/route";
 import { PostType } from "@/app/generated/prisma";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type CommentsShownType = {

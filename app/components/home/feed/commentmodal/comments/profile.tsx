@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { CommentType } from "@/app/apis/comments/oUserPost/[postid]/[page]/lib";
+import { CommentType } from "@/app/api/comments/oUserPost/[postid]/[page]/lib";
 export default function Profile({ comment }: { comment: CommentType }) {
   return (
     <Link href={"/#"} className="flex-none">

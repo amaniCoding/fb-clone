@@ -1,4 +1,4 @@
-import { ReplyType } from "@/app/apis/replies/oUserPost/[postid]/[commentid]/[page]/lib";
+import { ReplyType } from "@/app/api/replies/oUserPost/[postid]/[commentid]/[page]/lib";
 import ReplyReplies from "../replyreplies/replies";
 import Content from "./content";
 import Lower from "./lower";

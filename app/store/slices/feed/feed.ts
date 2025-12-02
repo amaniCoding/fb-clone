@@ -1,4 +1,4 @@
-import { FeedsType } from "@/app/apis/feeder/[page]/lib";
+import { FeedsType } from "@/app/api/feeder/[page]/lib";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type FeedResponseType = {

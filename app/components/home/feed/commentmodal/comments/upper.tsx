@@ -1,4 +1,4 @@
-import { CommentType } from "@/app/apis/comments/oUserPost/[postid]/[page]/lib";
+import { CommentType } from "@/app/api/comments/oUserPost/[postid]/[page]/lib";
 import Commentor from "./commentor";
 import Content from "./content";
 

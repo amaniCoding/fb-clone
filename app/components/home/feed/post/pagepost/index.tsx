@@ -1,4 +1,4 @@
-import { PagePostType } from "@/app/apis/feeder/[page]/lib";
+import { PagePostType } from "@/app/api/feeder/[page]/lib";
 import OPage_Post from "./original/post";
 import PageShare_Post from "./share/post";
 

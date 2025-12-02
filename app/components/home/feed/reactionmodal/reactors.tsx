@@ -1,4 +1,4 @@
-import { ReactorsType } from "@/app/apis/reactions/oGroupPost/body/[postid]/[reactiontype]/[page]/lib";
+import { ReactorsType } from "@/app/api/reactions/oGroupPost/body/[postid]/[reactiontype]/[page]/lib";
 import { ReactionType } from "@/app/generated/prisma";
 import { useLastReactorNodeRef } from "@/app/hooks/reactionModal/uselastnoderef";
 import Image from "next/image";

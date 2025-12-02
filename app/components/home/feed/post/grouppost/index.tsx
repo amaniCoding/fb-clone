@@ -1,4 +1,4 @@
-import { GroupPostType } from "@/app/apis/feeder/[page]/lib";
+import { GroupPostType } from "@/app/api/feeder/[page]/lib";
 import OGroup_Post from "./original/post";
 import ToGroupShare_Post from "./share/post";
 

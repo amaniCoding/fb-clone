@@ -4,7 +4,7 @@ import Content from "../../shared/content";
 import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";
 import Lower from "../../shared/lower";
-import { OUserPost } from "@/app/apis/feeder/[page]/lib";
+import { OUserPost } from "@/app/api/feeder/[page]/lib";
 
 type PropsTypes = {
   post: OUserPost;

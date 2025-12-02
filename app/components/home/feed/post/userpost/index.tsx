@@ -1,4 +1,4 @@
-import { UserPostType } from "@/app/apis/feeder/[page]/lib";
+import { UserPostType } from "@/app/api/feeder/[page]/lib";
 import OUser_Post from "./original/post";
 import UserShare_Post from "./share/post";
 
