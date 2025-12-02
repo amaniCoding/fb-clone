@@ -8,7 +8,7 @@ import {
 } from "@/app/store/slices/modal/comment";
 import axios from "axios";
 import { useReplyRepliesLastNodeRef } from "@/app/hooks/commentsModal/replyreplies/uselastnoderef";
-import Lower from "../shared/left";
+import Lower from "../shared/lower";
 import Content from "./content";
 import Reply from "./reply";
 

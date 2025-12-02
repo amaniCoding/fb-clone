@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Left from "../shared/left";
+import Left from "../shared/lower";
 import { ReactionType } from "@/app/generated/prisma";
 export default function Lower({
   gReactions,

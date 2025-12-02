@@ -5,6 +5,7 @@ import Replies from "../replies/replies";
 import { ReactionType } from "@/app/generated/prisma";
 
 import Header from "./header";
+import Commentor from "./commentor";
 export default function Comment({
   comment,
   gReactions,
