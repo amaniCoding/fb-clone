@@ -11,7 +11,7 @@ export async function _seeder() {
     select: {
       medias: {
         where: {
-          id: "media_id_in_this_postx",
+          id: "media_id_in_this_postxc",
         },
         select: {
           id: true,
