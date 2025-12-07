@@ -1,0 +1,1018 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Gender {
+  male
+  female
+  custom
+}
+
+enum Audinece {
+  public
+  friends
+  custom
+}
+
+enum MediaType {
+  image
+  video
+}
+
+enum MessageMediaType {
+  image
+  video
+  document
+}
+
+enum SuperAudinece {
+  friendsExcept
+  specificFriends
+  customList
+}
+
+enum FeedPostType {
+  user
+  group
+  page
+}
+
+enum UserPostType {
+  original
+  share
+}
+
+enum PagePostType {
+  original
+  share
+}
+
+enum GroupPostType {
+  original
+  share
+}
+
+enum ShareType {
+  user
+  group
+  page
+  media
+}
+
+enum ToGroupSharerType {
+  user
+  page
+}
+
+enum MediaOwnerType {
+  user
+  page
+  group
+}
+
+enum ReactionType {
+  like
+  love
+  sad
+  angry
+  care
+  haha
+  wow
+}
+
+enum PostType {
+  oUserPost
+  oPagePost
+  oGroupPost
+  userSharePost
+  pageSharePost
+  toGroupSharedPost
+}
+
+/**
+ * Entities
+ */
+
+/**
+ * user related data
+ */
+
+model User {
+  id                  String   @id @default(uuid())
+  firstName           String
+  lastName            String
+  birthDate           DateTime
+  gender              Gender
+  customGender        String?
+  customGenderPronoun String?
+  email               String?  @unique
+  phoneNumber         String?  @unique
+  password            String
+
+  verificationCode      Int?
+  verificationExpiredAt DateTime?
+  isActive              Boolean   @default(false)
+  activeAt              DateTime?
+
+  // friends
+  friends Firends[]
+
+  setFriendRequests      FriendRequest[] @relation("friendrequestsender")
+  recievedFriendRequests FriendRequest[] @relation("friendrequestreciever")
+
+  //groups
+  memberedGroups     GroupMembers[]
+  groupPosts         OGroupPost[]
+  sharedPostsToGroup ToGroupSharePost[]
+  superAdminTo       Group[]
+  adminTo            GroupAdmin[]
+  moderatorTo        GroupModerator[]
+
+  taggedPosts   Tags[]
+  //pages
+  followedPages UserPageFollow[]
+  managedPages  Page[]
+  //post
+  ownPosts      OUserPost[]
+
+  //shares
+  sharedPosts              UserSharePost[]
+  sentMessages             Message_USER[]  @relation("sentmessages")
+  recievedMessages         Message_USER[]  @relation("recievedmessages")
+  // messages
+  sentMessagesToPage       Message_PAGE[]  @relation("sentmessages")
+  recievedMessagesFromPage Message_PAGE[]  @relation("recievedmessages")
+
+  //story
+  stories                 Story[]
+  // profile
+  Profile                 Profile?
+  //feeds
+  comments                Comment[]
+  reactions               Reaction[]
+  replyReactions          ReplyReaction[]
+  FeedReplyReplyReactions ReplyReplyReactions[]
+  replies                 Reply[]
+  replyReplies            ReplyReply[]
+  commentReactions        CommentReaction[]
+
+  // medias
+
+  MediaReplyReplyReactions MediaReplyReplyReactions[]
+
+  MediaReplyReply MediaReplyReply[]
+
+  MediaReplyReactions MediaReplyReactions[]
+
+  MediaCommentReaction MediaCommentReaction[]
+
+  MediaReply MediaReply[]
+
+  MediaReaction MediaReaction[]
+
+  MediaComment MediaComment[]
+
+  // reels
+
+  reels Reel[]
+  // follwing 
+
+  followings UserFollow[] @relation("following")
+  followers  UserFollow[] @relation("follwer")
+  /**
+   * if i am follower, i get my followings
+   */
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserPost {
+  id              String         @id @default(uuid())
+  feed            Feed?
+  postType        UserPostType
+  oUserPostId     String?        @unique
+  userSharePostId String?        @unique
+  oUserPost       OUserPost?     @relation(fields: [oUserPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userSharePost   UserSharePost? @relation(fields: [userSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model OUserPost {
+  id            String             @id @unique @default(uuid())
+  postType      PostType           @default(oUserPost)
+  userPost      UserPost?
+  userId        String
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content       String?
+  tags          Tags[]
+  medias        Media[]
+  location      String?
+  doing         String?
+  doingWhat     String?
+  audience      Audinece           @default(friends)
+  sharesByUser  UserSharePost[]
+  sharesByPage  PageSharePost[]
+  sharesToGroup ToGroupSharePost[]
+  comments      Comment[]
+  reactions     Reaction[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
+model UserFollow {
+  id              String   @id @default(uuid())
+  followerUserId  String
+  followingUserId String
+  follower        User     @relation("following", fields: [followerUserId], references: [id])
+  followed        User     @relation("follwer", fields: [followingUserId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model UserSharePost {
+  id       String   @id @default(uuid())
+  postType PostType @default(userSharePost)
+
+  userPost UserPost?
+  userId   String
+
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tags         Tags[]
+  shareWhat    ShareType
+  content      String?
+  doing        String?
+  doingWhat    String?
+  audience     Audinece    @default(friends)
+  location     String?
+  oUserPostId  String?
+  oPagePostId  String?
+  oGroupPostId String?
+  mediaId      String?
+  media        Media?      @relation(fields: [mediaId], references: [id])
+  oUserPost    OUserPost?  @relation(fields: [oUserPostId], references: [id])
+  oPagePost    OPagePost?  @relation(fields: [oPagePostId], references: [id])
+  oGroupPost   OGroupPost? @relation(fields: [oGroupPostId], references: [id])
+  comments     Comment[]
+  reactions    Reaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tags {
+  id              String         @id @default(uuid())
+  userPostId      String?
+  userSharePostId String?
+  userId          String
+  userPost        OUserPost?     @relation(fields: [userPostId], references: [id])
+  userSharePost   UserSharePost? @relation(fields: [userSharePostId], references: [id])
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model Firends {
+  id        String   @id @default(uuid())
+  userId    String
+  friend    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FriendRequest {
+  id         String   @id @default(uuid())
+  sendId     String
+  recieverId String
+  sender     User     @relation("friendrequestsender", fields: [sendId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  reciever   User     @relation("friendrequestreciever", fields: [recieverId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+/**
+ * User profile
+ */
+
+model Profile {
+  id                 String             @id @default(uuid())
+  userId             String             @unique
+  user               User               @relation(fields: [userId], references: [id])
+  homeTown           String?
+  currentCity        String?
+  previousCity       PreviousCity?
+  bio                String?
+  relationShipStatus String?
+  nickName           String?
+  aboutYou           String?
+  favoriteQuotes     String?
+  profilePicture     String?
+  coverPhoto         String?
+  avatar             String?
+  socialLink         SocialLinks_USER[]
+  website            Websites_USER[]
+  work               Works_USER[]
+  school             Schools_USER[]
+  college            Collges_USER[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model PreviousCity {
+  id        String   @id @default(uuid())
+  dateYear  String
+  dateMonth String
+  Profile   Profile  @relation(fields: [profileId], references: [id])
+  profileId String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SocialLinks_USER {
+  id        String   @id @default(uuid())
+  userName  String
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Profile   Profile  @relation(fields: [profileId], references: [id])
+  profileId String
+}
+
+model Collges_USER {
+  id             String          @id @default(uuid())
+  schoolName     String
+  from           DateTime
+  to             DateTime
+  description    String
+  concentrations Concentraions[]
+  attendedFor    String
+  graduated      Boolean
+  Profile        Profile         @relation(fields: [profileId], references: [id])
+  profileId      String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model Concentraions {
+  id              String       @id @default(uuid())
+  concentration   String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  CollgeProfile   Collges_USER @relation(fields: [collgeProfileId], references: [id])
+  collgeProfileId String
+}
+
+model Websites_USER {
+  id String @id @default(uuid())
+
+  Profile   Profile  @relation(fields: [profileId], references: [id])
+  profileId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Schools_USER {
+  id         String   @id @default(uuid())
+  schoolName String
+  from       DateTime
+  to         DateTime
+  graduated  Boolean
+  Profile    Profile  @relation(fields: [profileId], references: [id])
+  profileId  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Works_USER {
+  id               String    @id @default(uuid())
+  company          String
+  city             String
+  town             String
+  description      String
+  position         String
+  from             DateTime
+  to               DateTime?
+  currentlyWorking Boolean?
+  Profile          Profile   @relation(fields: [profileId], references: [id])
+  profileId        String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+/**
+ * group related relations
+ */
+
+model Group {
+  id         String @id @default(uuid())
+  userId     String
+  superAdmin User   @relation(fields: [userId], references: [id])
+
+  name           String
+  category       String?
+  profilePicture String?
+  members        GroupMembers[]
+  posts          OGroupPost[]
+  rules          GroupRules[]
+  moderators     GroupModerator[]
+  admins         GroupAdmin[]
+  sharedPosts    ToGroupSharePost[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+model GroupPost {
+  id                 String            @id @default(uuid())
+  feed               Feed?
+  postType           GroupPostType
+  oGroupPostId       String?           @unique
+  toGroupSharePostId String?           @unique
+  oGroupPost         OGroupPost?       @relation(fields: [oGroupPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  toGroupSharedPost  ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model OGroupPost {
+  id       String   @id @default(uuid())
+  postType PostType @default(oGroupPost)
+
+  groupPost     GroupPost?
+  userId        String
+  groupId       String
+  user          User               @relation(fields: [userId], references: [id])
+  group         Group              @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content       String?
+  location      String?
+  doing         String?
+  doingWhat     String?
+  medias        Media[]
+  audience      Audinece?          @default(public)
+  sharesByUser  UserSharePost[]
+  sharesByPage  PageSharePost[]
+  sharesToGroup ToGroupSharePost[]
+
+  comments  Comment[]
+  reactions Reaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ToGroupSharePost {
+  id       String   @id @default(uuid())
+  postType PostType @default(toGroupSharedPost)
+
+  groupPost    GroupPost?
+  userId       String?
+  pageId       String?
+  page         Page?             @relation(fields: [pageId], references: [id])
+  user         User?             @relation(fields: [userId], references: [id])
+  groupId      String
+  group        Group             @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  shareWhat    ShareType
+  sharer       ToGroupSharerType
+  content      String?
+  doing        String?
+  doingWhat    String?
+  location     String?
+  oUserPostId  String?
+  oPagePostId  String?
+  oGroupPostId String?
+  mediaId      String?
+  media        Media?            @relation(fields: [mediaId], references: [id])
+  oUserPost    OUserPost?        @relation(fields: [oUserPostId], references: [id])
+  oPagePost    OPagePost?        @relation(fields: [oPagePostId], references: [id])
+  oGroupPost   OGroupPost?       @relation(fields: [oGroupPostId], references: [id])
+
+  comments  Comment[]
+  reactions Reaction[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model GroupRules {
+  id        String   @id @default(uuid())
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GroupAdmin {
+  id        String   @id @default(uuid())
+  groupId   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  group     Group    @relation(fields: [groupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GroupModerator {
+  id        String   @id @default(uuid())
+  groupId   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  group     Group    @relation(fields: [groupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GroupMembers {
+  id        String   @id @default(uuid())
+  userId    String
+  groupId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/**
+ * Page related data
+ */
+model Page {
+  id                 String             @id @default(uuid())
+  name               String
+  category           String?
+  profilePicture     String?
+  userId             String
+  admin              User               @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  stories            Story[]
+  posts              OPagePost[]
+  sharedPosts        PageSharePost[]
+  sharedPostsToGroup ToGroupSharePost[]
+  pageFollowings     PageFollow[]       @relation("followingpages")
+  pageFollowers      PageFollow[]       @relation("followerpages")
+  userFollowers      UserPageFollow[]
+  sentMessages       Message_PAGE[]     @relation("sentmessages")
+  recievedMessages   Message_PAGE[]     @relation("recievedmessages")
+  reels              Reel[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model PagePost {
+  id       String       @id @default(uuid())
+  feed     Feed?
+  postType PagePostType
+
+  oPagePostId     String?        @unique
+  pageSharePostId String?        @unique
+  oPagePost       OPagePost?     @relation(fields: [oPagePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pageSharePost   PageSharePost? @relation(fields: [pageSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model OPagePost {
+  id       String   @id @default(uuid())
+  postType PostType @default(oPagePost)
+
+  pagePost      PagePost?
+  pageId        String
+  page          Page               @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content       String?
+  doing         String?
+  doingWhat     String?
+  audience      Audinece?
+  location      String?
+  medias        Media[]
+  sharesByUser  UserSharePost[]
+  sharesByPage  PageSharePost[]
+  sharesToGroup ToGroupSharePost[]
+  comments      Comment[]
+  reactions     Reaction[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
+model PageSharePost {
+  id       String   @id @default(uuid())
+  postType PostType @default(pageSharePost)
+
+  pagePost PagePost?
+
+  pageId String
+  page   Page   @relation(fields: [pageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  shareWhat    ShareType
+  content      String?
+  doing        String?
+  doingWhat    String?
+  audience     Audinece?
+  location     String?
+  oUserPostId  String?
+  oPagePostId  String?
+  oGroupPostId String?
+  mediaId      String?
+  media        Media?      @relation(fields: [mediaId], references: [id])
+  oUserPost    OUserPost?  @relation(fields: [oUserPostId], references: [id])
+  oPagePost    OPagePost?  @relation(fields: [oPagePostId], references: [id])
+  oGroupPost   OGroupPost? @relation(fields: [oGroupPostId], references: [id])
+  comments     Comment[]
+  reactions    Reaction[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model UserPageFollow {
+  id        String   @id @default(uuid())
+  userId    String
+  paegId    String
+  page      Page     @relation(fields: [paegId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PageFollow {
+  id String @id @default(uuid())
+
+  pageId1      String?
+  pageId2      String?
+  followerPage Page?    @relation("followingpages", fields: [pageId1], references: [id])
+  following    Page?    @relation("followerpages", fields: [pageId2], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([pageId1, pageId2])
+}
+
+/**
+ * Feed media
+ */
+
+model Media {
+  id            String             @id @default(uuid())
+  userPostId    String?
+  pagePostId    String?
+  groupPostId   String?
+  feedId        String?
+  owner         MediaOwnerType
+  userPost      OUserPost?         @relation(fields: [userPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pagePost      OPagePost?         @relation(fields: [pagePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  groupPost     OGroupPost?        @relation(fields: [groupPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  url           String
+  type          MediaType
+  sharesByUser  UserSharePost[]
+  sharesByPage  PageSharePost[]
+  sharesToGroup ToGroupSharePost[]
+
+  reactions MediaReaction[]
+
+  comments  MediaComment[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+/**
+ * message user
+ */
+
+model Message_USER {
+  id            String               @id @default(uuid())
+  senderId      String
+  recieverId    String
+  sender        User                 @relation("recievedmessages", fields: [senderId], references: [id], onUpdate: Cascade)
+  reciever      User                 @relation("sentmessages", fields: [recieverId], references: [id], onUpdate: Cascade)
+  seen          Boolean              @default(false)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  MessageMedias MessageMedias_USER[]
+}
+
+model MessageMedias_USER {
+  id        String           @id @default(uuid())
+  messageId String
+  Message   Message_USER     @relation(fields: [messageId], references: [id])
+  type      MessageMediaType
+  url       String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+/**
+ * message page
+ */
+
+model Message_PAGE {
+  id              String  @id @default(uuid())
+  senderId        String?
+  recieverId      String?
+  senderId_page   String?
+  recieverId_page String?
+
+  sender_page   Page?                @relation("recievedmessages", fields: [senderId_page], references: [id], onUpdate: Cascade)
+  reciever_page Page?                @relation("sentmessages", fields: [recieverId_page], references: [id], onUpdate: Cascade)
+  sender        User?                @relation("recievedmessages", fields: [senderId], references: [id], onUpdate: Cascade)
+  reciever      User?                @relation("sentmessages", fields: [recieverId], references: [id], onUpdate: Cascade)
+  seen          Boolean              @default(false)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  MessageMedias MessageMedias_PAGE[]
+}
+
+model MessageMedias_PAGE {
+  id        String           @id @default(uuid())
+  messageId String
+  message   Message_PAGE     @relation(fields: [messageId], references: [id])
+  type      MessageMediaType
+  url       String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+/**
+ * story
+ */
+
+model Story {
+  id        String       @id @default(uuid())
+  userId    String?
+  pageId    String?
+  content   String?
+  page      Page?        @relation(fields: [pageId], references: [id])
+  user      User?        @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  medias    StoryMedia[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model StoryMedia {
+  id        String   @id @default(uuid())
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id])
+  owner     String
+  type      String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/**
+ * Feed
+ */
+
+model Feed {
+  id          String       @id @default(uuid())
+  postType    FeedPostType
+  userPostId  String?      @unique
+  pagePostId  String?      @unique
+  groupPostId String?      @unique
+
+  userPost  UserPost?  @relation(fields: [userPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pagePost  PagePost?  @relation(fields: [pagePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  groupPost GroupPost? @relation(fields: [groupPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Comment {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userPostId         String?
+  pagePostId         String?
+  groupPostId        String?
+  userSharePostId    String?
+  pageSharePostId    String?
+  toGroupSharePostId String?
+  userPost           OUserPost?        @relation(fields: [userPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pagePost           OPagePost?        @relation(fields: [pagePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  groupPost          OGroupPost?       @relation(fields: [groupPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userSharePost      UserSharePost?    @relation(fields: [userSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pageSharePost      PageSharePost?    @relation(fields: [pageSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  toGroupSharePost   ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl           String?
+  content            String?
+  reactions          CommentReaction[]
+  replies            Reply[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model Reaction {
+  id String @id @default(uuid())
+
+  userId             String
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userPostId         String?
+  pagePostId         String?
+  groupPostId        String?
+  userSharePostId    String?
+  pageSharePostId    String?
+  toGroupSharePostId String?
+  userPost           OUserPost?        @relation(fields: [userPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pagePost           OPagePost?        @relation(fields: [pagePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  groupPost          OGroupPost?       @relation(fields: [groupPostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userSharePost      UserSharePost?    @relation(fields: [userSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pageSharePost      PageSharePost?    @relation(fields: [pageSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  toGroupSharePost   ToGroupSharePost? @relation(fields: [toGroupSharePostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reactionType       ReactionType
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+/**
+ * feed comment
+ */
+
+model Reply {
+  id        String  @id @default(uuid())
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl  String?
+  content   String?
+  reactions ReplyReaction[]
+  replies   ReplyReply[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model CommentReaction {
+  id String @id @default(uuid())
+
+  commentId String
+  userId    String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  reactionType ReactionType
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+/**
+ * feed reply *
+ */
+
+model ReplyReaction {
+  id           String       @id @default(uuid())
+  replyId      String
+  reply        Reply        @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reactionType ReactionType
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ReplyReply {
+  id        String                @id @default(uuid())
+  replyId   String
+  reply     Reply                 @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl  String?
+  content   String?
+  reactions ReplyReplyReactions[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+}
+
+model ReplyReplyReactions {
+  id           String       @id @default(uuid())
+  replyReplyId String
+  reply        ReplyReply   @relation(fields: [replyReplyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reactionType ReactionType
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// media
+
+model MediaComment {
+  id       String  @id @default(uuid())
+  mediaId  String
+  media    Media   @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl String?
+  content  String?
+
+  reactions MediaCommentReaction[]
+
+  replies   MediaReply[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model MediaReaction {
+  id      String @id @default(uuid())
+  mediaId String
+  userId  String
+  Media   Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  reactionType ReactionType
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+/**
+ * media comment
+ */
+
+model MediaReply {
+  id        String       @id @default(uuid())
+  commentId String
+  comment   MediaComment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl String?
+  content  String?
+
+  replies MediaReplyReply[]
+
+  reactions MediaReplyReactions[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+}
+
+model MediaCommentReaction {
+  id String @id @default(uuid())
+
+  commentId String
+  userId    String
+  comment   MediaComment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  reactionType ReactionType
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+/**
+ * feed reply *
+ */
+
+model MediaReplyReactions {
+  id           String       @id @default(uuid())
+  replyId      String
+  reply        MediaReply   @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reactionType ReactionType
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MediaReplyReply {
+  id        String     @id @default(uuid())
+  replyId   String
+  reply     MediaReply @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mediaUrl  String?
+  content   String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  reactions MediaReplyReplyReactions[]
+}
+
+model MediaReplyReplyReactions {
+  id           String          @id @default(uuid())
+  replyReplyId String
+  reply        MediaReplyReply @relation(fields: [replyReplyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reactionType ReactionType
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reel {
+  id        String   @id @default(uuid())
+  userId    String?
+  pageId    String?
+  page      Page?    @relation(fields: [pageId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  url       String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
