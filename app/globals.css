@@ -24,7 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
-.slick-slide > div {
-      margin-left: 9px; /* Adjust the value as needed for desired spacing */
-    }
-     
+   .slick-list {
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+          .slick-slide {
+          padding: 0 !important;
+          margin-right: 6px !important;
+        }
+
+        
+        
+
+        

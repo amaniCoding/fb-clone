@@ -83,11 +83,11 @@ export default function Feeder() {
 
   if (error)
     return (
-      <div className="w-full h-4 flex items-center justify-center text-red-500 font-bold">
+      <div className="w-full h-40 mt-10 flex items-center justify-center text-red-500 font-bold">
         <div className="flex flex-col space-y-1">
           <p> Failed to load items.</p>
           <Link
-            className="block px-2 py-2.5 rounded-xl bg-blue-600 text-white"
+            className="block text-center px-2 py-2.5 rounded-lg bg-blue-600 text-white"
             href={`/`}
           >
             Reload this page

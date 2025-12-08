@@ -78,80 +78,101 @@ export default function Lower({ refFrom, post }: TypeProps) {
           onMouseLeave={hideReactionBox}
         >
           {post._isReacted.reactionType === "like" && (
-            <Image
-              alt=""
-              src={"/reactions/like.png"}
-              width={0}
-              height={0}
-              sizes="100vh"
-              className=" w-5 h-5 rounded-full block flex-none"
-            />
+            <div className="flex items-center px-3 py-1.5 space-x-1 ">
+              <Image
+                alt=""
+                src={"/reactions/like.png"}
+                width={0}
+                height={0}
+                sizes="100vh"
+                className=" w-5 h-5 rounded-full block flex-none"
+              />
+              <p className="text-blue-500">Like</p>
+            </div>
           )}
 
           {post._isReacted.reactionType === "love" && (
-            <Image
-              alt=""
-              src={"/reactions/love.png"}
-              width={0}
-              height={0}
-              sizes="100vh"
-              className=" w-5 h-5 rounded-full block flex-none"
-            />
+            <div className="flex items-center px-3 py-1.5 space-x-1 ">
+              <Image
+                alt=""
+                src={"/reactions/love.png"}
+                width={0}
+                height={0}
+                sizes="100vh"
+                className=" w-5 h-5 rounded-full block flex-none"
+              />
+              <p className="text-pink-400">Love</p>
+            </div>
           )}
 
           {post._isReacted.reactionType === "wow" && (
-            <Image
-              alt=""
-              src={"/reactions/wow.png"}
-              width={0}
-              height={0}
-              sizes="100vh"
-              className=" w-5 h-5 rounded-full block flex-none"
-            />
+            <div className="flex items-center px-3 py-1.5 space-x-1 ">
+              <Image
+                alt=""
+                src={"/reactions/wow.png"}
+                width={0}
+                height={0}
+                sizes="100vh"
+                className=" w-5 h-5 rounded-full block flex-none"
+              />
+              <p className="text-amber-300">Wow</p>
+            </div>
           )}
 
           {post._isReacted.reactionType === "care" && (
-            <Image
-              alt=""
-              src={"/reactions/care.png"}
-              width={0}
-              height={0}
-              sizes="100vh"
-              className=" w-5 h-5 rounded-full block flex-none"
-            />
+            <div className="flex items-center px-3 py-1.5 space-x-1 ">
+              <Image
+                alt=""
+                src={"/reactions/care.png"}
+                width={0}
+                height={0}
+                sizes="100vh"
+                className=" w-5 h-5 rounded-full block flex-none"
+              />
+              <p className="text-amber-300">Care</p>
+            </div>
           )}
 
           {post._isReacted.reactionType === "haha" && (
-            <Image
-              alt=""
-              src={"/reactions/haha.png"}
-              width={0}
-              height={0}
-              sizes="100vh"
-              className=" w-5 h-5 rounded-full block flex-none"
-            />
+            <div className="flex items-center px-3 py-1.5 space-x-1 ">
+              <Image
+                alt=""
+                src={"/reactions/haha.png"}
+                width={0}
+                height={0}
+                sizes="100vh"
+                className=" w-5 h-5 rounded-full block flex-none"
+              />
+              <p className="text-amber-300">Haha</p>
+            </div>
           )}
 
           {post._isReacted.reactionType === "sad" && (
-            <Image
-              alt=""
-              src={"/reactions/sad.png"}
-              width={0}
-              height={0}
-              sizes="100vh"
-              className=" w-5 h-5 rounded-full block flex-none"
-            />
+            <div className="flex items-center px-3 py-1.5 space-x-1 ">
+              <Image
+                alt=""
+                src={"/reactions/sad.png"}
+                width={0}
+                height={0}
+                sizes="100vh"
+                className=" w-5 h-5 rounded-full block flex-none"
+              />
+              <p className="text-amber-300">Sad</p>
+            </div>
           )}
 
           {post._isReacted.reactionType === "angry" && (
-            <Image
-              alt=""
-              src={"/reactions/angry.png"}
-              width={0}
-              height={0}
-              sizes="100vh"
-              className=" w-5 h-5 rounded-full block flex-none"
-            />
+            <div className="flex items-center px-3 py-1.5 space-x-1 ">
+              <Image
+                alt=""
+                src={"/reactions/angry.png"}
+                width={0}
+                height={0}
+                sizes="100vh"
+                className=" w-5 h-5 rounded-full block flex-none"
+              />
+              <p className="text-pink-400">Angry</p>
+            </div>
           )}
         </div>
       )}
