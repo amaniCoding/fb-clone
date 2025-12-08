@@ -1,39 +1,54 @@
-import { ReactionType } from "@/app/generated/prisma/client";
 import prisma from "@/app/libs/prisma";
 import { getRandomReactionType } from "@/app/seed/lib";
-import { getRandomUser } from "@/app/seed/libs";
+import { getUsers } from "@/app/seed/libs";
+import { ReactionType } from "@/app/generated/prisma/client";
 
 export async function _seeder() {
-  const user = await getRandomUser();
-  const reactionType = getRandomReactionType() as ReactionType;
-
-  const isReacted = await prisma.reaction.findFirst({
-    where: {
-      userId: user.id,
-    },
-    select: {
-      userPostId: true,
-    },
-  });
-
-  if (isReacted?.userPostId) {
-    return;
-  }
-  return prisma.oUserPost.update({
+  const posts = await prisma.oUserPost.findMany({
     where: {
       id: "someid",
     },
-    data: {
-      reactions: {
-        create: {
-          reactionType: reactionType,
-          user: {
-            connect: {
-              id: user.id,
-            },
-          },
+    select: {
+      id: true,
+      _count: {
+        select: {
+          reactions: true,
         },
       },
     },
   });
+
+  if (posts[0]._count.reactions > 0) {
+    return;
+  }
+
+  return Promise.all(
+    posts.map(async (post) => {
+      const users = await getUsers();
+
+      return Promise.all(
+        users.map((user) => {
+          const reactionType = getRandomReactionType() as ReactionType;
+
+          return prisma.oUserPost.update({
+            where: {
+              id: post.id,
+            },
+            data: {
+              reactions: {
+                create: {
+                  reactionType: reactionType,
+                  user: {
+                    connect: {
+                      id: user.id,
+                    },
+                  },
+                },
+              },
+            },
+          });
+        })
+      );
+    })
+  );
 }

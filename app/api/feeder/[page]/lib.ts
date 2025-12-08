@@ -1212,6 +1212,12 @@ export const getFeeds = async (userId: string, page: number) => {
   });
 
   const result = await feeds;
+  if (result.length === 0) {
+    return {
+      updated: [],
+      hasMore: false,
+    };
+  }
   const updated = result.map(async (feed) => {
     return {
       ...feed,
@@ -1323,6 +1329,7 @@ export const getFeeds = async (userId: string, page: number) => {
 
   return {
     updated: await Promise.all(updated),
+    hasMore: true,
   };
 };
 

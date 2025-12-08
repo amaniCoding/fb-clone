@@ -33,7 +33,7 @@ export const feedSlice = createSlice({
   initialState,
   reducers: {
     setFeeds: (state, action: PayloadAction<FeedResponseType>) => {
-      state.feeds.feeds = [...state.feeds.feeds!, ...action.payload.feeds];
+      state.feeds.feeds = action.payload.feeds;
     },
 
     addFeed: (state, action: PayloadAction<FeedsType | undefined>) => {

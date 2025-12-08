@@ -7,8 +7,16 @@ export async function _seeder() {
   const posts = await prisma.oGroupPost.findMany({
     select: {
       id: true,
+      _count: {
+        select: {
+          reactions: true,
+        },
+      },
     },
   });
+  if (posts[0]._count.reactions > 0) {
+    return;
+  }
 
   return Promise.all(
     posts.map(async (post) => {

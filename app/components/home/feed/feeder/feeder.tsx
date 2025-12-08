@@ -11,6 +11,7 @@ import FeedItemSkeleton from "@/app/components/skeletons/feed";
 import { setFeeds } from "@/app/store/slices/feed/feed";
 interface FeedsPage {
   feeds: FeedsType[];
+  hasMore: boolean;
 }
 export default function Feeder() {
   const dispatch = useAppDispatch();
@@ -30,10 +31,9 @@ export default function Feeder() {
     }
     return res.json();
   };
-  const PAGE_SIZE = 10;
 
   const getKey = (pageIndex: number, previousPageData: FeedsPage | null) => {
-    if (previousPageData && previousPageData.feeds.length === 0) return null;
+    if (previousPageData && !previousPageData.hasMore) return null;
 
     return `/api/feeder/${pageIndex + 1}/`;
   };
@@ -50,7 +50,8 @@ export default function Feeder() {
   const isLoadingMore =
     isLoading ||
     (isValidating && data && typeof data[size - 1] === "undefined");
-  const isReachingEnd = data && data[data.length - 1]?.feeds.length < PAGE_SIZE;
+  // const isReachingEnd = data && data[data.length - 1]?.feeds.length < PAGE_SIZE;
+  const isReachingEnd = data && data[data.length - 1]?.hasMore === false;
 
   useEffect(() => {
     dispatch(
@@ -61,11 +62,16 @@ export default function Feeder() {
   }, [dispatch, feeds]);
 
   useEffect(() => {
-    if (isReachingEnd || !observerRef.current) return;
+    if (!observerRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting && !isLoadingMore) {
+        if (
+          entries[0]?.isIntersecting &&
+          !isLoadingMore &&
+          !error &&
+          !isReachingEnd
+        ) {
           setSize(size + 1);
         }
       },
@@ -75,19 +81,23 @@ export default function Feeder() {
     observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  }, [size, setSize, isReachingEnd, isLoadingMore]);
+  }, [size, setSize, isReachingEnd, isLoadingMore, error]);
 
-  if (error) return <div>Failed to load posts</div>;
+  if (error) return <div>Failed to load items.</div>;
+  if (!data && isLoading) return <FeedItemSkeleton />;
   return (
     <>
       {feedsState!.map((post, index) => (
         <Post key={index} post={post} />
       ))}
 
-      {isLoadingMore && <FeedItemSkeleton />}
-      {!isLoadingMore && !isReachingEnd && (
-        <div ref={observerRef}>{isLoadingMore && <FeedItemSkeleton />}</div>
-      )}
+      <div ref={observerRef}>
+        {isLoadingMore ? (
+          <FeedItemSkeleton />
+        ) : isReachingEnd ? (
+          <p>You have reached the end of the list.</p>
+        ) : null}
+      </div>
 
       {isCommentModalOpen && <CommentModal />}
       {isReactionModalOpen && <ReactionModal />}
