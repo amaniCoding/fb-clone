@@ -71,23 +71,109 @@ export default function Lower({ refFrom, post }: TypeProps) {
           hideShowing={hideShowing}
         />
       )}
-      <div
-        className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100"
-        onMouseEnter={showReactionBox}
-        onMouseLeave={hideReactionBox}
-      >
-        <div className="flex items-center px-3 py-1.5 space-x-1 ">
-          <Image
-            alt=""
-            src={"/post/like.png"}
-            width={0}
-            height={0}
-            sizes="100vh"
-            className=" w-5 h-5 rounded-full block flex-none"
-          />
-          <p>Like</p>
+      {post._isReacted?.isReacted && (
+        <div
+          className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100"
+          onMouseEnter={showReactionBox}
+          onMouseLeave={hideReactionBox}
+        >
+          {post._isReacted.reactionType === "like" && (
+            <Image
+              alt=""
+              src={"/reactions/like.png"}
+              width={0}
+              height={0}
+              sizes="100vh"
+              className=" w-5 h-5 rounded-full block flex-none"
+            />
+          )}
+
+          {post._isReacted.reactionType === "love" && (
+            <Image
+              alt=""
+              src={"/reactions/love.png"}
+              width={0}
+              height={0}
+              sizes="100vh"
+              className=" w-5 h-5 rounded-full block flex-none"
+            />
+          )}
+
+          {post._isReacted.reactionType === "wow" && (
+            <Image
+              alt=""
+              src={"/reactions/wow.png"}
+              width={0}
+              height={0}
+              sizes="100vh"
+              className=" w-5 h-5 rounded-full block flex-none"
+            />
+          )}
+
+          {post._isReacted.reactionType === "care" && (
+            <Image
+              alt=""
+              src={"/reactions/care.png"}
+              width={0}
+              height={0}
+              sizes="100vh"
+              className=" w-5 h-5 rounded-full block flex-none"
+            />
+          )}
+
+          {post._isReacted.reactionType === "haha" && (
+            <Image
+              alt=""
+              src={"/reactions/haha.png"}
+              width={0}
+              height={0}
+              sizes="100vh"
+              className=" w-5 h-5 rounded-full block flex-none"
+            />
+          )}
+
+          {post._isReacted.reactionType === "sad" && (
+            <Image
+              alt=""
+              src={"/reactions/sad.png"}
+              width={0}
+              height={0}
+              sizes="100vh"
+              className=" w-5 h-5 rounded-full block flex-none"
+            />
+          )}
+
+          {post._isReacted.reactionType === "angry" && (
+            <Image
+              alt=""
+              src={"/reactions/angry.png"}
+              width={0}
+              height={0}
+              sizes="100vh"
+              className=" w-5 h-5 rounded-full block flex-none"
+            />
+          )}
         </div>
-      </div>
+      )}
+      {!post._isReacted?.isReacted && (
+        <div
+          className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100"
+          onMouseEnter={showReactionBox}
+          onMouseLeave={hideReactionBox}
+        >
+          <div className="flex items-center px-3 py-1.5 space-x-1 ">
+            <Image
+              alt=""
+              src={"/post/like.png"}
+              width={0}
+              height={0}
+              sizes="100vh"
+              className=" w-5 h-5 rounded-full block flex-none"
+            />
+            <p>Like</p>
+          </div>
+        </div>
+      )}
       <div
         className="flex items-center justify-center rounded-md grow cursor-pointer hover:bg-gray-100"
         onClick={refFrom === "post" ? _showCommentModal : () => {}}
