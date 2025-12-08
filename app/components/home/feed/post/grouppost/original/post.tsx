@@ -13,10 +13,6 @@ type PropsTypes = {
 };
 
 export default function OGroup_Post({ refFrom, post }: PropsTypes) {
-  const _post = {
-    type: post.postType!,
-    post,
-  };
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       <GroupHeader
@@ -32,11 +28,11 @@ export default function OGroup_Post({ refFrom, post }: PropsTypes) {
         reactionsCount={post?._count?.reactions}
         groupedReactions={post?._gReactions}
         firstReactions={post?.reactions}
-        post={_post}
+        post={post}
         feedId={post.feedId}
         postId={post.postId}
       />
-      <Lower post={_post} refFrom={refFrom} />
+      <Lower post={post} refFrom={refFrom} />
     </div>
   );
 }

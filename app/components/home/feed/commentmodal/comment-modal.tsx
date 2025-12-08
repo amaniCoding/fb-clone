@@ -13,6 +13,14 @@ import ToGroupShare_Post from "../post/grouppost/share/post";
 import OGroup_Post from "../post/grouppost/original/post";
 import Header from "./header";
 import Comments from "./comments/comments";
+import {
+  OGroupPost,
+  OPagePost,
+  OUserPost,
+  PageSharePost,
+  UserSharePost,
+  ToGroupSharedPost,
+} from "@/app/api/feeder/[page]/lib";
 
 export default function CommentModal() {
   const { data, status } = useSession();
@@ -22,39 +30,53 @@ export default function CommentModal() {
     dispatch(
       showCommentModal({
         isOpen: false,
-        currentPost: {},
       })
     );
   };
 
   const renderAppropriatePost = () => {
-    if (currentPost.postType === "oUserPost") {
-      return <OUser_Post refFrom="modal" post={currentPost.userPost!} />;
-    }
-
-    if (currentPost.postType === "userSharePost") {
+    if (currentPost?.postType === "oUserPost") {
       return (
-        <UserShare_Post refFrom="modal" post={currentPost.userSharePost!} />
+        <OUser_Post refFrom="modal" post={currentPost.post as OUserPost} />
       );
     }
 
-    if (currentPost.postType === "oPagePost") {
-      return <OPage_Post refFrom="modal" post={currentPost.pagePost!} />;
-    }
-
-    if (currentPost.postType === "pageSharePost") {
+    if (currentPost?.postType === "userSharePost") {
       return (
-        <PageShare_Post refFrom="modal" post={currentPost.pageSharePost!} />
+        <UserShare_Post
+          refFrom="modal"
+          post={currentPost?.post as UserSharePost}
+        />
       );
     }
 
-    if (currentPost.postType === "oGroupPost") {
-      return <OGroup_Post refFrom="modal" post={currentPost.groupPost!} />;
+    if (currentPost?.postType === "oPagePost") {
+      return (
+        <OPage_Post refFrom="modal" post={currentPost?.post as OPagePost} />
+      );
     }
 
-    if (currentPost.postType === "toGroupSharedPost") {
+    if (currentPost?.postType === "pageSharePost") {
       return (
-        <ToGroupShare_Post refFrom="modal" post={currentPost.groupSharePost!} />
+        <PageShare_Post
+          refFrom="modal"
+          post={currentPost?.post as PageSharePost}
+        />
+      );
+    }
+
+    if (currentPost?.postType === "oGroupPost") {
+      return (
+        <OGroup_Post refFrom="modal" post={currentPost?.post as OGroupPost} />
+      );
+    }
+
+    if (currentPost?.postType === "toGroupSharedPost") {
+      return (
+        <ToGroupShare_Post
+          refFrom="modal"
+          post={currentPost?.post as ToGroupSharedPost}
+        />
       );
     }
   };
@@ -69,8 +91,8 @@ export default function CommentModal() {
         <>
           <div className="sticky top-0 left-0 right-0 py-3 px-2">
             <Header
-              postType={currentPost.postType}
-              currentPost={currentPost}
+              postType={currentPost?.postType}
+              currentPost={currentPost?.post}
               onClose={closeModal}
             />
           </div>

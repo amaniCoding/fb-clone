@@ -9,30 +9,10 @@ interface CommentsPage {
   comments: CommentsType;
 }
 export default function Comments() {
-  const currentPostType = useAppSelector(
-    (state) => state.commentModal.currentPost.postType
+  const currentPost = useAppSelector(
+    (state) => state.commentModal.currentPost?.post
   );
-  const currentPost = useAppSelector((state) => state.commentModal.currentPost);
-  const getPostId = () => {
-    if (currentPostType === "oUserPost") {
-      return currentPost.userPost?.postId;
-    }
-    if (currentPostType === "userSharePost") {
-      return currentPost.userSharePost?.postId;
-    }
-    if (currentPostType === "oPagePost") {
-      return currentPost.pagePost?.postId;
-    }
-    if (currentPostType === "pageSharePost") {
-      return currentPost.pageSharePost?.postId;
-    }
-    if (currentPostType === "oGroupPost") {
-      return currentPost.groupPost?.postId;
-    }
-    if (currentPostType === "toGroupSharedPost") {
-      return currentPost.groupSharePost?.postId;
-    }
-  };
+
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
   const PAGE_SIZE = 10;
 
@@ -42,9 +22,9 @@ export default function Comments() {
   ) => {
     if (previousPageData && previousPageData.comments.length === 0) return null;
 
-    return `/api/comments/post-${currentPostType}-${getPostId}/dash-dash-dash-dash/${
-      pageIndex + 1
-    }/`;
+    return `/api/comments/post-${currentPost?.postType}-${
+      currentPost?.postId
+    }/dash-dash-dash-dash/${pageIndex + 1}/`;
   };
 
   const { data, error, size, setSize, isLoading, isValidating } =

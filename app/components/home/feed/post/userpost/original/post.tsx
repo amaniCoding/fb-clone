@@ -12,10 +12,6 @@ type PropsTypes = {
 };
 
 export default function OUser_Post({ refFrom, post }: PropsTypes) {
-  const _post = {
-    type: post.postType!,
-    post,
-  };
   return (
     <div className="rounded-xl bg-white mb-4 pb-1.5">
       <UserHeader
@@ -33,11 +29,11 @@ export default function OUser_Post({ refFrom, post }: PropsTypes) {
         reactionsCount={post?._count?.reactions}
         groupedReactions={post?._gReactions}
         firstReactions={post?.reactions}
-        post={_post}
+        post={post}
         postId={post.postId}
         feedId={post.feedId}
       />
-      <Lower post={_post} refFrom={refFrom} />
+      <Lower post={post} refFrom={refFrom} />
     </div>
   );
 }

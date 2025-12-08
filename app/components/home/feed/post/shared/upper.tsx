@@ -10,7 +10,7 @@ import {
   UserSharePost,
 } from "@/app/api/feeder/[page]/lib";
 import { showReactionModal } from "@/app/store/slices/modal/reaction";
-import { ReactionType, PostType } from "@/app/generated/prisma/client";
+import { ReactionType } from "@/app/generated/prisma/client";
 type PropTypes = {
   commentsCount: number | undefined;
   reactionsCount: number | undefined;
@@ -33,10 +33,13 @@ type PropTypes = {
     | undefined;
   feedId: string | undefined;
   postId: string | undefined;
-  post: {
-    type: PostType;
-    post: unknown;
-  };
+  post:
+    | OUserPost
+    | UserSharePost
+    | OPagePost
+    | PageSharePost
+    | OGroupPost
+    | ToGroupSharedPost;
 };
 export default function Upper({
   commentsCount,
@@ -52,88 +55,16 @@ export default function Upper({
   const newRxn_x = newRxn.length > 3 ? newRxn.slice(0, 3) : newRxn;
 
   const _showReactionModal = (currentReactionType: ReactionType) => {
-    if (post.type === "oUserPost") {
-      const _post = post.post as OUserPost;
-      dispatch(
-        showReactionModal({
-          currentReactionType,
-          isOpen: true,
-          currentPost: {
-            postType: "oUserPost",
-            oUserPost: _post,
-          },
-        })
-      );
-    }
-    if (post.type === "userSharePost") {
-      const _post = post.post as UserSharePost;
-      dispatch(
-        showReactionModal({
-          currentReactionType,
-          isOpen: true,
-          currentPost: {
-            postType: "userSharePost",
-            userSharePost: _post,
-          },
-        })
-      );
-    }
-
-    if (post.type === "oPagePost") {
-      const _post = post.post as OPagePost;
-      dispatch(
-        showReactionModal({
-          currentReactionType,
-          isOpen: true,
-          currentPost: {
-            postType: "oPagePost",
-            oPagePost: _post,
-          },
-        })
-      );
-    }
-
-    if (post.type === "pageSharePost") {
-      const _post = post.post as PageSharePost;
-      dispatch(
-        showReactionModal({
-          currentReactionType,
-          isOpen: true,
-          currentPost: {
-            postType: "pageSharePost",
-            pageSharePost: _post,
-          },
-        })
-      );
-    }
-
-    if (post.type === "oGroupPost") {
-      const _post = post.post as OGroupPost;
-      dispatch(
-        showReactionModal({
-          currentReactionType,
-          isOpen: true,
-          currentPost: {
-            postType: "oGroupPost",
-            oGroupPost: _post,
-          },
-        })
-      );
-    }
-
-    if (post.type === "toGroupSharedPost") {
-      const _post = post.post as ToGroupSharedPost;
-      dispatch(
-        showReactionModal({
-          currentReactionType,
-          isOpen: true,
-          currentPost: {
-            postType: "toGroupSharedPost",
-            toGroupSharedPost: _post,
-          },
-        })
-      );
-    }
+    dispatch(
+      showReactionModal({
+        currentReactionType,
+        isOpen: true,
+        currentPost: {
+          postType: post.postType!,
+          post: post,
+        },
+      })
+    );
   };
   return (
     <div className="px-3 py-2">

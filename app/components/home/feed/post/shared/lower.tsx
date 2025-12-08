@@ -14,13 +14,15 @@ import {
   UserSharePost,
 } from "@/app/api/feeder/[page]/lib";
 import ReactionBox from "../reactionbox/post/reactionbox";
-import { PostType } from "@/app/generated/prisma/client";
 
 type TypeProps = {
-  post: {
-    type: PostType;
-    post: unknown;
-  };
+  post:
+    | OUserPost
+    | UserSharePost
+    | OPagePost
+    | PageSharePost
+    | OGroupPost
+    | ToGroupSharedPost;
   refFrom: "modal" | "post";
 };
 export default function Lower({ refFrom, post }: TypeProps) {
@@ -29,82 +31,15 @@ export default function Lower({ refFrom, post }: TypeProps) {
   const timeOutId = useRef<NodeJS.Timeout>(null);
 
   const _showCommentModal = () => {
-    if (post.type === "oUserPost") {
-      const _post = post.post as OUserPost;
-      dispatch(
-        showCommentModal({
-          isOpen: true,
-          currentPost: {
-            postType: "oUserPost",
-            oUserPost: _post,
-          },
-        })
-      );
-    }
-    if (post.type === "userSharePost") {
-      const _post = post.post as UserSharePost;
-      dispatch(
-        showCommentModal({
-          isOpen: true,
-          currentPost: {
-            postType: "userSharePost",
-            userSharePost: _post,
-          },
-        })
-      );
-    }
-
-    if (post.type === "oPagePost") {
-      const _post = post.post as OPagePost;
-      dispatch(
-        showCommentModal({
-          isOpen: true,
-          currentPost: {
-            postType: "oPagePost",
-            oPagePost: _post,
-          },
-        })
-      );
-    }
-
-    if (post.type === "pageSharePost") {
-      const _post = post.post as PageSharePost;
-      dispatch(
-        showCommentModal({
-          isOpen: true,
-          currentPost: {
-            postType: "pageSharePost",
-            pageSharePost: _post,
-          },
-        })
-      );
-    }
-
-    if (post.type === "oGroupPost") {
-      const _post = post.post as OGroupPost;
-      dispatch(
-        showCommentModal({
-          isOpen: true,
-          currentPost: {
-            postType: "oGroupPost",
-            oGroupPost: _post,
-          },
-        })
-      );
-    }
-
-    if (post.type === "toGroupSharedPost") {
-      const _post = post.post as ToGroupSharedPost;
-      dispatch(
-        showCommentModal({
-          isOpen: true,
-          currentPost: {
-            postType: "toGroupSharedPost",
-            toGroupSharedPost: _post,
-          },
-        })
-      );
-    }
+    dispatch(
+      showCommentModal({
+        isOpen: true,
+        currentPost: {
+          postType: "oUserPost",
+          post: post,
+        },
+      })
+    );
   };
   const showReactionBox = () => {
     setTimeout(() => {

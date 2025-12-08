@@ -17,30 +17,10 @@ export default function Replies({
   replyId: string;
   commentId: string;
 }) {
-  const currentPostType = useAppSelector(
-    (state) => state.commentModal.currentPost.postType
+  const currentPost = useAppSelector(
+    (state) => state.commentModal.currentPost?.post
   );
-  const currentPost = useAppSelector((state) => state.commentModal.currentPost);
-  const getPostId = () => {
-    if (currentPostType === "oUserPost") {
-      return currentPost.userPost?.postId;
-    }
-    if (currentPostType === "userSharePost") {
-      return currentPost.userSharePost?.postId;
-    }
-    if (currentPostType === "oPagePost") {
-      return currentPost.pagePost?.postId;
-    }
-    if (currentPostType === "pageSharePost") {
-      return currentPost.pageSharePost?.postId;
-    }
-    if (currentPostType === "oGroupPost") {
-      return currentPost.groupPost?.postId;
-    }
-    if (currentPostType === "toGroupSharedPost") {
-      return currentPost.groupSharePost?.postId;
-    }
-  };
+
   const [page, setPage] = useState<number>(1);
   const fetcher = (url: string): Promise<ReplyData> =>
     fetch(url).then((res) => res.json());
@@ -58,9 +38,9 @@ export default function Replies({
   const viewAllReplies = async (commentId: string, replyId: string) => {
     if (!isReachingEnd) {
       await mutate(
-        `/api/replies/post-${currentPostType}-${getPostId()!}-dash-${commentId}-${replyId}-${
-          page + 1
-        }/`
+        `/api/replies/post-${currentPost?.postType}-${
+          currentPost?.postId
+        }-dash-${commentId}-${replyId}-${page + 1}/`
       );
       setPage(page + 1);
     }

@@ -17,53 +17,58 @@ export default function Header({
   onClose,
 }: {
   postType: PostType | undefined;
-  currentPost: {
-    postType?: PostType | undefined;
-    userPost?: OUserPost;
-    userSharePost?: UserSharePost;
-    pagePost?: OPagePost;
-    pageSharePost?: PageSharePost;
-    groupPost?: OGroupPost;
-    groupSharePost?: ToGroupSharedPost;
-  };
+  currentPost:
+    | OUserPost
+    | UserSharePost
+    | OPagePost
+    | PageSharePost
+    | OGroupPost
+    | ToGroupSharedPost
+    | undefined;
   onClose: () => void;
 }) {
   const renderPoster = () => {
     if (postType === "oUserPost") {
+      const _post = currentPost as OUserPost;
+
       return (
         <p>
-          {currentPost.userPost?.user?.firstName} {""}
-          {currentPost.userPost?.user?.lastName}&apos;s Post
+          {_post.user?.firstName} {""}
+          {_post.user?.lastName}&apos;s Post
         </p>
       );
     }
 
     if (postType === "userSharePost") {
+      const _post = currentPost as UserSharePost;
       return (
         <p>
-          {currentPost.userSharePost?.user?.firstName} {""}
-          {currentPost.userSharePost?.user?.lastName}&apos;s Post
+          {_post?.user?.firstName} {""}
+          {_post?.user?.lastName}&apos;s Post
         </p>
       );
     }
 
     if (postType === "oPagePost") {
-      return <p>{currentPost.pagePost?.page?.name}&apos;s Post</p>;
+      const _post = currentPost as OPagePost;
+      return <p>{_post.page?.name}&apos;s Post</p>;
     }
 
     if (postType === "pageSharePost") {
-      return <p>{currentPost.pageSharePost?.page?.name}&apos;s Post</p>;
+      const _post = currentPost as PageSharePost;
+      return <p>{_post.page?.name}&apos;s Post</p>;
     }
 
     if (postType === "oGroupPost") {
-      return <p>{currentPost.groupPost?.group?.name}&apos;s Post</p>;
+      const _post = currentPost as OGroupPost;
+      return <p>{_post.group?.name}&apos;s Post</p>;
     }
 
     if (postType === "toGroupSharedPost") {
+      const _post = currentPost as ToGroupSharedPost;
       return (
         <p>
-          {currentPost.groupSharePost?.user?.firstName} {""}{" "}
-          {currentPost.groupSharePost?.group?.name}&apos;s Post
+          {_post.user?.firstName} {""} {_post.group?.name}&apos;s Post
         </p>
       );
     }

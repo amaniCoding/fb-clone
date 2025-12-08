@@ -216,7 +216,7 @@ export default function ReactA({
   ]);
 
   return (
-    <form className="flex items-center">
+    <form className="flex items-center ">
       <button formAction={formActionLike}>
         <Image
           alt=""

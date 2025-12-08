@@ -9,9 +9,9 @@ import useSWRInfinite from "swr/infinite";
 import { FeedsType } from "@/app/api/feeder/[page]/lib";
 import FeedItemSkeleton from "@/app/components/skeletons/feed";
 import { setFeeds } from "@/app/store/slices/feed/feed";
+import Link from "next/link";
 interface FeedsPage {
   feeds: FeedsType[];
-  hasMore: boolean;
 }
 export default function Feeder() {
   const dispatch = useAppDispatch();
@@ -33,11 +33,12 @@ export default function Feeder() {
   };
 
   const getKey = (pageIndex: number, previousPageData: FeedsPage | null) => {
-    if (previousPageData && !previousPageData.hasMore) return null;
+    if (previousPageData && previousPageData.feeds.length === 0) return null;
 
     return `/api/feeder/${pageIndex + 1}/`;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, error, size, setSize, isLoading, isValidating } =
     useSWRInfinite<FeedsPage>(getKey, fetcher);
 
@@ -47,12 +48,9 @@ export default function Feeder() {
 
   const observerRef = useRef<HTMLDivElement>(null);
 
-  const isLoadingMore =
-    isLoading ||
-    (isValidating && data && typeof data[size - 1] === "undefined");
-  // const isReachingEnd = data && data[data.length - 1]?.feeds.length < PAGE_SIZE;
-  const isReachingEnd = data && data[data.length - 1]?.hasMore === false;
-
+  const isReachingEnd = data && data[data.length - 1]?.feeds.length < 10;
+  // const isReachingEnd = data && data[data.length - 1]?.hasReachedEnd;
+  console.log(isReachingEnd);
   useEffect(() => {
     dispatch(
       setFeeds({
@@ -68,7 +66,7 @@ export default function Feeder() {
       (entries) => {
         if (
           entries[0]?.isIntersecting &&
-          !isLoadingMore &&
+          !isLoading &&
           !error &&
           !isReachingEnd
         ) {
@@ -81,10 +79,22 @@ export default function Feeder() {
     observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  }, [size, setSize, isReachingEnd, isLoadingMore, error]);
+  }, [error, isLoading, isReachingEnd, setSize, size]);
 
-  if (error) return <div>Failed to load items.</div>;
-  if (!data && isLoading) return <FeedItemSkeleton />;
+  if (error)
+    return (
+      <div className="w-full h-4 flex items-center justify-center text-red-500 font-bold">
+        <div className="flex flex-col space-y-1">
+          <p> Failed to load items.</p>
+          <Link
+            className="block px-2 py-2.5 rounded-xl bg-blue-600 text-white"
+            href={`/`}
+          >
+            Reload this page
+          </Link>
+        </div>
+      </div>
+    );
   return (
     <>
       {feedsState!.map((post, index) => (
@@ -92,10 +102,14 @@ export default function Feeder() {
       ))}
 
       <div ref={observerRef}>
-        {isLoadingMore ? (
+        {isLoading ? (
           <FeedItemSkeleton />
         ) : isReachingEnd ? (
-          <p>You have reached the end of the list.</p>
+          <div className="h-4 flex items-center justify-center">
+            <p className="font-semibold">
+              You have reached the end of the list.
+            </p>
+          </div>
         ) : null}
       </div>
 

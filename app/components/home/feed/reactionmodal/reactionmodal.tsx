@@ -11,7 +11,6 @@ export default function ReactionModal() {
       showReactionModal({
         currentReactionType: undefined,
         isOpen: false,
-        currentPost: {},
       })
     );
   };

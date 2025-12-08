@@ -15,34 +15,11 @@ export default function ModalBody() {
   const currentReactionType = useAppSelector(
     (state) => state.reactionModal.currentReactionType
   );
-  const currentPostType = useAppSelector(
-    (state) => state.reactionModal.currentPost.postType
-  );
 
   const currentPost = useAppSelector(
-    (state) => state.reactionModal.currentPost
+    (state) => state.reactionModal.currentPost?.post
   );
 
-  const getPostId = () => {
-    if (currentPostType === "oUserPost") {
-      return currentPost.userPost?.postId;
-    }
-    if (currentPostType === "userSharePost") {
-      return currentPost.userSharePost?.postId;
-    }
-    if (currentPostType === "oPagePost") {
-      return currentPost.pagePost?.postId;
-    }
-    if (currentPostType === "pageSharePost") {
-      return currentPost.pageSharePost?.postId;
-    }
-    if (currentPostType === "oGroupPost") {
-      return currentPost.groupPost?.postId;
-    }
-    if (currentPostType === "toGroupSharedPost") {
-      return currentPost.groupSharePost?.postId;
-    }
-  };
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
   const PAGE_SIZE = 10;
 
@@ -53,9 +30,9 @@ export default function ModalBody() {
     if (previousPageData && previousPageData.reactors!.length === 0)
       return null;
 
-    return `/api/reactions/post-itSelf-${currentPostType}-${getPostId()!}-dash-dash-dash-${currentReactionType}/${
-      pageIndex + 1
-    }`;
+    return `/api/reactions/post-itSelf-${currentPost?.postType}-${
+      currentPost?.postId
+    }-dash-dash-dash-${currentReactionType}/${pageIndex + 1}`;
   };
 
   const { data, error, size, setSize, isLoading, isValidating } =
