@@ -7,7 +7,7 @@ export default function AddComment({
   loggedInUser: LoggedInUser | undefined;
 }) {
   return (
-    <div className="sticky rounded-b-xl flex bg-white space-x-2 bottom-0 left-0 right-0 p-2 w-full">
+    <div className="sticky flex bg-white space-x-2 bottom-0 left-0 right-0 p-2 w-full">
       {loggedInUser?.profilePicture ? (
         <Image
           alt="Amanuel Ferede"

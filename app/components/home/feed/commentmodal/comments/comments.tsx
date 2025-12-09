@@ -33,6 +33,7 @@ export default function Comments() {
   const comments: CommentsType = data
     ? data.flatMap((page) => page.comments)
     : [];
+  console.log("comments", comments);
 
   const observerRef = useRef<HTMLDivElement>(null);
   console.log(isLoading);
