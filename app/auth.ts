@@ -27,6 +27,20 @@ export const authConfig: NextAuthConfig = {
             where: {
               email: credentials.email as string,
             },
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              password: true,
+              gender: true,
+              email: true,
+              phoneNumber: true,
+              Profile: {
+                select: {
+                  profilePicture: true,
+                },
+              },
+            },
           });
 
           if (!user) {
@@ -43,10 +57,11 @@ export const authConfig: NextAuthConfig = {
               email: user.email,
               firstName: user.firstName,
               lastName: user.lastName,
-              profilePicture:
-                user.gender === "male"
+              profilePicture: !user.Profile?.profilePicture
+                ? user.gender === "male"
                   ? "/brands/male-d.jpg"
-                  : "/brands/female-d.jpg",
+                  : "/brands/female-d.jpg"
+                : user.Profile.profilePicture,
             };
           }
           throw new CredentialsSignin("Invalid credentials");
