@@ -14,16 +14,21 @@ export default function Comments() {
     (state) => state.commentModal.currentPost?.post
   );
 
-  const fetcher = (url: string): Promise<CommentsPage> =>
-    fetch(url).then((res) => res.json());
+  const fetcher = async (url: string): Promise<CommentsPage> => {
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error("An error occurred while fetching the data.");
+    }
+    return res.json();
+  };
   const PAGE_SIZE = 10;
 
   const getKey = (pageIndex: number, previousPageData: CommentsPage | null) => {
     if (previousPageData && previousPageData.comments.length === 0) return null;
-
-    return `/api/comments/post-${currentPost?.postType}-${
-      currentPost?.postId
-    }-dash-${pageIndex + 1}`;
+    const refId = `post-${currentPost?.postType}-${currentPost?.postId}-dash-${
+      pageIndex + 1
+    }`;
+    return `/api/comments/${refId}/`;
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
