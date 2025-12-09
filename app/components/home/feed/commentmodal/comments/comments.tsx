@@ -35,6 +35,7 @@ export default function Comments() {
     : [];
 
   const observerRef = useRef<HTMLDivElement>(null);
+  console.log(isLoading);
 
   // const isLoadingMore =
   //   isLoading ||

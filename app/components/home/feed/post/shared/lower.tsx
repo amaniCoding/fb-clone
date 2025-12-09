@@ -86,7 +86,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
                 width={0}
                 height={0}
                 sizes="100vh"
-                className=" w-5 h-5 rounded-full block flex-none"
+                className=" w-9 h-9 rounded-full block flex-none"
               />
               <p className="text-blue-500">Like</p>
             </div>
@@ -100,7 +100,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
                 width={0}
                 height={0}
                 sizes="100vh"
-                className=" w-5 h-5 rounded-full block flex-none"
+                className=" w-9 h-9 rounded-full block flex-none"
               />
               <p className="text-pink-400">Love</p>
             </div>
@@ -114,7 +114,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
                 width={0}
                 height={0}
                 sizes="100vh"
-                className=" w-5 h-5 rounded-full block flex-none"
+                className=" w-9 h-9 rounded-full block flex-none"
               />
               <p className="text-amber-300">Wow</p>
             </div>
@@ -128,7 +128,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
                 width={0}
                 height={0}
                 sizes="100vh"
-                className=" w-5 h-5 rounded-full block flex-none"
+                className=" w-9 h-9 rounded-full block flex-none"
               />
               <p className="text-amber-300">Care</p>
             </div>
@@ -142,7 +142,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
                 width={0}
                 height={0}
                 sizes="100vh"
-                className=" w-5 h-5 rounded-full block flex-none"
+                className=" w-9 h-9 rounded-full block flex-none"
               />
               <p className="text-amber-300">Haha</p>
             </div>
@@ -156,7 +156,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
                 width={0}
                 height={0}
                 sizes="100vh"
-                className=" w-5 h-5 rounded-full block flex-none"
+                className=" w-9 h-9 rounded-full block flex-none"
               />
               <p className="text-amber-300">Sad</p>
             </div>
@@ -170,7 +170,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
                 width={0}
                 height={0}
                 sizes="100vh"
-                className=" w-5 h-5 rounded-full block flex-none"
+                className=" w-9 h-9 rounded-full block flex-none"
               />
               <p className="text-pink-400">Angry</p>
             </div>
