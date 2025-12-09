@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { Gender } from "@/app/generated/prisma/client";
 import { users } from "../../dummy";
 
-export function _seeder() {
+export async function _seeder() {
   const up1 = Promise.all(
     users.map((user) => {
       return prisma.user.create({
@@ -25,22 +25,5 @@ export function _seeder() {
     })
   );
 
-  const up2 = prisma.user.create({
-    data: {
-      firstName: "Amanuel",
-      lastName: "Ferede",
-
-      birthDate: new Date(),
-      gender: "male",
-      email: "amanuelfrm@gmail.com",
-      password: bcrypt.hashSync("faker.js", 10),
-      Profile: {
-        create: {
-          profilePicture: "/ad/aman.jpg",
-        },
-      },
-    },
-  });
-
-  return Promise.all([up1, up2]);
+  return await up1;
 }

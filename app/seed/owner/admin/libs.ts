@@ -1,13 +1,18 @@
 import prisma from "@/app/libs/prisma";
+import bcrypt from "bcryptjs";
 
-export async function _seeder() {
-  await prisma.user.update({
-    where: {
-      id: "27997fea-b319-45bf-854a-bf4b5222f70f",
-    },
+export async function create() {
+  await prisma.user.create({
     data: {
+      firstName: "Amanuel",
+      lastName: "Ferede",
+
+      birthDate: new Date(),
+      gender: "male",
+      email: "amanuelfrm@gmail.com",
+      password: bcrypt.hashSync("faker.js", 10),
       Profile: {
-        update: {
+        create: {
           profilePicture: "/ad/aman.jpg",
         },
       },

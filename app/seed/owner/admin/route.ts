@@ -1,7 +1,7 @@
-import { _seeder } from "./libs";
+import { create } from "./libs";
 
 const seed = async () => {
-  await _seeder();
+  await create();
 };
 export async function GET() {
   try {
