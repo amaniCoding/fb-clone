@@ -13,11 +13,11 @@ export default async function Home() {
   const session = await auth();
   if (!session) redirect("/login");
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className=" bg-gray-100 min-h-screen w-full">
       <NavBar loggedInUser={session.user} />
       <div className="flex md:pt-[73px] pt-[55px]">
         <SideBar loggedInUser={session.user} />
-        <div className="w-[50%] ml-[25%] ">
+        <div className="w-[50%] ml-[25%]">
           <AddPost loggedInUser={session.user} />
           <Suspense fallback={<Story />}>
             <Stories loggedInUser={session.user} />

@@ -101,7 +101,7 @@ export default function Feeder() {
         <Post key={index} post={post} />
       ))}
 
-      <div ref={observerRef}>
+      <div ref={observerRef} className="w-full">
         {isLoading ? (
           <FeedItemSkeleton />
         ) : isReachingEnd ? (
