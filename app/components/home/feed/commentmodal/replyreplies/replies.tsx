@@ -33,12 +33,10 @@ export default function Replies({
     data?.replies &&
     data.replies[data.replies.length - 1]?.replies.length < PAGE_SIZE;
 
-  if (error) return <div>Failed to load replies</div>;
-
   const viewAllReplies = async (commentId: string, replyId: string) => {
     if (!isReachingEnd) {
       await mutate(
-        `/api/replies/post-${currentPost?.postType}-${
+        `/api/replyreplies/post-${currentPost?.postType}-${
           currentPost?.postId
         }-dash-${commentId}-${replyId}-${page + 1}/`
       );
@@ -59,10 +57,11 @@ export default function Replies({
         const gReactions = reply._gReactions
           ? [...reply._gReactions].sort((a, b) => b.count - a.count)
           : [];
-        const newGReactions =
+        const newGReaction =
           gReactions.length > 3 ? gReactions.slice(0, 3) : gReactions;
-        return <Reply key={index} reply={reply} gReactions={newGReactions} />;
+        return <Reply key={index} reply={reply} gReaction={newGReaction} />;
       })}
+      {error && <p>Faild to load replies</p>}
       {isLoading && <CommentsSkeleton />}
     </div>
   );

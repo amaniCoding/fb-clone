@@ -1,34 +1,41 @@
 import { ReplyType } from "@/app/api/replies/[refId]/lib";
-import Content from "./content";
-import Lower from "./lower";
-import { ReactionType } from "@/app/generated/prisma/client";
 import Replies from "../replyreplies/replies";
+import Reactions from "./reactions";
+import ReplyItem from "./replyItem";
+import { ReactionType } from "@/app/generated/prisma/client";
+import LikeReply from "../lr";
+
 export default function Reply({
   reply,
 
-  gReactions,
+  gReaction,
   commentId,
 }: {
   reply: ReplyType;
   commentId: string;
-  gReactions: {
+  gReaction: {
     reactionType: ReactionType;
     count: number;
   }[];
 }) {
   return (
-    <div className="ml-2 flex flex-col">
-      <Content content={reply!.content} mediaUrl={reply!.mediaUrl} />
-      <Lower
-        gReactions={gReactions}
-        reactionsCount={reply!._count.reactions}
-        repliesCount={reply._count.replies}
-      />
-      <Replies
-        commentId={commentId}
-        replyId={reply.id}
-        repliesCount={reply._count.replies}
-      />
+    <div className="relative">
+      <div className="flex flex-col">
+        <ReplyItem reply={reply} />
+
+        <div className="flex items-center">
+          <Reactions
+            gReactions={gReaction}
+            reactionsCount={reply._count.reactions}
+          />
+          <LikeReply fromWhat="comment" />
+        </div>
+        <Replies
+          commentId={commentId}
+          replyId={reply.id}
+          repliesCount={reply!._count.replies}
+        />
+      </div>
     </div>
   );
 }

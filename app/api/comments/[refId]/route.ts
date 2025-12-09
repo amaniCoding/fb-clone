@@ -14,7 +14,7 @@ export async function GET(
   try {
     const session = await auth();
     if (!session?.user) {
-      throw new Error("Un aauthorized request");
+      throw new Error("Un authorized request");
     }
     // const { refFrom, postType, postId, mediaId, page } = await params;
 

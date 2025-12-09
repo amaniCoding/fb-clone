@@ -32,8 +32,6 @@ export default function Replies({
     data?.replies &&
     data.replies[data.replies.length - 1]?.replies.length < PAGE_SIZE;
 
-  if (error) return <div>Failed to load posts</div>;
-
   const viewAllReplies = async (commentId: string) => {
     if (!isReachingEnd) {
       await mutate(
@@ -64,11 +62,12 @@ export default function Replies({
           <Reply
             key={index}
             reply={reply}
-            gReactions={newGReactions}
+            gReaction={newGReactions}
             commentId={commentId}
           />
         );
       })}
+      {error && <p>Failed to load replies</p>}
       {isLoading && <CommentsSkeleton />}
     </div>
   );

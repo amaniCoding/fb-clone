@@ -1,15 +1,14 @@
 import { CommentType } from "@/app/api/comments/[refId]/lib";
-
 import Replies from "../replies/replies";
-
-import Header from "./header";
 import { ReactionType } from "@/app/generated/prisma/client";
+import CommentItem from "./commentItem";
+import Reactions from "./reactions";
 export default function Comment({
   comment,
-  gReactions,
+  gReaction,
 }: {
   comment: CommentType;
-  gReactions: {
+  gReaction: {
     reactionType: ReactionType;
     count: number;
   }[];
@@ -17,7 +16,11 @@ export default function Comment({
   return (
     <div className="relative">
       <div className="flex flex-col">
-        <Header comment={comment} gReactions={gReactions} />
+        <CommentItem comment={comment} />
+        <Reactions
+          gReactions={gReaction}
+          reactionsCount={comment._count.reactions}
+        />
         <Replies
           commentId={comment!.id}
           repliesCount={comment!._count.replies}

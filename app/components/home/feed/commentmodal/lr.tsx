@@ -1,9 +1,8 @@
 "use client";
+import { useRef, useState } from "react";
+import ReactionBox from "../post/reactionbox/comment/reactionbox";
 
-import { useState, useRef } from "react";
-import ReactionBox from "../../post/reactionbox/comment/reactionbox";
-
-export default function Left({
+export default function LikeReply({
   fromWhat,
 }: {
   fromWhat: "post" | "comment" | "reply" | "replyreply";

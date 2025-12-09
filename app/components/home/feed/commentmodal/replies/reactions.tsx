@@ -1,7 +1,6 @@
-import Image from "next/image";
-import Left from "../shared/lower";
 import { ReactionType } from "@/app/generated/prisma/client";
-export default function Lower({
+import Image from "next/image";
+export default function Reactions({
   reactionsCount,
   gReactions,
 }: {
@@ -13,7 +12,6 @@ export default function Lower({
 }) {
   return (
     <div className="flex items-center justify-between space-x-5">
-      <Left fromWhat="comment" />
       <div className="flex items-center">
         <p className="text-gray-500">{reactionsCount}</p>
 

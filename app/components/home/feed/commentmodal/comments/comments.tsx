@@ -5,6 +5,7 @@ import useSWRInfinite from "swr/infinite";
 import { useEffect, useRef } from "react";
 import { CommentsType } from "@/app/api/comments/[refId]/lib";
 import { useAppSelector } from "@/app/store/hooks";
+import CommentFirstTimeSkeleton from "@/app/components/skeletons/commentFirst";
 interface CommentsPage {
   comments: CommentsType;
 }
@@ -63,28 +64,37 @@ export default function Comments() {
     return () => observer.disconnect();
   }, [error, isLoading, isReachingEnd, setSize, size]);
 
-  if (error) return <div>Failed to load posts</div>;
-
+  if (error)
+    return (
+      <div className="w-full h-40 mt-10 flex items-center justify-center text-red-500 font-bold">
+        <div className="flex flex-col space-y-1">
+          <p> Failed to load comments.</p>
+        </div>
+      </div>
+    );
   return (
     <div className="bg-white">
       {comments!.map((comment, index) => {
         const gReactions = comment._gReactions
           ? [...comment._gReactions].sort((a, b) => b.count - a.count)
           : [];
-        const newGReactions =
+        const newGReaction =
           gReactions.length > 3 ? gReactions.slice(0, 3) : gReactions;
 
         return (
-          <Comment key={index} comment={comment} gReactions={newGReactions} />
+          <Comment key={index} comment={comment} gReaction={newGReaction} />
         );
       })}
       <div ref={observerRef}>
         {isLoading ? (
-          <CommentsSkeleton />
+          <div>
+            {isLoading && size === 1 && <CommentFirstTimeSkeleton />}
+            {isLoading && size > 1 && <CommentsSkeleton />}
+          </div>
         ) : isReachingEnd ? (
           <div className="h-4 flex items-center justify-center">
             <p className="font-semibold">
-              You have reached the end of the list.
+              You have reached the end of comments.
             </p>
           </div>
         ) : null}

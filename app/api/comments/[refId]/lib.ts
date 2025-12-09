@@ -136,16 +136,18 @@ export const getComments = async (
           },
         },
       });
-      const updatedComments = post?.comments.map(async (comment) => {
-        return {
-          ...comment,
-          postType: "oUserPost" as PostType,
-          postId: post.id,
+      const updatedComments =
+        post &&
+        post.comments.map(async (comment) => {
+          return {
+            ...comment,
+            postType: "oUserPost" as PostType,
+            postId: post.id,
 
-          _gReactions: await prepareGReactions(comment.id),
-          _isReacted: await isReacted(userId, comment.id),
-        };
-      });
+            _gReactions: await prepareGReactions(comment.id),
+            _isReacted: await isReacted(userId, comment.id),
+          };
+        });
       return {
         comments: await Promise.all(updatedComments ? updatedComments : []),
       };
