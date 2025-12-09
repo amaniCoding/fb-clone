@@ -30,8 +30,6 @@ export default function Stories({
     infinite: false,
     initialSlide: 1,
     variableWidth: true,
-    centerPadding: "0px",
-
     speed: 500,
     slidesToShow: slidesToShow,
     //slidesToScroll: slidesToShow,

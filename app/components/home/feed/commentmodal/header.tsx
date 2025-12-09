@@ -74,7 +74,7 @@ export default function Header({
     }
   };
   return (
-    <div className="shadow-sm flex rounded-t-xl items-center justify-between mb-2 border-b-2 border-b-slate-200 p-2 sticky w-full left-0 right-0 bg-white top-0">
+    <div className="shadow-sm  flex rounded-t-xl items-center justify-between border-b-2 border-b-slate-200 p-2 sticky w-full left-0 right-0 bg-white top-0">
       <p></p>
       {renderPoster()}
       <FaXmark

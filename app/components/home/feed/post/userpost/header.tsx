@@ -9,12 +9,14 @@ export default function UserHeader({
   profilePicture,
   date,
   refFrom,
+  _refFrom,
 }: {
   firstName: string | undefined;
   lastName: string | undefined;
   date: string | undefined;
   profilePicture: string | undefined | null;
   refFrom: "share" | "original" | "shared";
+  _refFrom: "modal" | "post";
 }) {
   return (
     <div className="flex items-center justify-between px-3 pt-3">
@@ -42,7 +44,7 @@ export default function UserHeader({
         {refFrom === "original" && (
           <>
             <IoIosMore className="w-7 h-7" />
-            <CgClose />
+            {_refFrom === "post" && <CgClose />}
           </>
         )}
 

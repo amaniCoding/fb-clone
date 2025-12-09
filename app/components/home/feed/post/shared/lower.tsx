@@ -38,6 +38,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
           postType: "oUserPost",
           post: post,
         },
+        action: "open",
       })
     );
   };

@@ -13,13 +13,18 @@ type PropsTypes = {
 
 export default function OUser_Post({ refFrom, post }: PropsTypes) {
   return (
-    <div className="rounded-xl bg-white mb-4 pb-1.5">
+    <div
+      className={`${
+        refFrom === "post" ? "mb-4 rounded-xl  pb-1.5" : ""
+      } bg-white `}
+    >
       <UserHeader
         firstName={post?.user?.firstName}
         lastName={post?.user?.lastName}
         date={post?.createdAt?.toString()}
         profilePicture={post.user?.Profile?.profilePicture}
         refFrom="original"
+        _refFrom={refFrom}
       />
 
       <Content content={post?.content} />

@@ -8,11 +8,13 @@ export default function PageHeader({
   profilePicture,
   date,
   refFrom,
+  _refFrom,
 }: {
   name: string | undefined;
   profilePicture: string | undefined | null;
   date: string | undefined;
   refFrom: "share" | "original" | "shared";
+  _refFrom: "modal" | "post";
 }) {
   return (
     <div
@@ -42,14 +44,14 @@ export default function PageHeader({
         {refFrom === "original" && (
           <>
             <IoIosMore className="w-7 h-7" />
-            <CgClose />
+            {_refFrom === "post" && <CgClose />}
           </>
         )}
 
         {refFrom === "share" && (
           <>
             <IoIosMore className="w-7 h-7" />
-            <CgClose />
+            {_refFrom === "post" && <CgClose />}
           </>
         )}
       </div>

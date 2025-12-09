@@ -36,12 +36,8 @@ export async function GET(
       parseInt(page)
     );
 
-    const jsonResponse = {
-      comments: comments,
-    };
-
     return Response.json({
-      result: jsonResponse,
+      comments: comments,
     });
   } catch (error) {
     console.error(error);

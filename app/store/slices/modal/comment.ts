@@ -12,6 +12,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type ShowModalPayLoadType = {
   isOpen: boolean;
+  action: "open" | "close";
   currentPost?: {
     postType: PostType;
     post:
@@ -51,10 +52,14 @@ export const commentModalSlice = createSlice({
   reducers: {
     showCommentModal: (state, action: PayloadAction<ShowModalPayLoadType>) => {
       state.isOpen = action.payload.isOpen;
-      state.currentPost = {
-        postType: action.payload.currentPost!.postType,
-        post: action.payload.currentPost!.post,
-      };
+      if (action.payload.action === "open") {
+        state.currentPost = {
+          postType: action.payload.currentPost!.postType,
+          post: action.payload.currentPost!.post,
+        };
+      } else {
+        state.currentPost = undefined;
+      }
     },
   },
 });

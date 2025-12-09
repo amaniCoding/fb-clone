@@ -16,13 +16,18 @@ type PropsTypes = {
 
 export default function UserShare_Post({ refFrom, post }: PropsTypes) {
   return (
-    <div className="rounded-xl bg-white mb-4 pb-1.5">
+    <div
+      className={`${
+        refFrom === "post" ? "rounded-xl mb-4 pb-1.5" : ""
+      } bg-white `}
+    >
       <UserHeader
         firstName={post?.user?.firstName}
         lastName={post?.user?.lastName}
         profilePicture={post.user?.Profile?.profilePicture}
         date={post?.createdAt?.toString()}
         refFrom="share"
+        _refFrom={refFrom}
       />
       <Content content={post.content} />
 
@@ -34,6 +39,7 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
             profilePicture={post.oUserPost?.user.Profile?.profilePicture}
             date={post?.createdAt?.toString()}
             refFrom="shared"
+            _refFrom={refFrom}
           />
 
           <Content content={post.oUserPost?.content} />
@@ -48,6 +54,7 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
             profilePicture={post?.oPagePost?.page?.profilePicture}
             date={post?.createdAt?.toString()}
             refFrom="shared"
+            _refFrom={refFrom}
           />
 
           <Content content={post?.oPagePost?.content} />
@@ -62,6 +69,7 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
             memeber={post.oGroupPost?.user}
             date={post?.createdAt?.toString()}
             refFrom="shared"
+            _refFrom={refFrom}
           />
 
           <Content content={post?.oGroupPost?.content} />
@@ -80,6 +88,7 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
               }
               date={post?.createdAt?.toString()}
               refFrom="shared"
+              _refFrom={refFrom}
             />
           )}
           {post.media?.owner === "page" && (
@@ -88,6 +97,7 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
               profilePicture={post?.media.pagePost?.page.profilePicture}
               date={post?.createdAt?.toString()}
               refFrom="shared"
+              _refFrom={refFrom}
             />
           )}
           {post.media?.owner === "group" && (
@@ -96,6 +106,7 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
               memeber={post?.media.groupPost?.user}
               date={post?.createdAt?.toString()}
               refFrom="shared"
+              _refFrom={refFrom}
             />
           )}
           <div className={`w-full h-112`}>

@@ -5,9 +5,11 @@ import { CgClose } from "react-icons/cg";
 
 export default function GroupHeader({
   group,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   memeber,
   refFrom,
   date,
+  _refFrom,
 }: {
   group:
     | {
@@ -27,6 +29,7 @@ export default function GroupHeader({
     | undefined
     | null;
   date: string | undefined;
+  _refFrom: "post" | "modal";
   refFrom: "share" | "original" | "shared";
 }) {
   return (
@@ -53,14 +56,14 @@ export default function GroupHeader({
         {refFrom === "original" && (
           <>
             <IoIosMore className="w-7 h-7" />
-            <CgClose />
+            {_refFrom === "post" && <CgClose />}
           </>
         )}
 
         {refFrom === "share" && (
           <>
             <IoIosMore className="w-7 h-7" />
-            <CgClose />
+            {_refFrom === "modal" && <CgClose />}
           </>
         )}
       </div>
