@@ -1,6 +1,6 @@
 import { LIMIT } from "@/app/api/config";
 
-import { PostType } from "@/app/generated/prisma/client";
+import { PostType, ReactionType } from "@/app/generated/prisma/client";
 import prisma from "@/app/libs/prisma";
 const prepareGReactions = async (replyId: string) => {
   try {
@@ -48,6 +48,109 @@ const isReacted = async (userId: string, id: string | undefined) => {
   };
 };
 
+type PostReplyType = {
+  postType: PostType;
+  postId: string;
+  commentId: string;
+  _gReactions: {
+    reactionType: ReactionType;
+    count: number;
+  }[];
+  _isReacted: {
+    isReacted: boolean;
+    reactionType: ReactionType | undefined;
+  };
+
+  id: string;
+  content: string | null;
+  createdAt: Date;
+  user: {
+    firstName: string;
+    lastName: string;
+    Profile: {
+      profilePicture: string | null;
+    } | null;
+  };
+
+  reactions: {
+    user: {
+      firstName: string;
+      lastName: string;
+      Profile: {
+        profilePicture: string | null;
+      } | null;
+    };
+  }[];
+  _count: {
+    reactions: number;
+  };
+  mediaUrl: string | null;
+  replies: {
+    user: {
+      firstName: string;
+      lastName: string;
+      Profile: {
+        profilePicture: string | null;
+      } | null;
+    };
+  }[];
+};
+
+type MediaReplyType = {
+  postType: PostType;
+  postId: string;
+  commentId: string;
+  mediaId: string;
+  _gReactions: {
+    reactionType: ReactionType;
+    count: number;
+  }[];
+  _isReacted: {
+    isReacted: boolean;
+    reactionType: ReactionType | undefined;
+  };
+
+  id: string;
+  content: string | null;
+  createdAt: Date;
+  user: {
+    firstName: string;
+    lastName: string;
+    Profile: {
+      profilePicture: string | null;
+    } | null;
+  };
+
+  reactions: {
+    user: {
+      firstName: string;
+      lastName: string;
+      Profile: {
+        profilePicture: string | null;
+      } | null;
+    };
+  }[];
+  _count: {
+    reactions: number;
+  };
+  mediaUrl: string | null;
+  replies: {
+    user: {
+      firstName: string;
+      lastName: string;
+      Profile: {
+        profilePicture: string | null;
+      } | null;
+    };
+  }[];
+};
+export type ReplyType = PostReplyType | MediaReplyType;
+export type RepliesType = PostReplyType[] | MediaReplyType[];
+
+type ReplyReturnType = {
+  replies: PostReplyType[] | MediaReplyType[];
+};
+
 export const getReplies = async (
   userId: string,
   refFrom: "post" | "media",
@@ -56,7 +159,7 @@ export const getReplies = async (
   mediaId: string | undefined,
   commentId: string,
   page: number
-) => {
+): Promise<ReplyReturnType> => {
   const skip = (page - 1) * LIMIT;
 
   if (refFrom === "post") {
@@ -156,7 +259,9 @@ export const getReplies = async (
         };
       });
       return {
-        replies: await Promise.all(updatedReplies ? updatedReplies : []),
+        replies: (await Promise.all(
+          updatedReplies ? updatedReplies : []
+        )) as unknown as PostReplyType[],
       };
     }
     if (postType === "userSharePost") {
@@ -256,7 +361,9 @@ export const getReplies = async (
         };
       });
       return {
-        replies: await Promise.all(updatedReplies ? updatedReplies : []),
+        replies: (await Promise.all(
+          updatedReplies ? updatedReplies : []
+        )) as unknown as PostReplyType[],
       };
     }
     if (postType === "oPagePost") {
@@ -356,7 +463,9 @@ export const getReplies = async (
         };
       });
       return {
-        replies: await Promise.all(updatedReplies ? updatedReplies : []),
+        replies: (await Promise.all(
+          updatedReplies ? updatedReplies : []
+        )) as unknown as PostReplyType[],
       };
     }
     if (postType === "pageSharePost") {
@@ -456,7 +565,9 @@ export const getReplies = async (
         };
       });
       return {
-        replies: await Promise.all(updatedReplies ? updatedReplies : []),
+        replies: (await Promise.all(
+          updatedReplies ? updatedReplies : []
+        )) as unknown as PostReplyType[],
       };
     }
     if (postType === "oGroupPost") {
@@ -556,7 +667,9 @@ export const getReplies = async (
         };
       });
       return {
-        replies: await Promise.all(updatedReplies ? updatedReplies : []),
+        replies: (await Promise.all(
+          updatedReplies ? updatedReplies : []
+        )) as unknown as PostReplyType[],
       };
     }
     if (postType === "toGroupSharedPost") {
@@ -656,7 +769,9 @@ export const getReplies = async (
         };
       });
       return {
-        replies: await Promise.all(updatedReplies ? updatedReplies : []),
+        replies: (await Promise.all(
+          updatedReplies ? updatedReplies : []
+        )) as unknown as PostReplyType[],
       };
     }
   }
@@ -759,7 +874,7 @@ export const getReplies = async (
         async (reply) => {
           return {
             ...reply,
-            postType: "oUserPost",
+            postType: "oUserPost" as PostType,
             postId: post.id,
             commentId: post.medias[0].comments[0].id,
 
@@ -770,7 +885,9 @@ export const getReplies = async (
         }
       );
       return {
-        replies: await Promise.all(updatedReplies! ? updatedReplies : []),
+        replies: (await Promise.all(
+          updatedReplies! ? updatedReplies : []
+        )) as unknown as MediaReplyType[],
       };
     }
     if (postType === "oPagePost") {
@@ -882,7 +999,9 @@ export const getReplies = async (
         }
       );
       return {
-        replies: await Promise.all(updatedReplies! ? updatedReplies : []),
+        replies: (await Promise.all(
+          updatedReplies! ? updatedReplies : []
+        )) as unknown as MediaReplyType[],
       };
     }
     if (postType === "oGroupPost") {
@@ -994,7 +1113,9 @@ export const getReplies = async (
         }
       );
       return {
-        replies: await Promise.all(updatedReplies! ? updatedReplies : []),
+        replies: (await Promise.all(
+          updatedReplies! ? updatedReplies : []
+        )) as unknown as MediaReplyType[],
       };
     }
   }
@@ -1002,21 +1123,3 @@ export const getReplies = async (
     replies: [],
   };
 };
-
-const result = await getReplies(
-  "userId",
-  "post",
-  "oUserPost",
-  "postId",
-  "mediaId",
-  "commentId",
-  1
-);
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const replies = result?.replies;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const reply = result?.replies[0];
-export type RepliesType = typeof replies;
-export type ReplyType = typeof reply;

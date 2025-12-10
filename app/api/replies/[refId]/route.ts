@@ -18,7 +18,7 @@ export async function GET(
     }
     // const { refFrom, postType, postId, mediaId, commentId, page } = await params;
     const { refId } = await params;
-    const split = refId.split("-");
+    const split = refId.split("_");
 
     const refFrom = split[0];
     const postType = split[1];

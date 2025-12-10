@@ -19,7 +19,7 @@ export async function GET(
     // const { refFrom, postType, postId, mediaId, page } = await params;
 
     const { refId } = await params;
-    const split = refId.split("-");
+    const split = refId.split("_");
 
     const refFrom = split[0];
     const postType = split[1];
@@ -35,6 +35,11 @@ export async function GET(
       mediaId,
       parseInt(page)
     );
+    console.log("refFrom", refFrom);
+    console.log("posttype", postType);
+    console.log("postid", postId);
+    console.log("mediaid", mediaId);
+    console.log("page", page);
 
     return Response.json({
       comments: comments,

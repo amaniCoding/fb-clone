@@ -25,7 +25,7 @@ export default function Comments() {
 
   const getKey = (pageIndex: number, previousPageData: CommentsPage | null) => {
     if (previousPageData && previousPageData.comments.length === 0) return null;
-    const refId = `post-${currentPost?.postType}-${currentPost?.postId}-dash-${
+    const refId = `post_${currentPost?.postType}_${currentPost?.postId}_dash_${
       pageIndex + 1
     }`;
     return `/api/comments/${refId}/`;
@@ -38,7 +38,6 @@ export default function Comments() {
   const comments: CommentsType = data
     ? data.flatMap((page) => page.comments)
     : [];
-  console.log("comments", comments);
 
   const observerRef = useRef<HTMLDivElement>(null);
   console.log(isLoading);

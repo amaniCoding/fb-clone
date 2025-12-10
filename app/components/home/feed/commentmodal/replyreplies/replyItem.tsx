@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ReplyType } from "@/app/api/replies/[refId]/lib";
+import { ReplyType } from "@/app/api/replyreplies/[refId]/lib";
 export default function ReplyItem({ reply }: { reply: ReplyType }) {
   return (
     <div className="flex flex-row space-x-3 bg-yellow-300">

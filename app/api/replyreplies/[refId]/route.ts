@@ -14,13 +14,13 @@ export async function GET(
   try {
     const session = await auth();
     if (!session?.user) {
-      throw new Error("Un aauthorized request");
+      throw new Error("Un authorized request");
     }
     // const { refFrom, postType, postId, mediaId, commentId, replyId, page } =
     //   await params;
     const { refId } = await params;
 
-    const split = refId.split("-");
+    const split = refId.split("_");
 
     const refFrom = split[0];
     const postType = split[1];

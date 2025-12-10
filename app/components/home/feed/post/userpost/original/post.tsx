@@ -38,7 +38,7 @@ export default function OUser_Post({ refFrom, post }: PropsTypes) {
         postId={post.postId}
         feedId={post.feedId}
       />
-      <Lower post={post} refFrom={refFrom} />
+      {refFrom === "post" && <Lower post={post} refFrom={refFrom} />}
     </div>
   );
 }

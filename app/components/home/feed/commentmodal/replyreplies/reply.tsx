@@ -1,9 +1,8 @@
-import { ReplyType } from "@/app/api/replies/[refId]/lib";
-
 import { ReactionType } from "@/app/generated/prisma/client";
 import ReplyItem from "./replyItem";
 import Reactions from "./reactions";
 import LikeReply from "../lr";
+import { ReplyType } from "@/app/api/replyreplies/[refId]/lib";
 export default function Reply({
   reply,
 

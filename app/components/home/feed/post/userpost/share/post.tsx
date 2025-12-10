@@ -131,7 +131,7 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
         feedId={post.feedId}
         postId={post.postId}
       />
-      <Lower post={post} refFrom={refFrom} />
+      {refFrom === "post" && <Lower post={post} refFrom={refFrom} />}
     </div>
   );
 }

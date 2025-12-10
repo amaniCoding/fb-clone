@@ -1,10 +1,9 @@
 "use client";
-import CommentsSkeleton from "@/app/components/skeletons/comment";
 import Reply from "./reply";
-import { RepliesType } from "@/app/api/replies/[refId]/lib";
-import { useState } from "react";
-import useSWR, { useSWRConfig } from "swr";
 import { useAppSelector } from "@/app/store/hooks";
+import useSWRInfinite from "swr/infinite";
+import { RepliesType } from "@/app/api/replyreplies/[refId]/lib";
+import { useState } from "react";
 interface ReplyData {
   replies: RepliesType;
 }
@@ -20,39 +19,58 @@ export default function Replies({
   const currentPost = useAppSelector(
     (state) => state.commentModal.currentPost?.post
   );
+  const [shouldFetch, setShouldFetch] = useState<boolean>(false);
 
-  const [page, setPage] = useState<number>(1);
-  const fetcher = (url: string): Promise<ReplyData> =>
-    fetch(url).then((res) => res.json());
-  const PAGE_SIZE = 10;
-  const { mutate } = useSWRConfig();
-
-  const { data, error, isLoading } = useSWR<ReplyData>(null, fetcher);
-  const replies = [...data!.replies, ...data!.replies];
-  const isReachingEnd =
-    data?.replies &&
-    data.replies[data.replies.length - 1]?.replies.length < PAGE_SIZE;
-
-  const viewAllReplies = async (commentId: string, replyId: string) => {
-    if (!isReachingEnd) {
-      await mutate(
-        `/api/replyreplies/post-${currentPost?.postType}-${
-          currentPost?.postId
-        }-dash-${commentId}-${replyId}-${page + 1}/`
-      );
-      setPage(page + 1);
+  const fetcher = async (url: string): Promise<ReplyData> => {
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error("An error occurred while fetching the data.");
     }
+    return res.json();
   };
+  const PAGE_SIZE = 10;
+
+  const getKey = (pageIndex: number, previousPageData: ReplyData | null) => {
+    if (previousPageData && previousPageData.replies.length === 0) return null;
+    const refId = `/api/replyreplies/post_${currentPost?.postType}_${
+      currentPost?.postId
+    }_dash_${commentId}_${replyId}_${pageIndex + 1}/`;
+    const key = shouldFetch ? refId : null;
+
+    return key;
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data, error, size, setSize, isLoading, isValidating } =
+    useSWRInfinite<ReplyData>(getKey, fetcher);
+
+  const replies: RepliesType = data ? data.flatMap((page) => page.replies) : [];
+
+  // const isLoadingMore =
+  //   isLoading ||
+  //   (isValidating && data && typeof data[size - 1] === "undefined");
+  const isReachingEnd =
+    data && data[data.length - 1]?.replies.length < PAGE_SIZE;
+
+  const viewAllReplies = () => {
+    setShouldFetch(true);
+
+    setSize(size + 1);
+  };
+
   return (
     <div id="replies">
-      <p
+      <button
+        disabled={isLoading || isReachingEnd || shouldFetch}
         className="my-1.5 text-gray-500"
-        onClick={() => {
-          viewAllReplies(commentId, replyId);
-        }}
+        onClick={viewAllReplies}
       >
-        View all {repliesCount} replies
-      </p>
+        {isLoading
+          ? "Loading..."
+          : isReachingEnd
+          ? "No more items"
+          : `View all ${repliesCount} replies`}
+      </button>
       {replies!.map((reply, index) => {
         const gReactions = reply._gReactions
           ? [...reply._gReactions].sort((a, b) => b.count - a.count)
@@ -62,7 +80,6 @@ export default function Replies({
         return <Reply key={index} reply={reply} gReaction={newGReaction} />;
       })}
       {error && <p>Faild to load replies</p>}
-      {isLoading && <CommentsSkeleton />}
     </div>
   );
 }
