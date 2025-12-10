@@ -48,7 +48,11 @@ export default function Feeder() {
 
   const observerRef = useRef<HTMLDivElement>(null);
 
-  const isReachingEnd = data && data[data.length - 1]?.feeds.length < 10;
+  const isEmpty = data && data[data.length - 1]?.feeds.length === 0;
+  const isReachingEnd =
+    isEmpty || (data && data[data.length - 1]?.feeds.length < 10);
+  const isLoadingMore =
+    isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
   // const isReachingEnd = data && data[data.length - 1]?.hasReachedEnd;
   console.log(isReachingEnd);
   useEffect(() => {
@@ -101,17 +105,9 @@ export default function Feeder() {
         <Post key={index} post={post} />
       ))}
 
-      <div ref={observerRef} className="w-full">
-        {isLoading ? (
-          <FeedItemSkeleton />
-        ) : isReachingEnd ? (
-          <div className="h-4 flex items-center justify-center">
-            <p className="font-semibold">
-              You have reached the end of the list.
-            </p>
-          </div>
-        ) : null}
-      </div>
+      <div ref={observerRef} className="w-full h-5"></div>
+      {isLoadingMore && <FeedItemSkeleton />}
+      {isReachingEnd && <div>No more feeds to show</div>}
 
       {isCommentModalOpen && <CommentModal />}
       {isReactionModalOpen && <ReactionModal />}

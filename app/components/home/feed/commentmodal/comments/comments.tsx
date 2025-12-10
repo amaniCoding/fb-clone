@@ -25,10 +25,10 @@ export default function Comments() {
 
   const getKey = (pageIndex: number, previousPageData: CommentsPage | null) => {
     if (previousPageData && previousPageData.comments.length === 0) return null;
-    const refId = `post_${currentPost?.postType}_${currentPost?.postId}_dash_${
-      pageIndex + 1
-    }`;
-    return `/api/comments/${refId}/`;
+
+    return `/api/comments/post_${currentPost?.postType}_${
+      currentPost?.postId
+    }_dash_${pageIndex + 1}/`;
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -45,8 +45,11 @@ export default function Comments() {
   // const isLoadingMore =
   //   isLoading ||
   //   (isValidating && data && typeof data[size - 1] === "undefined");
+  const isEmpty = data && data[data.length - 1]?.comments.length === 0;
   const isReachingEnd =
-    data && data[data.length - 1]?.comments.length < PAGE_SIZE;
+    isEmpty || (data && data[data.length - 1]?.comments.length < PAGE_SIZE);
+  const isLoadingMore =
+    isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
 
   useEffect(() => {
     if (!observerRef.current) return;
@@ -55,7 +58,7 @@ export default function Comments() {
       (entries) => {
         if (
           entries[0]?.isIntersecting &&
-          !isLoading &&
+          !isLoadingMore &&
           !error &&
           !isReachingEnd
         ) {
@@ -68,12 +71,7 @@ export default function Comments() {
     observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  }, [error, isLoading, isReachingEnd, setSize, size]);
-
-  console.log("error", error);
-  console.log("loadging", isLoading);
-  console.log("isReachedEnd", isReachingEnd);
-  console.log("postid", currentPost?.postId);
+  }, [error, isLoadingMore, isReachingEnd, setSize, size]);
 
   if (error)
     return (
@@ -96,20 +94,10 @@ export default function Comments() {
           <Comment key={index} comment={comment} gReaction={newGReaction} />
         );
       })}
-      <div ref={observerRef}>
-        {isLoading ? (
-          <div>
-            {isLoading && size === 1 && <CommentFirstTimeSkeleton />}
-            {isLoading && size > 1 && <CommentsSkeleton />}
-          </div>
-        ) : isReachingEnd ? (
-          <div className="h-4 flex items-center justify-center">
-            <p className="font-semibold">
-              You have reached the end of comments.
-            </p>
-          </div>
-        ) : null}
-      </div>{" "}
+      <div ref={observerRef} className="h-5"></div>{" "}
+      {isLoadingMore && size === 1 && <CommentFirstTimeSkeleton />}
+      {isLoadingMore && size > 1 && <CommentsSkeleton />}
+      {isReachingEnd && <div>No more comments</div>}
     </div>
   );
 }
