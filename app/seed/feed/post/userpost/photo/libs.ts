@@ -20,8 +20,6 @@ export async function _seeder() {
                 connect: { id: user.id },
               },
 
-              content: null,
-
               medias: {
                 createMany: {
                   data: generatePhoto("user", getRandomPhotoCount()),

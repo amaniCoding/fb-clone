@@ -96,8 +96,6 @@ export async function _seeder() {
                       },
                     }
                   : undefined,
-
-              content: null,
             },
           },
         },

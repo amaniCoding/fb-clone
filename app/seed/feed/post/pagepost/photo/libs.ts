@@ -19,8 +19,6 @@ export async function _seeder() {
                 connect: { id: page.id },
               },
 
-              content: null,
-
               medias: {
                 createMany: {
                   data: generatePhoto("page", getRandomPhotoCount()),

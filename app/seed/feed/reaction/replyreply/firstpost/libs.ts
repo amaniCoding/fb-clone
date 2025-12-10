@@ -18,6 +18,11 @@ export async function _seeder() {
               replies: {
                 select: {
                   id: true,
+                  reactions: {
+                    select: {
+                      id: true,
+                    },
+                  },
                 },
               },
             },
@@ -26,6 +31,10 @@ export async function _seeder() {
       },
     },
   });
+
+  if (post && post.comments[0].replies[0].replies[0].reactions.length > 0) {
+    return;
+  }
 
   return post
     ? Promise.all(

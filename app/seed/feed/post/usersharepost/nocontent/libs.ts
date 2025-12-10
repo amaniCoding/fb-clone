@@ -3,7 +3,6 @@ import {
   getPostMediaType,
   getRandomMedia,
   getRandomPost,
-  getRandomPostText,
   getRandomSharedPostType,
   getRandomUser,
 } from "@/app/seed/libs";
@@ -73,8 +72,6 @@ export async function _seeder() {
                       },
                     }
                   : undefined,
-
-              content: null,
             },
           },
         },

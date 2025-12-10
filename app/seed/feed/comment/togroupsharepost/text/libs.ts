@@ -3,7 +3,7 @@ import { getRandomPostComment } from "@/app/seed/lib";
 import { getRandomUser } from "@/app/seed/libs";
 
 export async function _seeder() {
-  const posts = await prisma.oUserPost.findMany({
+  const posts = await prisma.toGroupSharePost.findMany({
     select: {
       id: true,
     },
@@ -14,7 +14,7 @@ export async function _seeder() {
       const user = await getRandomUser();
       const comment = getRandomPostComment();
 
-      return prisma.oUserPost.update({
+      return prisma.toGroupSharePost.update({
         where: {
           id: post.id,
         },
@@ -23,7 +23,6 @@ export async function _seeder() {
             create: {
               content: comment,
 
-              mediaUrl: null,
               user: {
                 connect: {
                   id: user.id,

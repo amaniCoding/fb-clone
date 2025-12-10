@@ -23,7 +23,6 @@ export async function _seeder() {
             create: {
               content: comment,
 
-              mediaUrl: null,
               user: {
                 connect: {
                   id: user.id,

@@ -15,12 +15,17 @@ export async function _seeder() {
           replies: {
             select: {
               id: true,
+              reactions: true,
             },
           },
         },
       },
     },
   });
+
+  if (post && post.comments[0].replies[0].reactions.length > 0) {
+    return;
+  }
 
   return post
     ? Promise.all(

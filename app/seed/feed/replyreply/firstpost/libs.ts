@@ -1,10 +1,6 @@
 import prisma from "@/app/libs/prisma";
 import { getRandomCommentReply } from "@/app/seed/lib";
-import {
-  generateSinglePhoto,
-  getRandomPostContentOption,
-  getRandomUser,
-} from "@/app/seed/libs";
+import { getRandomUser } from "@/app/seed/libs";
 
 export async function _seeder() {
   const post = await prisma.oUserPost.findUnique({
@@ -32,10 +28,6 @@ export async function _seeder() {
             const user = await getRandomUser();
             const reply = getRandomCommentReply();
 
-            const replyPostOption = getRandomPostContentOption() as
-              | "contentonly"
-              | "mediasonly"
-              | "both";
             return prisma.oUserPost.update({
               where: {
                 id: "someid",
@@ -56,16 +48,8 @@ export async function _seeder() {
                           data: {
                             replies: {
                               create: {
-                                content:
-                                  replyPostOption === "contentonly" ||
-                                  replyPostOption === "both"
-                                    ? reply
-                                    : null,
-                                mediaUrl:
-                                  replyPostOption === "both" ||
-                                  replyPostOption === "mediasonly"
-                                    ? generateSinglePhoto()
-                                    : null,
+                                content: reply,
+
                                 user: {
                                   connect: {
                                     id: user.id,

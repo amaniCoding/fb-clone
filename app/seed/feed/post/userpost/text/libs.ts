@@ -17,8 +17,6 @@ export async function _seeder() {
               },
 
               content: getRandomPostText(),
-
-              medias: undefined,
             },
           },
         },

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { CommentType } from "@/app/api/comments/[refId]/lib";
 export default function CommentItem({ comment }: { comment: CommentType }) {
   return (
-    <div className="flex flex-row space-x-3 bg-yellow-300">
+    <div className="flex flex-row space-x-3 p-1.5">
       <Link href={"/#"} className="flex-none">
         {comment!.user.Profile?.profilePicture ? (
           <Image
