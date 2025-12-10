@@ -69,7 +69,9 @@ export default function Replies({
           ? "Loading..."
           : isReachingEnd
           ? "No more items"
-          : `View all ${repliesCount} replies`}
+          : repliesCount > 0
+          ? `View all ${repliesCount} replies`
+          : null}
       </button>
       {replies!.map((reply, index) => {
         const gReactions = reply._gReactions

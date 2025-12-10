@@ -13,7 +13,7 @@ export default function ReplyItem({ reply }: { reply: ReplyType }) {
             width={0}
             height={0}
             sizes="100vh"
-            className="w-8 h-8 object-cover rounded-full"
+            className="w-5 h-5 object-cover rounded-full"
           />
         ) : null}
       </Link>

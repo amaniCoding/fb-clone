@@ -11,7 +11,7 @@ export default function Reactions({
   }[];
 }) {
   return (
-    <div className="flex items-center justify-between space-x-5">
+    <div className="flex items-center justify-between">
       <div className="flex items-center">
         <p className="text-gray-500">{reactionsCount}</p>
 

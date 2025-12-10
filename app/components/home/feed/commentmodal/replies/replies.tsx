@@ -55,7 +55,7 @@ export default function Replies({
     setSize(size + 1);
   };
   return (
-    <div id="replies">
+    <div id="replies" className="absolute bottom-1/2">
       <button
         disabled={isLoading || isReachingEnd || shouldFetch}
         className="my-1.5 text-gray-500"
@@ -65,7 +65,9 @@ export default function Replies({
           ? "Loading..."
           : isReachingEnd
           ? "No more items"
-          : `View all ${repliesCount} replies`}
+          : repliesCount > 0
+          ? `View all ${repliesCount} replies`
+          : null}
       </button>
       {replies!.map((reply, index) => {
         const gReactions = reply._gReactions

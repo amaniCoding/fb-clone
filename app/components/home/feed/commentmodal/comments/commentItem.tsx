@@ -1,9 +1,21 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CommentType } from "@/app/api/comments/[refId]/lib";
-export default function CommentItem({ comment }: { comment: CommentType }) {
+import Reactions from "./reactions";
+import LikeReply from "../lr";
+import { ReactionType } from "@/app/generated/prisma/client";
+export default function CommentItem({
+  comment,
+  gReaction,
+}: {
+  comment: CommentType;
+  gReaction: {
+    reactionType: ReactionType;
+    count: number;
+  }[];
+}) {
   return (
-    <div className="flex flex-row space-x-3 p-1.5">
+    <div className="flex flex-row space-x-3 p-1.5 bg-gray-300 absolute -left-1">
       <Link href={"/#"} className="flex-none">
         {comment!.user.Profile?.profilePicture ? (
           <Image
@@ -33,6 +45,13 @@ export default function CommentItem({ comment }: { comment: CommentType }) {
               className="cursor-pointer w-52 object-cover block flex-none"
             />
           ) : null}
+        </div>
+        <div className="flex items-center">
+          <Reactions
+            gReactions={gReaction}
+            reactionsCount={comment._count.reactions}
+          />
+          <LikeReply fromWhat="comment" />
         </div>
       </div>
     </div>

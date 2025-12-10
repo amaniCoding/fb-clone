@@ -20,7 +20,7 @@ export default function Reply({
 }) {
   return (
     <div className="relative">
-      <div className="flex flex-col">
+      <div className="flex flex-col space-y-1.5">
         <ReplyItem reply={reply} />
 
         <div className="flex items-center">
@@ -28,7 +28,7 @@ export default function Reply({
             gReactions={gReaction}
             reactionsCount={reply._count.reactions}
           />
-          <LikeReply fromWhat="comment" />
+          <LikeReply fromWhat="reply" />
         </div>
         <Replies
           commentId={commentId}
