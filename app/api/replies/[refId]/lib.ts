@@ -83,6 +83,7 @@ type PostReplyType = {
   }[];
   _count: {
     reactions: number;
+    replies: number;
   };
   mediaUrl: string | null;
   replies: {
@@ -132,6 +133,7 @@ type MediaReplyType = {
   }[];
   _count: {
     reactions: number;
+    replies: number;
   };
   mediaUrl: string | null;
   replies: {

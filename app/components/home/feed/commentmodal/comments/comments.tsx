@@ -72,7 +72,7 @@ export default function Comments() {
 
   if (error)
     return (
-      <div className="w-full h-40 mt-10 flex items-center justify-center text-red-500 font-bold">
+      <div className="w-full bg-white h-20 flex items-center justify-center text-red-500 font-bold">
         <div className="flex flex-col space-y-1">
           <p> Failed to load comments.</p>
         </div>
