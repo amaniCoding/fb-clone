@@ -35,7 +35,6 @@ export default function Lower({ refFrom, post }: TypeProps) {
       showCommentModal({
         isOpen: true,
         currentPost: {
-          postType: "oUserPost",
           post: post,
         },
         action: "open",

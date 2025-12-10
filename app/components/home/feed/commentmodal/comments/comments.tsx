@@ -70,6 +70,11 @@ export default function Comments() {
     return () => observer.disconnect();
   }, [error, isLoading, isReachingEnd, setSize, size]);
 
+  console.log("error", error);
+  console.log("loadging", isLoading);
+  console.log("isReachedEnd", isReachingEnd);
+  console.log("postid", currentPost?.postId);
+
   if (error)
     return (
       <div className="w-full bg-white h-20 flex items-center justify-center text-red-500 font-bold">

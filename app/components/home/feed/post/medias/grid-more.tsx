@@ -6,7 +6,7 @@ export default function GridMore({ medias }: MediaPropType) {
   const overFlow_medias = medias!.length - 5;
 
   return (
-    <div className="w-full h-[28rem]">
+    <div className="w-full h-112">
       <div className="flex space-x-1.5 w-full h-1/2">
         {medias!.slice(0, 2).map((media, index) => {
           return (

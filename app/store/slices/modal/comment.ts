@@ -6,7 +6,6 @@ import {
   UserSharePost,
   PageSharePost,
 } from "@/app/api/feeder/[page]/lib";
-import { PostType } from "@/app/generated/prisma/client";
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -14,7 +13,6 @@ type ShowModalPayLoadType = {
   isOpen: boolean;
   action: "open" | "close";
   currentPost?: {
-    postType: PostType;
     post:
       | OUserPost
       | UserSharePost
@@ -29,7 +27,6 @@ type ShowModalPayLoadType = {
 interface CommentModalState {
   isOpen: boolean;
   currentPost?: {
-    postType: PostType;
     post:
       | OUserPost
       | UserSharePost
@@ -54,11 +51,12 @@ export const commentModalSlice = createSlice({
       state.isOpen = action.payload.isOpen;
       if (action.payload.action === "open") {
         state.currentPost = {
-          postType: action.payload.currentPost!.postType,
           post: action.payload.currentPost!.post,
         };
       } else {
-        state.currentPost = undefined;
+        state.currentPost = {
+          post: undefined,
+        };
       }
     },
   },

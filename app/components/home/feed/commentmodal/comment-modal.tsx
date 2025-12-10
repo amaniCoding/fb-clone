@@ -24,7 +24,9 @@ import {
 
 export default function CommentModal() {
   const { data, status } = useSession();
-  const currentPost = useAppSelector((state) => state.commentModal.currentPost);
+  const currentPost = useAppSelector(
+    (state) => state.commentModal.currentPost?.post
+  );
   const dispatch = useAppDispatch();
   const closeModal = () => {
     dispatch(
@@ -37,46 +39,34 @@ export default function CommentModal() {
 
   const renderAppropriatePost = () => {
     if (currentPost?.postType === "oUserPost") {
-      return (
-        <OUser_Post refFrom="modal" post={currentPost.post as OUserPost} />
-      );
+      return <OUser_Post refFrom="modal" post={currentPost as OUserPost} />;
     }
 
     if (currentPost?.postType === "userSharePost") {
       return (
-        <UserShare_Post
-          refFrom="modal"
-          post={currentPost?.post as UserSharePost}
-        />
+        <UserShare_Post refFrom="modal" post={currentPost as UserSharePost} />
       );
     }
 
     if (currentPost?.postType === "oPagePost") {
-      return (
-        <OPage_Post refFrom="modal" post={currentPost?.post as OPagePost} />
-      );
+      return <OPage_Post refFrom="modal" post={currentPost as OPagePost} />;
     }
 
     if (currentPost?.postType === "pageSharePost") {
       return (
-        <PageShare_Post
-          refFrom="modal"
-          post={currentPost?.post as PageSharePost}
-        />
+        <PageShare_Post refFrom="modal" post={currentPost as PageSharePost} />
       );
     }
 
     if (currentPost?.postType === "oGroupPost") {
-      return (
-        <OGroup_Post refFrom="modal" post={currentPost?.post as OGroupPost} />
-      );
+      return <OGroup_Post refFrom="modal" post={currentPost as OGroupPost} />;
     }
 
     if (currentPost?.postType === "toGroupSharedPost") {
       return (
         <ToGroupShare_Post
           refFrom="modal"
-          post={currentPost?.post as ToGroupSharedPost}
+          post={currentPost as ToGroupSharedPost}
         />
       );
     }
@@ -93,7 +83,7 @@ export default function CommentModal() {
           <div className="sticky top-0 left-0 right-0  ">
             <Header
               postType={currentPost?.postType}
-              currentPost={currentPost?.post}
+              currentPost={currentPost}
               onClose={closeModal}
             />
           </div>
