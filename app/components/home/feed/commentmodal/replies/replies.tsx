@@ -12,7 +12,8 @@ export default function Replies({
   repliesCount,
 }: {
   commentId: string;
-  repliesCount: number;
+  replyId?: string;
+  repliesCount?: number;
 }) {
   const currentPost = useAppSelector(
     (state) => state.commentModal.currentPost?.post
@@ -65,13 +66,13 @@ export default function Replies({
           ? "Loading..."
           : isReachingEnd
           ? "No more items"
-          : repliesCount > 0
+          : repliesCount && repliesCount > 0
           ? `View all ${repliesCount} replies`
           : "View all replies"}
       </button>
     </div>
   ) : (
-    <div id="replies" className="-bottom-3.5 left-5 bg-white w-full">
+    <div className="w-full">
       {replies!.map((reply, index) => {
         const gReactions = reply._gReactions
           ? [...reply._gReactions].sort((a, b) => b.count - a.count)
@@ -87,7 +88,9 @@ export default function Replies({
           />
         );
       })}
-      {error && <p>Failed to load replies</p>}
+      {error && (
+        <p className="font-semibold text-center my-1">Failed to load replies</p>
+      )}
     </div>
   );
 }

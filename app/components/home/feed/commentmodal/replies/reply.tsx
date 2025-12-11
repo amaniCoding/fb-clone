@@ -1,9 +1,7 @@
-import Replies from "../replyreplies/replies";
-import Reactions from "./reactions";
 import ReplyItem from "./replyItem";
 import { ReactionType } from "@/app/generated/prisma/client";
-import LikeReply from "../lr";
 import { ReplyType } from "@/app/api/replies/[refId]/lib";
+import Replies from "./replies";
 
 export default function Reply({
   reply,
@@ -19,17 +17,10 @@ export default function Reply({
   }[];
 }) {
   return (
-    <div className="relative">
+    <div className="absolute -bottom-3.5 left-5 bg-white w-full">
       <div className="flex flex-col space-y-1.5">
-        <ReplyItem reply={reply} />
+        <ReplyItem reply={reply} gReaction={gReaction} />
 
-        <div className="flex items-center">
-          <Reactions
-            gReactions={gReaction}
-            reactionsCount={reply._count.reactions}
-          />
-          <LikeReply fromWhat="reply" />
-        </div>
         <Replies
           commentId={commentId}
           replyId={reply.id}

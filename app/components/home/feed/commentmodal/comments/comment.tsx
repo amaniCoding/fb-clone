@@ -20,12 +20,6 @@ export default function Comment({
           : " border-l-2 border-b-2 border-b-gray-300    border-l-gray-300 rounded-bl-xl "
       } `}
     >
-      {/* <div className="absolute  -left-3 -top-3 w-full bg-amber-300">
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Similique
-        doloremque quis, veniam debitis fugit placeat nisi sapiente, pariatur
-        quasi, magnam error? Reprehenderit consequatur culpa quos inventore in
-        atque minus! Id.
-      </div> */}
       <CommentItem
         comment={comment}
         gReaction={gReaction}

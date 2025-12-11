@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CommentType } from "@/app/api/comments/[refId]/lib";
-import Reactions from "./reactions";
+import Reactions from "../reactions";
 import LikeReply from "../lr";
 import { ReactionType } from "@/app/generated/prisma/client";
 export default function CommentItem({

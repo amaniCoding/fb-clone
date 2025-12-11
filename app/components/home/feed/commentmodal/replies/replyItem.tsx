@@ -1,7 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ReplyType } from "@/app/api/replies/[refId]/lib";
-export default function ReplyItem({ reply }: { reply: ReplyType }) {
+import Reactions from "../reactions";
+import LikeReply from "../lr";
+import { ReactionType } from "@/app/generated/prisma/client";
+export default function ReplyItem({
+  reply,
+  gReaction,
+}: {
+  reply: ReplyType;
+  gReaction: {
+    reactionType: ReactionType;
+    count: number;
+  }[];
+}) {
   return (
     <div className="flex flex-row space-x-3 bg-yellow-300">
       <Link href={"/#"} className="flex-none">
@@ -33,6 +45,13 @@ export default function ReplyItem({ reply }: { reply: ReplyType }) {
               className="cursor-pointer w-52 object-cover block flex-none"
             />
           ) : null}
+        </div>
+        <div className="flex items-center">
+          <Reactions
+            gReaction={gReaction}
+            reactionsCount={reply._count.reactions}
+          />
+          <LikeReply fromWhat="reply" />
         </div>
       </div>
     </div>

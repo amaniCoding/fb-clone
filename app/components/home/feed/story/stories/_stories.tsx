@@ -25,20 +25,17 @@ export default function StoriesClient({
 }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const numSlides = stories.length;
-
-  const slidesToShow = numSlides > 3 ? 3 : numSlides;
   const sliderRef = useRef<Slider>(null);
   const settings = {
     beforeChange: (oldIndex: number, newIndex: number) =>
       setCurrentSlide(newIndex),
     dots: false,
     infinite: false,
-    initialSlide: 1,
+
     variableWidth: true,
     speed: 500,
-    slidesToShow: slidesToShow,
-    //slidesToScroll: slidesToShow,
+    slidesToShow: 1,
+    slidesToScroll: 1,
 
     arrows: false,
   };
