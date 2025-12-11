@@ -32,7 +32,7 @@ export default function NavBar({
         {data.map((data, index) => (
           <div
             key={index}
-            className="flex items-center justify-center px-10 py-1.5 relative rounded-lg hover:bg-gray-50"
+            className="md:flex hidden items-center justify-center px-10 py-1.5 relative rounded-lg hover:bg-gray-50"
           >
             <Image
               alt="Amanuel Ferede"

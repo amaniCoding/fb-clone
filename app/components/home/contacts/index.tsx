@@ -5,7 +5,7 @@ import Search from "./search";
 export default function Contacts() {
   return (
     <div
-      className={`w-[25%] [&::-webkit-scrollbar]:w-0 [&::-webkit-scrollbar-track]:rounded-full
+      className={`w-[25%] md:block hidden [&::-webkit-scrollbar]:w-0 [&::-webkit-scrollbar-track]:rounded-full
   [&::-webkit-scrollbar-track]:bg-gray-100
   [&::-webkit-scrollbar-thumb]:rounded-full
   [&::-webkit-scrollbar-thumb]:bg-gray-300

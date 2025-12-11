@@ -49,7 +49,7 @@ export default function StoriesClient({
   };
 
   return (
-    <div className="slider-container h-52 relative w-full mb-5">
+    <div className="slider-container h-52 relative w-full mb-5 md:p-0 p-3">
       <MdNavigateNext
         onClick={handelNext}
         className="w-12 h-12 text-gray-400 flex items-center justify-center absolute top-1/2 right-5 z-10 bg-white outline outline-gray-500 cursor-pointer rounded-full p-2  hover:fill-200  transition duration-300 ease-out "

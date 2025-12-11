@@ -17,7 +17,7 @@ export default async function Home() {
       <NavBar loggedInUser={session.user} />
       <div className="flex md:pt-[73px] pt-[55px]">
         <SideBar loggedInUser={session.user} />
-        <div className="w-[50%] ml-[25%]">
+        <div className="md:w-[50%] w-full md:ml-[25%] ml-0">
           <AddPost loggedInUser={session.user} />
           <Suspense fallback={<Story />}>
             <Stories loggedInUser={session.user} />
