@@ -75,14 +75,12 @@ export default function Comments() {
 
   if (error)
     return (
-      <div className="w-full bg-white h-20 flex items-center justify-center text-red-500 font-bold">
-        <div className="flex flex-col space-y-1">
-          <p> Failed to load comments.</p>
-        </div>
+      <div className="w-full bg-white h-20 flex items-center justify-center font-semibold text-gray-500">
+        <p className="text-center"> Failed to load comments.</p>
       </div>
     );
   return (
-    <div className="bg-white">
+    <div className="bg-white pl-7 pt-6 relative">
       {comments!.map((comment, index) => {
         const gReactions = comment._gReactions
           ? [...comment._gReactions].sort((a, b) => b.count - a.count)

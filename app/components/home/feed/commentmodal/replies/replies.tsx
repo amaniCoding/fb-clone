@@ -54,11 +54,11 @@ export default function Replies({
     setShouldFetch(true);
     setSize(size + 1);
   };
-  return (
-    <div id="replies" className="absolute bottom-1/2">
+  return replies.length === 0 ? (
+    <div className="absolute -bottom-3.5 left-8 bg-white w-full">
       <button
         disabled={isLoading || isReachingEnd || shouldFetch}
-        className="my-1.5 text-gray-500"
+        className=" text-gray-500 "
         onClick={viewAllReplies}
       >
         {isLoading
@@ -67,8 +67,11 @@ export default function Replies({
           ? "No more items"
           : repliesCount > 0
           ? `View all ${repliesCount} replies`
-          : null}
+          : "View all replies"}
       </button>
+    </div>
+  ) : (
+    <div id="replies" className="-bottom-3.5 left-5 bg-white w-full">
       {replies!.map((reply, index) => {
         const gReactions = reply._gReactions
           ? [...reply._gReactions].sort((a, b) => b.count - a.count)

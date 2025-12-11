@@ -7,51 +7,62 @@ import { ReactionType } from "@/app/generated/prisma/client";
 export default function CommentItem({
   comment,
   gReaction,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  repliesCount,
 }: {
   comment: CommentType;
   gReaction: {
     reactionType: ReactionType;
     count: number;
   }[];
+  repliesCount: number;
 }) {
   return (
-    <div className="flex flex-row space-x-3 p-1.5 bg-gray-300 absolute -left-1">
-      <Link href={"/#"} className="flex-none">
-        {comment!.user.Profile?.profilePicture ? (
-          <Image
-            unoptimized
-            alt={`${comment!.user.firstName.substring(0, 2)}`}
-            src={comment!.user.Profile?.profilePicture}
-            width={0}
-            height={0}
-            sizes="100vh"
-            className="w-8 h-8 object-cover rounded-full"
-          />
-        ) : null}
-      </Link>
-      <div className="flex flex-col space-y-1">
-        <p>
-          {comment!.user.firstName} {comment!.user.lastName}
-        </p>
-        <div>
-          {comment.content && <p>{comment.content}</p>}
-          {comment.mediaUrl ? (
+    <div className={`absolute w-full -left-4 -top-4`}>
+      <div className="flex flex-row space-x-3">
+        <Link href={"/#"} className="flex-none">
+          {comment!.user.Profile?.profilePicture ? (
             <Image
-              alt=""
-              src={comment.mediaUrl}
+              unoptimized
+              alt={`${comment!.user.firstName.substring(0, 2)}`}
+              src={comment!.user.Profile?.profilePicture}
               width={0}
               height={0}
               sizes="100vh"
-              className="cursor-pointer w-52 object-cover block flex-none"
+              className="w-8 h-8 object-cover rounded-full"
             />
           ) : null}
-        </div>
-        <div className="flex items-center">
-          <Reactions
-            gReactions={gReaction}
-            reactionsCount={comment._count.reactions}
-          />
-          <LikeReply fromWhat="comment" />
+        </Link>
+        <div className="flex flex-col space-y-1">
+          <div className="bg-gray-100 rounded-2xl p-2">
+            <p className="text-sm font-semibold">
+              {comment!.user.firstName} {comment!.user.lastName}
+            </p>
+
+            {comment.content && (
+              <span className=" font-medium">{comment.content}</span>
+            )}
+            <div id="image">
+              {comment.mediaUrl ? (
+                <Image
+                  alt=""
+                  src={comment.mediaUrl}
+                  width={0}
+                  height={0}
+                  sizes="100vh"
+                  className="cursor-pointer w-52 object-cover block flex-none"
+                />
+              ) : null}
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <LikeReply fromWhat="comment" />
+
+            <Reactions
+              reactionsCount={comment._count.reactions}
+              gReaction={gReaction}
+            />
+          </div>
         </div>
       </div>
     </div>

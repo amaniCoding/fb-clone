@@ -2,10 +2,10 @@ import { ReactionType } from "@/app/generated/prisma/client";
 import Image from "next/image";
 export default function Reactions({
   reactionsCount,
-  gReactions,
+  gReaction,
 }: {
   reactionsCount: number;
-  gReactions: {
+  gReaction: {
     reactionType: ReactionType;
     count: number;
   }[];
@@ -16,7 +16,7 @@ export default function Reactions({
         <p className="text-gray-500">{reactionsCount}</p>
 
         <div className="flex items-center -space-x-1.5">
-          {gReactions.map((rxn, index) =>
+          {gReaction.map((rxn, index) =>
             rxn.reactionType ? (
               <Image
                 key={index}

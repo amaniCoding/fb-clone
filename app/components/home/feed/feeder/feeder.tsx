@@ -105,9 +105,13 @@ export default function Feeder() {
         <Post key={index} post={post} />
       ))}
 
-      <div ref={observerRef} className="w-full h-5"></div>
+      <div ref={observerRef} className="w-full h-1"></div>
       {isLoadingMore && <FeedItemSkeleton />}
-      {isReachingEnd && <div>No more feeds to show</div>}
+      {isReachingEnd && (
+        <div className="text-center p-2 font-semibold">
+          No more feeds to show
+        </div>
+      )}
 
       {isCommentModalOpen && <CommentModal />}
       {isReactionModalOpen && <ReactionModal />}

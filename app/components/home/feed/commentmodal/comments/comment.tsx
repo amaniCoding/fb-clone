@@ -1,7 +1,7 @@
 import { CommentType } from "@/app/api/comments/[refId]/lib";
-import Replies from "../replies/replies";
 import { ReactionType } from "@/app/generated/prisma/client";
 import CommentItem from "./commentItem";
+import Replies from "../replies/replies";
 export default function Comment({
   comment,
   gReaction,
@@ -13,18 +13,25 @@ export default function Comment({
   }[];
 }) {
   return (
-    <div className="relative">
-      <div className="flex flex-col space-y-1.5 border-l border-l-gray-300 relative ">
-        <CommentItem comment={comment} gReaction={gReaction} />
-        <div className="absolute right-1 border-r border-r-gray-300">
-          <div className="relative">
-            <Replies
-              commentId={comment!.id}
-              repliesCount={comment!._count.replies}
-            />
-          </div>
-        </div>
-      </div>
+    <div
+      className={` mb-10 h-auto w-full ${
+        comment._count.replies > 0
+          ? "border-l-2 border-b-2 border-b-gray-300    border-l-gray-300 rounded-bl-xl"
+          : " border-l-2 border-b-2 border-b-gray-300    border-l-gray-300 rounded-bl-xl "
+      } `}
+    >
+      {/* <div className="absolute  -left-3 -top-3 w-full bg-amber-300">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Similique
+        doloremque quis, veniam debitis fugit placeat nisi sapiente, pariatur
+        quasi, magnam error? Reprehenderit consequatur culpa quos inventore in
+        atque minus! Id.
+      </div> */}
+      <CommentItem
+        comment={comment}
+        gReaction={gReaction}
+        repliesCount={comment!._count.replies}
+      />
+      <Replies commentId={comment!.id} repliesCount={comment!._count.replies} />
     </div>
   );
 }
