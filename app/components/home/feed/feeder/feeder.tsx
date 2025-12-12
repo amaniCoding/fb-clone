@@ -70,7 +70,7 @@ export default function Feeder() {
       (entries) => {
         if (
           entries[0]?.isIntersecting &&
-          !isLoading &&
+          !isLoadingMore &&
           !error &&
           !isReachingEnd
         ) {
@@ -83,7 +83,7 @@ export default function Feeder() {
     observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  }, [error, isLoading, isReachingEnd, setSize, size]);
+  }, [error, isLoadingMore, isReachingEnd, setSize, size]);
 
   if (error)
     return (

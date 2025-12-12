@@ -10,7 +10,7 @@ import { MediaPropType } from "../medias/types";
 export default function Medias({ medias }: MediaPropType) {
   return (
     medias && (
-      <div className={`w-full ${medias!.length > 0 ? "h-112" : "h-auto"}`}>
+      <div className={`w-full ${medias!.length > 0 ? "h-200" : "h-auto"}`}>
         {medias!.length === 1 && medias![0].type === "image" && (
           <div
             className="w-full h-full"
