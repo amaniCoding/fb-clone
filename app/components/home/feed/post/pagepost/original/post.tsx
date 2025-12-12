@@ -10,9 +10,14 @@ import { OPagePost } from "@/app/api/feeder/[page]/lib";
 type PropsTypes = {
   post: OPagePost;
   refFrom: "modal" | "post";
+  isCommentsLoading: boolean | undefined;
 };
 
-export default function OPage_Post({ refFrom, post }: PropsTypes) {
+export default function OPage_Post({
+  refFrom,
+  post,
+  isCommentsLoading,
+}: PropsTypes) {
   return (
     <div
       className={`${
@@ -26,7 +31,6 @@ export default function OPage_Post({ refFrom, post }: PropsTypes) {
         refFrom="original"
         _refFrom={refFrom}
       />
-
       <Content content={post?.content} />
       <Medias medias={post?.medias} />
       <Upper
@@ -38,7 +42,9 @@ export default function OPage_Post({ refFrom, post }: PropsTypes) {
         feedId={post.feedId}
         postId={post.postId}
       />
-      <Lower post={post} refFrom={refFrom} />
+      {isCommentsLoading && isCommentsLoading && (
+        <Lower post={post} refFrom={refFrom} />
+      )}{" "}
     </div>
   );
 }

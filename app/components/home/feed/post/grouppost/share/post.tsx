@@ -13,9 +13,14 @@ import Lower from "../../shared/lower";
 type PropsTypes = {
   post: ToGroupSharedPost;
   refFrom: "modal" | "post";
+  isCommentsLoading: boolean | undefined;
 };
 
-export default function ToGroupShare_Post({ refFrom, post }: PropsTypes) {
+export default function ToGroupShare_Post({
+  refFrom,
+  post,
+  isCommentsLoading,
+}: PropsTypes) {
   return (
     <div
       className={`${
@@ -31,7 +36,6 @@ export default function ToGroupShare_Post({ refFrom, post }: PropsTypes) {
           _refFrom={refFrom}
         />
       )}
-
       {post.sharer === "page" && (
         <PageHeader
           name={post?.page?.name}
@@ -41,7 +45,6 @@ export default function ToGroupShare_Post({ refFrom, post }: PropsTypes) {
           _refFrom={refFrom}
         />
       )}
-
       <Content content={post.content} />
       {post.shareWhat === "user" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
@@ -57,7 +60,6 @@ export default function ToGroupShare_Post({ refFrom, post }: PropsTypes) {
           <Medias medias={post?.oUserPost?.medias} />
         </div>
       )}
-
       {post.shareWhat === "page" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
           <PageHeader
@@ -71,7 +73,6 @@ export default function ToGroupShare_Post({ refFrom, post }: PropsTypes) {
           <Medias medias={post?.oPagePost?.medias} />
         </div>
       )}
-
       {post.shareWhat === "group" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
           <GroupHeader
@@ -139,7 +140,9 @@ export default function ToGroupShare_Post({ refFrom, post }: PropsTypes) {
         feedId={post.feedId}
         postId={post.postId}
       />
-      <Lower post={post} refFrom={refFrom} />
+      {isCommentsLoading && isCommentsLoading && (
+        <Lower post={post} refFrom={refFrom} />
+      )}{" "}
     </div>
   );
 }

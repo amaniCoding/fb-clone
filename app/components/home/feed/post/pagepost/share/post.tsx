@@ -13,9 +13,14 @@ import Lower from "../../shared/lower";
 type PropsTypes = {
   post: PageSharePost;
   refFrom: "modal" | "post";
+  isCommentsLoading: boolean | undefined;
 };
 
-export default function PageShare_Post({ refFrom, post }: PropsTypes) {
+export default function PageShare_Post({
+  refFrom,
+  post,
+  isCommentsLoading,
+}: PropsTypes) {
   return (
     <div
       className={`${
@@ -45,7 +50,6 @@ export default function PageShare_Post({ refFrom, post }: PropsTypes) {
           <Medias medias={post?.oUserPost?.medias} />
         </div>
       )}
-
       {post.shareWhat === "page" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
           <PageHeader
@@ -60,7 +64,6 @@ export default function PageShare_Post({ refFrom, post }: PropsTypes) {
           <Medias medias={post?.oPagePost?.medias} />
         </div>
       )}
-
       {post.shareWhat === "group" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
           <GroupHeader
@@ -129,7 +132,9 @@ export default function PageShare_Post({ refFrom, post }: PropsTypes) {
         feedId={post.feedId}
         postId={post.postId}
       />
-      <Lower post={post} refFrom={refFrom} />
+      {isCommentsLoading && isCommentsLoading && (
+        <Lower post={post} refFrom={refFrom} />
+      )}{" "}
     </div>
   );
 }

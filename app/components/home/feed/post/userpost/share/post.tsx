@@ -12,9 +12,14 @@ import Lower from "../../shared/lower";
 type PropsTypes = {
   post: UserSharePost;
   refFrom: "modal" | "post";
+  isCommentsLoading: boolean | undefined;
 };
 
-export default function UserShare_Post({ refFrom, post }: PropsTypes) {
+export default function UserShare_Post({
+  refFrom,
+  post,
+  isCommentsLoading,
+}: PropsTypes) {
   return (
     <div
       className={`${
@@ -30,7 +35,6 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
         _refFrom={refFrom}
       />
       <Content content={post.content} />
-
       {post.shareWhat === "user" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
           <UserHeader
@@ -46,7 +50,6 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
           <Medias medias={post.oUserPost?.medias} />
         </div>
       )}
-
       {post.shareWhat === "page" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
           <PageHeader
@@ -61,7 +64,6 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
           <Medias medias={post?.oPagePost?.medias} />
         </div>
       )}
-
       {post.shareWhat === "group" && (
         <div className="rounded-xl bg-white mb-4 pb-1.5">
           <GroupHeader
@@ -76,7 +78,6 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
           <Medias medias={post?.oGroupPost?.medias} />
         </div>
       )}
-
       {post.shareWhat === "media" && (
         <div className="rounded-xl bg-white mb-1 pb-1.5">
           {post.media?.owner === "user" && (
@@ -131,7 +132,9 @@ export default function UserShare_Post({ refFrom, post }: PropsTypes) {
         feedId={post.feedId}
         postId={post.postId}
       />
-      {refFrom === "post" && <Lower post={post} refFrom={refFrom} />}
+      {isCommentsLoading && isCommentsLoading && (
+        <Lower post={post} refFrom={refFrom} />
+      )}{" "}
     </div>
   );
 }
