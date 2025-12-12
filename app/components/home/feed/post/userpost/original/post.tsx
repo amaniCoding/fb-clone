@@ -9,7 +9,7 @@ import { OUserPost } from "@/app/api/feeder/[page]/lib";
 type PropsTypes = {
   post: OUserPost;
   refFrom: "modal" | "post";
-  isCommentsLoading: boolean | undefined;
+  isCommentsLoading?: boolean | undefined;
 };
 
 export default function OUser_Post({

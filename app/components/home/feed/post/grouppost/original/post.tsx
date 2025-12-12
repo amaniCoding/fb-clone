@@ -10,7 +10,7 @@ import { OGroupPost } from "@/app/api/feeder/[page]/lib";
 type PropsTypes = {
   post: OGroupPost;
   refFrom: "modal" | "post";
-  isCommentsLoading: boolean | undefined;
+  isCommentsLoading?: boolean | undefined;
 };
 
 export default function OGroup_Post({

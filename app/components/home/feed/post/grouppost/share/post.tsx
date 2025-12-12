@@ -13,7 +13,7 @@ import Lower from "../../shared/lower";
 type PropsTypes = {
   post: ToGroupSharedPost;
   refFrom: "modal" | "post";
-  isCommentsLoading: boolean | undefined;
+  isCommentsLoading?: boolean | undefined;
 };
 
 export default function ToGroupShare_Post({

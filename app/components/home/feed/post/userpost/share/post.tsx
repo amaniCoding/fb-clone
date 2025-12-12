@@ -12,7 +12,7 @@ import Lower from "../../shared/lower";
 type PropsTypes = {
   post: UserSharePost;
   refFrom: "modal" | "post";
-  isCommentsLoading: boolean | undefined;
+  isCommentsLoading?: boolean | undefined;
 };
 
 export default function UserShare_Post({
