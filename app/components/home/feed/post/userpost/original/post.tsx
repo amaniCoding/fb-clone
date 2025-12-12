@@ -18,7 +18,6 @@ export default function OUser_Post({ refFrom, post }: PropsTypes) {
         refFrom === "post" ? "mb-4 rounded-xl  pb-1.5" : ""
       } bg-white `}
     >
-      <p>{post.postId}</p>
       <UserHeader
         firstName={post?.user?.firstName}
         lastName={post?.user?.lastName}

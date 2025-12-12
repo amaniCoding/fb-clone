@@ -4,7 +4,7 @@ import { MediaPropType } from "./types";
 
 export default function Grid3({ medias }: MediaPropType) {
   return (
-    <div className="flex space-x-1.5 w-full h-112">
+    <div className="flex space-x-1.5 w-full h-full">
       {medias![0].type === "image" && (
         <div
           className="w-[60%] h-full"

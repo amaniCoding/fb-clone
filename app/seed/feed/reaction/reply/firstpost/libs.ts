@@ -6,7 +6,7 @@ import { ReactionType } from "@/app/generated/prisma/client";
 export async function _seeder() {
   const post = await prisma.oUserPost.findUnique({
     where: {
-      id: "someid",
+      id: "168136ed-3a69-494b-b21c-5152d5e48baa",
     },
     select: {
       comments: {
