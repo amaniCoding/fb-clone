@@ -42,7 +42,7 @@ export default function OGroup_Post({
         feedId={post.feedId}
         postId={post.postId}
       />
-      {isCommentsLoading && isCommentsLoading && (
+      {isCommentsLoading && !isCommentsLoading && (
         <Lower post={post} refFrom={refFrom} />
       )}{" "}
     </div>
