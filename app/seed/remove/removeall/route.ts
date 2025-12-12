@@ -5,7 +5,7 @@ const remove = async () => {
 };
 export async function GET() {
   try {
-    await remove();
+    // await remove();
     //await seedUser();
     return Response.json({ message: "Database seeded successfully" });
   } catch (error) {

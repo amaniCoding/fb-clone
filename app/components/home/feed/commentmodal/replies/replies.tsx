@@ -55,8 +55,8 @@ export default function Replies({
     setShouldFetch(true);
     setSize(size + 1);
   };
-  return replies.length === 0 ? (
-    <div className="absolute -bottom-3.5 left-8 bg-white w-full">
+  return (
+    <div className="w-full">
       <button
         disabled={isLoading || isReachingEnd || shouldFetch}
         className=" text-gray-500 "
@@ -70,9 +70,6 @@ export default function Replies({
           ? `View all ${repliesCount} replies`
           : "View all replies"}
       </button>
-    </div>
-  ) : (
-    <div className="w-full">
       {replies!.map((reply, index) => {
         const gReactions = reply._gReactions
           ? [...reply._gReactions].sort((a, b) => b.count - a.count)

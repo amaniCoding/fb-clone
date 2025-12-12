@@ -12,7 +12,6 @@ import PageShare_Post from "../post/pagepost/share/post";
 import ToGroupShare_Post from "../post/grouppost/share/post";
 import OGroup_Post from "../post/grouppost/original/post";
 import Header from "./header";
-import Comments from "./comments/comments";
 import {
   OGroupPost,
   OPagePost,
@@ -21,6 +20,7 @@ import {
   UserSharePost,
   ToGroupSharedPost,
 } from "@/app/api/feeder/[page]/lib";
+import Comments from "./comments/comments";
 
 export default function CommentModal() {
   const { data, status } = useSession();
