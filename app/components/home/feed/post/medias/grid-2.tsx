@@ -4,7 +4,7 @@ import { MediaPropType } from "./types";
 
 export default function Grid2({ medias }: MediaPropType) {
   return (
-    <div className="w-full h-auto flex space-x-1.5">
+    <div className="w-full h-130 flex space-x-1.5">
       {medias!.map((media, index) => {
         return (
           media.type === "image" && (

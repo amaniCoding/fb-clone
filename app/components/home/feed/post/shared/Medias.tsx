@@ -13,7 +13,7 @@ export default function Medias({ medias }: MediaPropType) {
       <div className={`w-full`}>
         {medias!.length === 1 && medias![0].type === "image" && (
           <div
-            className="w-full h-auto"
+            className="w-full h-130"
             style={{
               backgroundImage: "url(" + `${medias![0].url}` + ")",
               backgroundPosition: "top center",
