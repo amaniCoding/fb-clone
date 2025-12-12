@@ -42,9 +42,10 @@ export default function OUser_Post({
         postId={post.postId}
         feedId={post.feedId}
       />
-      {isCommentsLoading && !isCommentsLoading && (
-        <Lower post={post} refFrom={refFrom} />
-      )}{" "}
+      {!isCommentsLoading ||
+        (isCommentsLoading && !isCommentsLoading && (
+          <Lower post={post} refFrom={refFrom} />
+        ))}{" "}
     </div>
   );
 }
