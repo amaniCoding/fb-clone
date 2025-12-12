@@ -12,7 +12,7 @@ import Lower from "../../shared/lower";
 type PropsTypes = {
   post: UserSharePost;
   refFrom: "modal" | "post";
-  isCommentsLoading?: boolean | undefined;
+  isCommentsLoading?: boolean;
 };
 
 export default function UserShare_Post({
@@ -132,10 +132,13 @@ export default function UserShare_Post({
         feedId={post.feedId}
         postId={post.postId}
       />
-      {!isCommentsLoading ||
-        (isCommentsLoading && !isCommentsLoading && (
-          <Lower post={post} refFrom={refFrom} />
-        ))}{" "}
+      {isCommentsLoading === undefined && (
+        <Lower post={post} refFrom={refFrom} />
+      )}
+
+      {isCommentsLoading && isCommentsLoading && (
+        <Lower post={post} refFrom={refFrom} />
+      )}
     </div>
   );
 }

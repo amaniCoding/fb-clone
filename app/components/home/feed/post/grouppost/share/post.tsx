@@ -140,10 +140,13 @@ export default function ToGroupShare_Post({
         feedId={post.feedId}
         postId={post.postId}
       />
-      {!isCommentsLoading ||
-        (isCommentsLoading && !isCommentsLoading && (
-          <Lower post={post} refFrom={refFrom} />
-        ))}{" "}
+      {isCommentsLoading === undefined && (
+        <Lower post={post} refFrom={refFrom} />
+      )}
+
+      {isCommentsLoading && isCommentsLoading && (
+        <Lower post={post} refFrom={refFrom} />
+      )}
     </div>
   );
 }
