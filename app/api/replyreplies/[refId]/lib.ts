@@ -1017,5 +1017,5 @@ export type MediaReplyReplyType = {
   mediaUrl: string | null;
 };
 
-export type ReplyType = MediaReplyReplyType | PostReplyReplyType;
-export type RepliesType = MediaReplyReplyType[] | PostReplyReplyType[];
+export type ReplyReplyType = MediaReplyReplyType | PostReplyReplyType;
+export type ReplyRepliesType = MediaReplyReplyType[] | PostReplyReplyType[];

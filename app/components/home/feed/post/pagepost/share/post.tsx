@@ -8,19 +8,13 @@ import UserHeader from "../../userpost/header";
 import Content from "../../shared/content";
 import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";
-import Lower from "../../shared/lower";
 
 type PropsTypes = {
   post: PageSharePost;
   refFrom: "modal" | "post";
-  isCommentsLoading?: boolean | undefined;
 };
 
-export default function PageShare_Post({
-  refFrom,
-  post,
-  isCommentsLoading,
-}: PropsTypes) {
+export default function PageShare_Post({ refFrom, post }: PropsTypes) {
   return (
     <div
       className={`${
@@ -132,13 +126,6 @@ export default function PageShare_Post({
         feedId={post.feedId}
         postId={post.postId}
       />
-      {isCommentsLoading === undefined && (
-        <Lower post={post} refFrom={refFrom} />
-      )}
-
-      {isCommentsLoading && isCommentsLoading && (
-        <Lower post={post} refFrom={refFrom} />
-      )}
     </div>
   );
 }

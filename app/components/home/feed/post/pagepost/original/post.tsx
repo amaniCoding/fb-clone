@@ -1,6 +1,5 @@
 "use client";
 import Content from "../../shared/content";
-import Lower from "../../shared/lower";
 import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";
 import PageHeader from "../header";
@@ -10,14 +9,9 @@ import { OPagePost } from "@/app/api/feeder/[page]/lib";
 type PropsTypes = {
   post: OPagePost;
   refFrom: "modal" | "post";
-  isCommentsLoading?: boolean | undefined;
 };
 
-export default function OPage_Post({
-  refFrom,
-  post,
-  isCommentsLoading,
-}: PropsTypes) {
+export default function OPage_Post({ refFrom, post }: PropsTypes) {
   return (
     <div
       className={`${
@@ -42,13 +36,6 @@ export default function OPage_Post({
         feedId={post.feedId}
         postId={post.postId}
       />
-      {isCommentsLoading === undefined && (
-        <Lower post={post} refFrom={refFrom} />
-      )}
-
-      {isCommentsLoading && isCommentsLoading && (
-        <Lower post={post} refFrom={refFrom} />
-      )}
     </div>
   );
 }

@@ -8,19 +8,13 @@ import GroupHeader from "../header";
 import Medias from "../../shared/Medias";
 import Content from "../../shared/content";
 import Upper from "../../shared/upper";
-import Lower from "../../shared/lower";
 
 type PropsTypes = {
   post: ToGroupSharedPost;
   refFrom: "modal" | "post";
-  isCommentsLoading?: boolean | undefined;
 };
 
-export default function ToGroupShare_Post({
-  refFrom,
-  post,
-  isCommentsLoading,
-}: PropsTypes) {
+export default function ToGroupShare_Post({ refFrom, post }: PropsTypes) {
   return (
     <div
       className={`${
@@ -140,13 +134,6 @@ export default function ToGroupShare_Post({
         feedId={post.feedId}
         postId={post.postId}
       />
-      {isCommentsLoading === undefined && (
-        <Lower post={post} refFrom={refFrom} />
-      )}
-
-      {isCommentsLoading && isCommentsLoading && (
-        <Lower post={post} refFrom={refFrom} />
-      )}
     </div>
   );
 }

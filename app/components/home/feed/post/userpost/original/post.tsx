@@ -3,20 +3,14 @@ import UserHeader from "../header";
 import Content from "../../shared/content";
 import Medias from "../../shared/Medias";
 import Upper from "../../shared/upper";
-import Lower from "../../shared/lower";
 import { OUserPost } from "@/app/api/feeder/[page]/lib";
 
 type PropsTypes = {
   post: OUserPost;
   refFrom: "modal" | "post";
-  isCommentsLoading?: boolean;
 };
 
-export default function OUser_Post({
-  refFrom,
-  post,
-  isCommentsLoading,
-}: PropsTypes) {
+export default function OUser_Post({ refFrom, post }: PropsTypes) {
   return (
     <div
       className={`${
@@ -42,13 +36,6 @@ export default function OUser_Post({
         postId={post.postId}
         feedId={post.feedId}
       />
-      {isCommentsLoading === undefined && (
-        <Lower post={post} refFrom={refFrom} />
-      )}
-
-      {isCommentsLoading && isCommentsLoading && (
-        <Lower post={post} refFrom={refFrom} />
-      )}
     </div>
   );
 }
