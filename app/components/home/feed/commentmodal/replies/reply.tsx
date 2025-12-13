@@ -35,7 +35,7 @@ export default function Reply({
     setSize(size + 1);
   };
   return replyReplies.length === 0 ? (
-    <div className="">
+    <div className="relative h-20 border-l-2 border-l-gray-300 border-b-2 border-b-gray-300 mb-7">
       <ReplyItem gReaction={gReaction} reply={reply} />
       <div className="w-[93%] bg-white absolute left-7 -bottom-1/2 translate-y-1/2">
         <button
@@ -54,7 +54,7 @@ export default function Reply({
       </div>
     </div>
   ) : (
-    <div className="relative h-40 border-l-2 border-l-gray-300 border-b-2 border-b-gray-300">
+    <div className="relative h-20 border-l-2 border-l-gray-300 border-b-2 border-b-gray-300 mb-7">
       <Replies
         replyReplies={replyReplies}
         commentId={commentId}

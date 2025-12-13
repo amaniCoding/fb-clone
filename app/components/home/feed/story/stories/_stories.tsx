@@ -63,17 +63,17 @@ export default function StoriesClient({
 
       <Slider {...settings} ref={sliderRef}>
         <div className="group overflow-hidden rounded-xl max-w-28 m-auto h-52">
-          <Link href={`#`} className="block h-52 relative rounded-xl">
+          <Link href={`#`} className="block h-54 relative rounded-xl">
             <Image
               alt="Amanuel Ferede"
               src={loggedInUserProfilePicture}
               width={0}
               height={0}
               sizes="100vh"
-              className="w-full h-3/4 object-cover"
+              className="w-full h-[70%] object-cover"
             />
 
-            <div className="h-[25%] absolute z-10 bottom-0 flex flex-col w-full bg-white px-2 pb-4">
+            <div className="h-[30%] absolute z-10 bottom-0 flex flex-col w-full bg-white px-2 pb-4">
               <div className="w-10 h-10  bg-white rounded-full scale-[122%] absolute left-1/2 -translate-x-1/2 -top-1/2 translate-y-1/2"></div>
               <BsPlus className="w-10 h-10 bg-blue-600 rounded-full absolute left-1/2 -translate-x-1/2 -top-1/2 translate-y-1/2 text-white" />
               <p className="text-center mt-8 text-sm">Create A story</p>

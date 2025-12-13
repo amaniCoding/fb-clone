@@ -5,7 +5,7 @@ import { StorySliderProps } from "./types";
 
 export default function StorySliderItem(props: StorySliderProps) {
   return (
-    <div className="group overflow-hidden max-w-28 m-auto rounded-xl h-52 bg-red-300">
+    <div className="group overflow-hidden max-w-28 m-auto rounded-xl h-54 bg-red-300">
       <Link href={`/story/${props.storyid}`}>
         <div className="relative">
           <Image
@@ -14,7 +14,7 @@ export default function StorySliderItem(props: StorySliderProps) {
             width={0}
             height={0}
             sizes="100vh"
-            className="w-full h-52 object-cover group-hover:scale-105 transition-all duration-300 ease-in-out"
+            className="w-full h-54 object-cover group-hover:scale-105 transition-all duration-300 ease-in-out"
           />
 
           <div className="absolute top-0 bottom-0 left-0 right-0 bg-linear-to-b from-transparent to-black/60"></div>

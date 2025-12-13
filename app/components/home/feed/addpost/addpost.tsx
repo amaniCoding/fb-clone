@@ -56,7 +56,7 @@ export default function AddPost({
           ></input>
         </div>
         <div className="flex items-center justify-between space-x-2 my-1">
-          <button className="rounded-md hover:bg-gray-100 px-3 flex items-center space-x-2 py-1.5">
+          <button className="cursor-pointer rounded-md hover:bg-gray-100 px-3 flex items-center space-x-2 py-1.5">
             <Image
               alt="Amanuel Ferede"
               src={`/addpost/video.png`}
@@ -68,7 +68,7 @@ export default function AddPost({
             <span className="md:block hidden">Live Video</span>
           </button>
           <button
-            className="rounded-md hover:bg-gray-100 px-3 flex items-center space-x-2 py-1.5"
+            className="cursor-pointer rounded-md hover:bg-gray-100 px-3 flex items-center space-x-2 py-1.5"
             onClick={() => {
               handelShowPostBox();
             }}
@@ -83,7 +83,7 @@ export default function AddPost({
             />{" "}
             <span className="md:block hidden">Photo / Video</span>
           </button>
-          <button className="rounded-md hover:bg-gray-100 px-3 flex items-center space-x-2 py-1.5">
+          <button className="cursor-pointer rounded-md hover:bg-gray-100 px-3 flex items-center space-x-2 py-1.5">
             <FaRegSmile className="w-7 h-7 fill-orange-300" />
             <span className="md:block hidden">Photo / Video</span>
           </button>

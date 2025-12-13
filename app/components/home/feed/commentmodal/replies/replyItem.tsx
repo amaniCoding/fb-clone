@@ -15,7 +15,7 @@ export default function ReplyItem({
   }[];
 }) {
   return (
-    <div className="flex flex-row space-x-3 bg-yellow-300">
+    <div className={`absolute w-full -left-4 -top-4`}>
       <Link href={"/#"} className="flex-none">
         {reply!.user.Profile?.profilePicture ? (
           <Image

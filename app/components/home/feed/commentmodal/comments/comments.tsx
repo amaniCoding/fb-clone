@@ -15,12 +15,7 @@ export default function Comments() {
     error,
     currentPost,
   } = useFetchComments();
-  if (error)
-    return (
-      <div className="w-full bg-white h-20 flex items-center justify-center font-semibold text-gray-500">
-        <p className="text-center"> Failed to load comments.</p>
-      </div>
-    );
+
   return (
     <div>
       {loading && !loading && size === 1 && (
@@ -42,6 +37,11 @@ export default function Comments() {
         {loading && size === 1 && <CommentFirstTimeSkeleton />}
         {loading && size > 1 && <CommentsSkeleton />}
         {isReachingEnd && <div>No more comments</div>}
+        {error && (
+          <p className="font-semibold text-center my-1">
+            Failed to load replies
+          </p>
+        )}
       </div>
     </div>
   );

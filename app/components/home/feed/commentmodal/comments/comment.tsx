@@ -25,7 +25,7 @@ export default function Comment({
     setSize(size + 1);
   };
   return replies.length === 0 ? (
-    <div className="relative h-40 border-l-2 border-l-gray-300 border-b-2 border-b-gray-300">
+    <div className="relative h-20 border-l-2 border-l-gray-300 border-b-2 border-b-gray-300 mb-7">
       <CommentItem
         comment={comment}
         gReaction={gReaction}
@@ -48,7 +48,7 @@ export default function Comment({
       </div>
     </div>
   ) : (
-    <div className="relative h-40 border-l-2 border-l-gray-300 border-b-2 border-b-gray-300">
+    <div className="relative h-20 border-l-2 border-l-gray-300 border-b-2 border-b-gray-300 mb-7">
       <Replies
         replies={replies}
         commentId={comment.id}
