@@ -24,7 +24,7 @@ export async function _seeder() {
 
           return prisma.oUserPost.update({
             where: {
-              id: "someid",
+              id: "168136ed-3a69-494b-b21c-5152d5e48baa",
             },
             data: {
               comments: {

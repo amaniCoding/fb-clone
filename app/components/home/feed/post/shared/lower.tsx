@@ -64,6 +64,7 @@ export default function Lower({ refFrom, post }: TypeProps) {
   };
   return (
     <div className="flex items-center justify-between relative mx-1.5">
+      {post.postId}
       {toShowReactionBox && (
         <ReactionBox
           post={post}
