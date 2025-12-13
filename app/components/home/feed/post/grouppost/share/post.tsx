@@ -16,11 +16,7 @@ type PropsTypes = {
 
 export default function ToGroupShare_Post({ refFrom, post }: PropsTypes) {
   return (
-    <div
-      className={`${
-        refFrom === "post" ? "rounded-xl mb-4 pb-1.5" : ""
-      } bg-white `}
-    >
+    <div className={`${refFrom === "post" ? "pb-1.5" : ""}  `}>
       {post.sharer === "user" && (
         <GroupHeader
           group={post?.group}

@@ -13,11 +13,7 @@ type PropsTypes = {
 
 export default function OPage_Post({ refFrom, post }: PropsTypes) {
   return (
-    <div
-      className={`${
-        refFrom === "post" ? "rounded-xl mb-4 pb-1.5" : ""
-      } bg-white `}
-    >
+    <div className={`${refFrom === "post" ? "pb-1.5" : ""}  `}>
       <PageHeader
         name={post.page?.name}
         profilePicture={post.page?.profilePicture}

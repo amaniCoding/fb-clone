@@ -10,14 +10,14 @@ export default function PagePost({ post }: PropsTypes) {
   return (
     <>
       {post?.postType === "original" && (
-        <div className="flex flex-col space-y-1.5">
+        <div className="flex flex-col rounded-xl bg-white mb-4">
           <OPage_Post refFrom="post" post={post.oPagePost} />
           <Lower post={post.oPagePost} refFrom="post" />
         </div>
       )}
 
       {post?.postType === "share" && (
-        <div className="flex flex-col space-y-1.5">
+        <div className="flex flex-col rounded-xl bg-white mb-4">
           <PageShare_Post refFrom="post" post={post.pageSharePost} />
           <Lower post={post.pageSharePost} refFrom="post" />
         </div>

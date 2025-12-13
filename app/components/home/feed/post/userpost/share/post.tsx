@@ -15,11 +15,7 @@ type PropsTypes = {
 
 export default function UserShare_Post({ refFrom, post }: PropsTypes) {
   return (
-    <div
-      className={`${
-        refFrom === "post" ? "rounded-xl mb-4 pb-1.5" : ""
-      } bg-white `}
-    >
+    <div className={`${refFrom === "post" ? "pb-1.5" : ""}  `}>
       <UserHeader
         firstName={post?.user?.firstName}
         lastName={post?.user?.lastName}

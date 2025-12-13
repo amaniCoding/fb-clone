@@ -21,7 +21,7 @@ export default function Comments() {
       {loading && !loading && size === 1 && (
         <Lower refFrom="modal" post={currentPost!} />
       )}
-      <div className="bg-white pl-7 pt-6 relative">
+      <div className="bg-white pl-7 pt-6 w-full">
         {comments!.map((comment, index) => {
           const gReactions = comment._gReactions
             ? [...comment._gReactions].sort((a, b) => b.count - a.count)

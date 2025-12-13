@@ -13,11 +13,7 @@ type PropsTypes = {
 
 export default function OGroup_Post({ refFrom, post }: PropsTypes) {
   return (
-    <div
-      className={`${
-        refFrom === "post" ? "rounded-xl mb-4 pb-1.5" : ""
-      } bg-white `}
-    >
+    <div className={`${refFrom === "post" ? "pb-1.5" : ""}  `}>
       <GroupHeader
         group={post?.group}
         memeber={post?.user}

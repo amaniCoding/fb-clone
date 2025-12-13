@@ -25,13 +25,13 @@ export default function Comment({
     setSize(size + 1);
   };
   return replies.length === 0 ? (
-    <div className="relative h-20 border-l-2 border-l-gray-300 border-b-2 border-b-gray-300 mb-7">
+    <div className="relative  border-l-2 border-l-gray-300 border-b-2 border-b-gray-300 mb-10 rounded-bl-xl">
       <CommentItem
         comment={comment}
         gReaction={gReaction}
         repliesCount={comment._count.replies}
       />
-      <div className="w-[93%] bg-white absolute left-7 -bottom-1/2 translate-y-1/2">
+      <div className="w-[93%] bg-white absolute left-[7%] -bottom-3.5 ">
         <button
           disabled={loading || isReachingEnd || !shouldFetch}
           className=" text-gray-500"
