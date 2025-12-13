@@ -69,7 +69,7 @@ export default function Upper({
   return (
     <div className="px-3 py-2">
       <div className="flex items-center justify-between border-b border-b-gray-300 pb-2">
-        {reactionsCount && reactionsCount > 0 && (
+        {reactionsCount && reactionsCount > 0 ? (
           <div className="flex items-center space-x-1 fill-gray-500">
             <div className="flex items-center -space-x-1.5">
               {newRxn_x.map((rxn, index) => (
@@ -89,9 +89,9 @@ export default function Upper({
             </div>
             <p>{reactionsCount}</p>
           </div>
-        )}
+        ) : null}
         <div className="flex items-center space-x-3">
-          {commentsCount && commentsCount > 0 && (
+          {commentsCount && commentsCount > 0 ? (
             <div className="flex items-center space-x-1  rounded-md ">
               <span>{commentsCount}</span>
               <Image
@@ -103,7 +103,7 @@ export default function Upper({
                 className=" w-5 h-5 object-cover rounded-full block flex-none opacity-60"
               />
             </div>
-          )}
+          ) : null}
 
           {/* <div className="flex items-center space-x-1  rounded-md ">
             <span>20</span>

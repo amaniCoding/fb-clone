@@ -18,7 +18,7 @@ export default function CommentItem({
   repliesCount: number;
 }) {
   return (
-    <div className={`relative w-full -left-4 -top-4`}>
+    <div className={`relative w-full -left-4 -top-4 `}>
       <div className="flex flex-row space-x-3">
         <Link href={"/#"} className="flex-none">
           {comment!.user.Profile?.profilePicture ? (

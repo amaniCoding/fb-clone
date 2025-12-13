@@ -33,7 +33,7 @@ export default function Comments() {
             <Comment key={index} comment={comment} gReaction={newGReaction} />
           );
         })}
-        <div ref={observerRef} className="h-5"></div>{" "}
+        <div ref={observerRef} className=""></div>{" "}
         {loading && size === 1 && <CommentFirstTimeSkeleton />}
         {loading && size > 1 && <CommentsSkeleton />}
         {isReachingEnd && <div>No more comments</div>}

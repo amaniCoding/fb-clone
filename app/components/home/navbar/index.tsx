@@ -11,7 +11,7 @@ export default function NavBar({
   loggedInUser: LoggedInUser;
 }) {
   return (
-    <nav className="py-1.5 px-4 fixed top-0 left-0 right-0 z-20 bg-white w-full shadow-md">
+    <nav className="py-1.5 px-4 fixed top-0 left-0 right-0 z-50 bg-white w-full shadow-md">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Link href={"/"}>

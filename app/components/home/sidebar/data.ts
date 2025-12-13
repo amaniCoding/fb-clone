@@ -1,7 +1,7 @@
 export const data = [
   {
     name: "Friends",
-    icon: "/sidebar/friends.png",
+    icon: "/sidebar/friend.png",
     toFixSize: false,
   },
   {
